@@ -1,0 +1,17 @@
+{
+    "name": "mieciekbot",
+    "version": "0.0.1",
+    "description": "NodeJS Discord Bot",
+    "main": "index.js",
+    "scripts": {
+        "start": "node index.js",
+        "start:dev": "node -r dotenv/config index.js"
+    },
+    "author": "PoProstuMieciek",
+    "dependencies": {
+        "discord.js": "^11.5.1"
+    },
+    "devDependencies": {
+        "dotenv": "^8.2.0"
+    }
+}
