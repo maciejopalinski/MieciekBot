@@ -1,0 +1,2 @@
+# MieciekBot
+NodeJS Discord Bot
