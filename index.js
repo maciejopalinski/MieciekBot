@@ -64,9 +64,9 @@ bot.on('guildCreate', guild => {
         prefix: "!",
         delete_timeout: 3000,
         roles: {
-            OWNER: {},
-            ADMIN: {},
-            USER: {}
+            owner: "",
+            admin: "",
+            user: ""
         }
     });
     newSettings.save().catch(err => console.log(err));
