@@ -19,6 +19,6 @@ module.exports.run = async (bot, msg, args) => {
 module.exports.help = {
     name: "help",
     args: [],
-    permission: "ALL",
+    permission: "USER",
     description: "shows all commands"
 }

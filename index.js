@@ -122,7 +122,7 @@ bot.on('message', async msg => {
                 {
                     allowed_roles = [role_owner, role_admin];
                 }
-                if(commandfile.help.permission === "ALL")
+                if(commandfile.help.permission === "USER")
                 {
                     allowed_roles = [role_owner, role_admin, role_user];
                 }
@@ -135,15 +135,15 @@ bot.on('message', async msg => {
                         bot.allowed_roles = [];
                         if(role.id == role_owner)
                         {
-                            bot.allowed_roles = ["OWNER", "ADMIN", "ALL"];
+                            bot.allowed_roles = ["OWNER", "ADMIN", "USER"];
                         }
                         if(role.id == role_admin)
                         {
-                            bot.allowed_roles = ["ADMIN", "ALL"];
+                            bot.allowed_roles = ["ADMIN", "USER"];
                         }
                         if(role.id == role_user)
                         {
-                            bot.allowed_roles = ["ALL"];
+                            bot.allowed_roles = ["USER"];
                         }
                         commandfile.run(bot, msg, args);
                     }
