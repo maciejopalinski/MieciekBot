@@ -4,8 +4,10 @@ module.exports.run = async (bot, msg, args) => {
     let messages = args[0];
     if(messages >= 2 && messages <= 100)
     {
-        await msg.delete(bot.delete_timeout);
-        msg.channel.bulkDelete(messages);
+        msg.channel.bulkDelete(messages).catch(err => {
+            msg.delete(bot.delete_timeout);
+            msg.channel.send(err.message).then(msg => msg.delete(bot.delete_timeout));
+        });
     }
     else
     {
