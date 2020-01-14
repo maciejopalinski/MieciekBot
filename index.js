@@ -13,23 +13,24 @@ mongoose.connect(process.env.DATABASE, {
 bot.prefix = "!";
 bot.commands = new Discord.Collection();
 
+
 fs.readdir("./commands/", (err, files) => {
     if(err) throw err;
 
-    console.log(`INFO: Initializing...\n`);
-    console.log(`INFO: Starting commands loading...`);
+    console.log(`[INFO] Initializing...\n`);
+    console.log(`[INFO] Starting commands loading...`);
     let jsfiles = files.filter(f => f.split(".").pop() === "js");
     if(jsfiles.length <= 0)
     {
-        console.log(`WARN: Commands not found!\n`);
+        console.log(`[WARN] Commands not found!\n`);
         return;
     }
     jsfiles.forEach((file, index) => {
         let props = require(`./commands/${file}`);
-        console.log(`INFO: ${file} loaded`);
+        console.log(`[INFO] ${file} loaded`);
         bot.commands.set(props.help.name, props);
     });
-    console.log(`INFO: ${jsfiles.length} commands loaded\n`)
+    console.log(`[INFO] ${jsfiles.length} commands loaded\n`)
 });
 
 bot.on('ready', async () => {
@@ -55,7 +56,7 @@ bot.on('ready', async () => {
         bot.user.setPresence(status[index]);
     }, 5000);
 
-    console.log(`INFO: Running...`);
+    console.log(`[INFO] Running...`);
 });
 
 bot.on('guildCreate', guild => {
