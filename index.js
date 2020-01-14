@@ -62,7 +62,7 @@ bot.on('guildCreate', guild => {
     const newSettings = new Settings({
         serverID: guild.id,
         prefix: "!",
-        delete_timeout: 2000,
+        delete_timeout: 3000,
         roles: {
             owner: "",
             admin: "",
