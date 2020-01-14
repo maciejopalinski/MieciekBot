@@ -1,6 +1,6 @@
 {
     "name": "mieciekbot",
-    "version": "0.2.0",
+    "version": "0.3.0",
     "description": "NodeJS Discord Bot",
     "main": "index.js",
     "scripts": {
