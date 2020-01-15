@@ -109,43 +109,45 @@ bot.on('message', async msg => {
                 if(err) console.log(err);
 
                 let member = msg.member.roles;
-                let role_user = res.roles.user;
-                let role_admin = res.roles.admin;
-                let role_owner = res.roles.owner;
+                let role = {
+                    id: [
+                        res.roles.user,
+                        res.roles.admin,
+                        res.roles.owner
+                    ],
+                    name: [
+                        "USER",
+                        "ADMIN",
+                        "OWNER"
+                    ],
+                    allowed_roles: [
+                        ["USER"],
+                        ["USER", "ADMIN"],
+                        ["USER", "ADMIN", "OWNER"]
+                    ]
+                };
 
-                
-                let allowed_roles = [];
-                if(commandfile.help.permission === "OWNER")
-                {
-                    allowed_roles = [role_owner];
-                }
-                if(commandfile.help.permission === "ADMIN")
-                {
-                    allowed_roles = [role_owner, role_admin];
-                }
-                if(commandfile.help.permission === "USER")
-                {
-                    allowed_roles = [role_owner, role_admin, role_user];
-                }
+                let last_max = -1;
+                role.id.forEach((value, index) => {
+                    if(member.some(role => role.id == value) && index > last_max)
+                    {
+                        last_max = index;
+                    }
+                });
 
-                let role = member.find(role => allowed_roles.includes(role.id));
-                if(role)
+                let ok = false;
+                role.name.forEach((value, index) => {
+                    if(commandfile.help.permission == value && last_max >= index)
+                    {
+                        ok = true;
+                    }
+                });
+
+                if(ok)
                 {
                     if(args.length >= commandfile.help.args.length)
                     {
-                        bot.allowed_roles = [];
-                        if(role.id == role_owner)
-                        {
-                            bot.allowed_roles = ["OWNER", "ADMIN", "USER"];
-                        }
-                        if(role.id == role_admin)
-                        {
-                            bot.allowed_roles = ["ADMIN", "USER"];
-                        }
-                        if(role.id == role_user)
-                        {
-                            bot.allowed_roles = ["USER"];
-                        }
+                        bot.allowed_roles = role.allowed_roles[last_max];
                         commandfile.run(bot, msg, args);
                     }
                     else
