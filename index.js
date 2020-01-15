@@ -13,23 +13,24 @@ mongoose.connect(process.env.DATABASE, {
 bot.prefix = "!";
 bot.commands = new Discord.Collection();
 
+
 fs.readdir("./commands/", (err, files) => {
     if(err) throw err;
 
-    console.log(`INFO: Initializing...\n`);
-    console.log(`INFO: Starting commands loading...`);
+    console.log(`[INFO] Initializing...\n`);
+    console.log(`[INFO] Starting commands loading...`);
     let jsfiles = files.filter(f => f.split(".").pop() === "js");
     if(jsfiles.length <= 0)
     {
-        console.log(`WARN: Commands not found!\n`);
+        console.log(`[WARN] Commands not found!\n`);
         return;
     }
     jsfiles.forEach((file, index) => {
         let props = require(`./commands/${file}`);
-        console.log(`INFO: ${file} loaded`);
+        console.log(`[INFO] ${file} loaded`);
         bot.commands.set(props.help.name, props);
     });
-    console.log(`INFO: ${jsfiles.length} commands loaded\n`)
+    console.log(`[INFO] ${jsfiles.length} commands loaded\n`)
 });
 
 bot.on('ready', async () => {
@@ -55,7 +56,7 @@ bot.on('ready', async () => {
         bot.user.setPresence(status[index]);
     }, 5000);
 
-    console.log(`INFO: Running...`);
+    console.log(`[INFO] Running...`);
 });
 
 bot.on('guildCreate', guild => {
@@ -108,43 +109,45 @@ bot.on('message', async msg => {
                 if(err) console.log(err);
 
                 let member = msg.member.roles;
-                let role_user = res.roles.user;
-                let role_admin = res.roles.admin;
-                let role_owner = res.roles.owner;
+                let role = {
+                    id: [
+                        res.roles.user,
+                        res.roles.admin,
+                        res.roles.owner
+                    ],
+                    name: [
+                        "USER",
+                        "ADMIN",
+                        "OWNER"
+                    ],
+                    allowed_roles: [
+                        ["USER"],
+                        ["USER", "ADMIN"],
+                        ["USER", "ADMIN", "OWNER"]
+                    ]
+                };
 
-                
-                let allowed_roles = [];
-                if(commandfile.help.permission === "OWNER")
-                {
-                    allowed_roles = [role_owner];
-                }
-                if(commandfile.help.permission === "ADMIN")
-                {
-                    allowed_roles = [role_owner, role_admin];
-                }
-                if(commandfile.help.permission === "USER")
-                {
-                    allowed_roles = [role_owner, role_admin, role_user];
-                }
+                let last_max = -1;
+                role.id.forEach((value, index) => {
+                    if(member.some(role => role.id == value) && index > last_max)
+                    {
+                        last_max = index;
+                    }
+                });
 
-                let role = member.find(role => allowed_roles.includes(role.id));
-                if(role)
+                let ok = false;
+                role.name.forEach((value, index) => {
+                    if(commandfile.help.permission == value && last_max >= index)
+                    {
+                        ok = true;
+                    }
+                });
+
+                if(ok)
                 {
                     if(args.length >= commandfile.help.args.length)
                     {
-                        bot.allowed_roles = [];
-                        if(role.id == role_owner)
-                        {
-                            bot.allowed_roles = ["OWNER", "ADMIN", "USER"];
-                        }
-                        if(role.id == role_admin)
-                        {
-                            bot.allowed_roles = ["ADMIN", "USER"];
-                        }
-                        if(role.id == role_user)
-                        {
-                            bot.allowed_roles = ["USER"];
-                        }
+                        bot.allowed_roles = role.allowed_roles[last_max];
                         commandfile.run(bot, msg, args);
                     }
                     else
