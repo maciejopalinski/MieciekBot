@@ -17,7 +17,7 @@ module.exports.run = async (bot, msg, args) => {
         .setTitle(`INFO: MieciekBot`)
         .addField(`Author:`, `PoProstuMieciek`)
         .addField(`Version:`, `${package.version}`)
-        .addField(`GitHub repository:`, `https://github.com/PoProstuMieciek/MieciekBot`);
+        .addField(`GitHub repository:`, `${package.repository.url}`);
 
         msg.channel.send(message);
     }
