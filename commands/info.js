@@ -32,6 +32,10 @@ module.exports.run = async (bot, msg, args) => {
 
 module.exports.help = {
     name: "info",
+    aliases: [
+        "i",
+        "informations"
+    ],
     args: [
         "<server/bot>"
     ],

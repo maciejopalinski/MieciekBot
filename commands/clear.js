@@ -18,6 +18,11 @@ module.exports.run = async (bot, msg, args) => {
 
 module.exports.help = {
     name: "clear",
+    aliases: [
+        "cls",
+        "clr",
+        "cl"
+    ],
     args: [
         "<number>"
     ],

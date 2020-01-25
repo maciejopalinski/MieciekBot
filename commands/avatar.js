@@ -12,6 +12,10 @@ module.exports.run = async (bot, msg, args) => {
 
 module.exports.help = {
     name: "avatar",
+    aliases: [
+        "userimg",
+        "userpic"
+    ],
     args: [],
     permission: "USER",
     description: "shows user avatar"

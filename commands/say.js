@@ -8,6 +8,11 @@ module.exports.run = async (bot, msg, args) => {
 
 module.exports.help = {
     name: "say",
+    aliases: [
+        "print",
+        "send",
+        "announce"
+    ],
     args: [
         "<text>"
     ],
