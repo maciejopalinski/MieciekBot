@@ -18,6 +18,11 @@ module.exports.run = async (bot, msg, args) => {
 
 module.exports.help = {
     name: "help",
+    aliases: [
+        "hepl",
+        "hlep",
+        "?"
+    ],
     args: [],
     permission: "USER",
     description: "shows all commands"

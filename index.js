@@ -12,6 +12,7 @@ mongoose.connect(process.env.DATABASE, {
 
 bot.prefix = "!";
 bot.commands = new Discord.Collection();
+bot.aliases = new Discord.Collection();
 
 
 fs.readdir("./commands/", (err, files) => {
@@ -27,10 +28,13 @@ fs.readdir("./commands/", (err, files) => {
     }
     jsfiles.forEach((file, index) => {
         let props = require(`./commands/${file}`);
+        props.help.aliases.forEach(value => {
+            bot.aliases.set(value, props);
+        });
         console.log(`[INFO] ${file} loaded`);
         bot.commands.set(props.help.name, props);
     });
-    console.log(`[INFO] ${jsfiles.length} commands loaded\n`)
+    console.log(`[INFO] ${jsfiles.length} commands loaded\n`);
 });
 
 bot.on('ready', async () => {
@@ -98,7 +102,7 @@ bot.on('message', async msg => {
     let cmd = messageArray[0];
     let args = messageArray.slice(1);
 
-    let commandfile = bot.commands.get(cmd.slice(bot.prefix.length));
+    let commandfile = bot.commands.get(cmd.slice(bot.prefix.length)) || bot.aliases.get(cmd.slice(bot.prefix.length));
     if(commandfile)
     {
         if(msg.content.startsWith(bot.prefix))
