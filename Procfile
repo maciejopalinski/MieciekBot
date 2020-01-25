@@ -1,0 +1,1 @@
+mieciekbot: npm start
