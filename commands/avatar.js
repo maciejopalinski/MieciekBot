@@ -16,7 +16,9 @@ module.exports.help = {
         "userimg",
         "userpic"
     ],
-    args: [],
+    args: [
+        "[@user]"
+    ],
     permission: "USER",
     description: "shows user avatar"
 }

@@ -1,7 +1,7 @@
 const Discord = require("discord.js");
 
 module.exports.run = async (bot, msg, args) => {
-    let messages = args[0];
+    let messages = args[0] || 100;
     if(messages >= 2 && messages <= 100)
     {
         msg.delete();
@@ -24,10 +24,10 @@ module.exports.help = {
         "cl"
     ],
     args: [
-        "<number>"
+        "[number]"
     ],
     permission: "ADMIN",
-    description: "deletes last <number> messages from channel"
+    description: "deletes last 100 or [number] messages from channel"
 }
 
 module.exports.error = {
