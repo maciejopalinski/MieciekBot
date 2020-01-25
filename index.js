@@ -149,7 +149,19 @@ bot.on('message', async msg => {
 
                 if(ok)
                 {
-                    if(args.length >= commandfile.help.args.length)
+                    let required_args = 0, optional_args = 0;
+                    commandfile.help.args.forEach(value => {
+                        if(value.startsWith('<'))
+                        {
+                            required_args += 1;
+                        }
+                        if(value.startsWith('['))
+                        {
+                            optional_args += 1;
+                        }
+                    });
+                    
+                    if(args.length >= required_args)
                     {
                         bot.allowed_roles = role.allowed_roles[last_max];
                         commandfile.run(bot, msg, args);
