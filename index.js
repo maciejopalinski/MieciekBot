@@ -89,7 +89,7 @@ bot.on('message', async msg => {
     if(msg.author.bot) return;
     if(msg.channel.type === "dm") return;
 
-    Settings.findOne({
+    await Settings.findOne({
         serverID: msg.guild.id
     }, (err, res) => {
         if(err) console.log(err);
@@ -164,14 +164,14 @@ bot.on('message', async msg => {
                     if(args.length >= required_args)
                     {
                         bot.allowed_roles = role.allowed_roles[last_max];
+                        bot.settings = {
+                            roles: role
+                        };
                         commandfile.run(bot, msg, args);
                     }
                     else
                     {
-                        let err = `Usage: ${bot.prefix}${commandfile.help.name} `;
-                        commandfile.help.args.forEach((value, index) => {
-                            err += value;
-                        });
+                        let err = `Usage: ${bot.prefix}${commandfile.help.name} ${commandfile.help.args.join(" ")}`;
                         msg.delete(bot.delete_timeout);
                         msg.channel.send(err).then(msg => msg.delete(bot.delete_timeout));
                     }

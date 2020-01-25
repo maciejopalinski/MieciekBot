@@ -9,7 +9,7 @@ module.exports.run = async (bot, msg, args) => {
     bot.commands.forEach((value, index) => {
         if(value.help.name !== "help" && bot.allowed_roles.includes(value.help.permission))
         {
-            help.addField(`${bot.prefix}${value.help.name} ${value.help.args}`, `${value.help.description}`);
+            help.addField(`${bot.prefix}${value.help.name} ${value.help.args.join(" ")}`, `${value.help.description}`);
         }
     });
     
