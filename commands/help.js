@@ -24,6 +24,6 @@ module.exports.help = {
         "?"
     ],
     args: [],
-    permission: "USER",
+    permission: "@everyone",
     description: "shows all commands"
 }
