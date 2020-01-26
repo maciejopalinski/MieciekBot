@@ -1,6 +1,7 @@
 const Discord = require("discord.js");
 const fs = require("fs");
 const mongoose = require("mongoose");
+const package_info = require("./package.json");
 
 const Settings = require("./models/settings.js");
 
@@ -114,17 +115,21 @@ bot.on('message', async msg => {
 
                 let member = msg.member.roles;
                 let role = {
+                    actual: -1,
                     id: [
+                        msg.guild.defaultRole.id,
                         res.roles.user,
                         res.roles.admin,
                         res.roles.owner
                     ],
                     name: [
+                        "@everyone",
                         "USER",
                         "ADMIN",
                         "OWNER"
                     ],
                     allowed_roles: [
+                        ["@everyone"],
                         ["USER"],
                         ["USER", "ADMIN"],
                         ["USER", "ADMIN", "OWNER"]
@@ -138,6 +143,7 @@ bot.on('message', async msg => {
                         last_max = index;
                     }
                 });
+                role.actual = last_max;
 
                 let ok = false;
                 role.name.forEach((value, index) => {
@@ -165,7 +171,9 @@ bot.on('message', async msg => {
                     {
                         bot.allowed_roles = role.allowed_roles[last_max];
                         bot.settings = {
-                            roles: role
+                            roles: role,
+                            package_info: package_info,
+                            iconURL: "https://cdn.discordapp.com/avatars/510925936393322497/15784b2d9cf8df572617b493bc79c707.png?size=4096"
                         };
                         commandfile.run(bot, msg, args);
                     }
