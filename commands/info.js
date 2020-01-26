@@ -1,5 +1,4 @@
 const Discord = require("discord.js");
-const package = require("../package.json");
 
 module.exports.run = async (bot, msg, args) => {
     if(args[0] == "server")
@@ -17,10 +16,10 @@ module.exports.run = async (bot, msg, args) => {
     {
         let message = new Discord.RichEmbed()
         .setTitle(`INFO: MieciekBot`)
-        .setThumbnail(`https://cdn.discordapp.com/avatars/510925936393322497/15784b2d9cf8df572617b493bc79c707.png?size=4096`)
+        .setThumbnail(bot.settings.iconURL)
         .addField(`Author:`, `PoProstuMieciek`)
-        .addField(`Version:`, `${package.version}`)
-        .addField(`GitHub repository:`, `${package.repository.url}`);
+        .addField(`Version:`, `${bot.settings.package_info.version}`)
+        .addField(`GitHub repository:`, `${bot.settings.package_info.repository.url}`);
 
         msg.channel.send(message);
     }
