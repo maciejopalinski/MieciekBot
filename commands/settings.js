@@ -8,22 +8,18 @@ mongoose.connect(process.env.DATABASE, {
     useUnifiedTopology: true
 });
 
-module.exports.print_help = (bot, msg, args) => {
-    let help = new Discord.RichEmbed()
-    .setTitle(`Settings:`)
-    .addField(`prefix`, `${bot.prefix}`)
-    .addField(`msg:delete_timeout`, `${bot.delete_timeout}`)
-    .addField(`role:owner`, `<@&${bot.settings.roles.id[2]}> (${bot.settings.roles.id[2]})`)
-    .addField(`role:admin`, `<@&${bot.settings.roles.id[1]}> (${bot.settings.roles.id[1]})`)
-    .addField(`role:user`, `<@&${bot.settings.roles.id[0]}> (${bot.settings.roles.id[0]})`);
-
-    msg.channel.send(help);
-}
-
 module.exports.run = async (bot, msg, args) => {
     if(!args[0])
     {
-        this.print_help(bot, msg, args);
+        let help = new Discord.RichEmbed()
+        .setTitle(`Settings:`)
+        .addField(`prefix`, `${bot.prefix}`)
+        .addField(`msg:delete_timeout`, `${bot.delete_timeout}`)
+        .addField(`role:owner`, `<@&${bot.settings.roles.id[3]}> (${bot.settings.roles.id[3]})`)
+        .addField(`role:admin`, `<@&${bot.settings.roles.id[2]}> (${bot.settings.roles.id[2]})`)
+        .addField(`role:user`, `<@&${bot.settings.roles.id[1]}> (${bot.settings.roles.id[1]})`);
+
+        msg.channel.send(help);
     }
     else if(args[1])
     {
@@ -41,7 +37,6 @@ module.exports.run = async (bot, msg, args) => {
                 settings.prefix = value;
                 settings.save();
                 msg.channel.send(`Successfully changed 'prefix' value to '${value}'.`);
-                this.print_help(bot, msg, args);
             });
         }
         else if(key == "msg:delete_timeout")
@@ -57,7 +52,6 @@ module.exports.run = async (bot, msg, args) => {
                 settings.delete_timeout = value;
                 settings.save();
                 msg.channel.send(`Successfully changed 'prefix' value to '${value}'.`);
-                this.print_help(bot, msg, args);
             });
         }
         else if(key.startsWith("role:"))
@@ -83,19 +77,16 @@ module.exports.run = async (bot, msg, args) => {
                 {
                     settings.roles.owner = role.id;
                     msg.channel.send(`Successfully changed 'role:owner' value to <@&${role.id}> (${role.id}).`);
-                    this.print_help(bot, msg, args);
                 }
                 else if(key == "role:admin")
                 {
                     settings.roles.admin = role.id;
                     msg.channel.send(`Successfully changed 'role:admin' value to <@&${role.id}> (${role.id}).`);
-                    this.print_help(bot, msg, args);
                 }
                 else if(key == "role:user")
                 {
                     settings.roles.user = role.id;
                     msg.channel.send(`Successfully changed 'role:user' value to <@&${role.id}> (${role.id}).`);
-                    this.print_help(bot, msg, args);
                 }
                 else
                 {
