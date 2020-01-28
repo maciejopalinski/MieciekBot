@@ -12,12 +12,12 @@ module.exports.run = async (bot, msg, args) => {
     if(!args[0])
     {
         let help = new Discord.RichEmbed()
-        .setTitle(`Settings:`)
-        .addField(`prefix`, `${bot.prefix}`)
-        .addField(`msg:delete_timeout`, `${bot.delete_timeout}`)
-        .addField(`role:owner`, `<@&${bot.settings.roles.id[3]}> (${bot.settings.roles.id[3]})`)
-        .addField(`role:admin`, `<@&${bot.settings.roles.id[2]}> (${bot.settings.roles.id[2]})`)
-        .addField(`role:user`, `<@&${bot.settings.roles.id[1]}> (${bot.settings.roles.id[1]})`);
+            .setTitle(`Settings:`)
+            .addField(`prefix`, `${bot.prefix}`)
+            .addField(`msg:delete_timeout`, `${bot.delete_timeout}`)
+            .addField(`role:owner`, `<@&${bot.settings.roles.id[3]}> (${bot.settings.roles.id[3]})`)
+            .addField(`role:admin`, `<@&${bot.settings.roles.id[2]}> (${bot.settings.roles.id[2]})`)
+            .addField(`role:user`, `<@&${bot.settings.roles.id[1]}> (${bot.settings.roles.id[1]})`);
 
         msg.channel.send(help);
     }
