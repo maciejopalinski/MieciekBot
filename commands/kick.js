@@ -6,7 +6,6 @@ module.exports.run = async (bot, msg, args) => {
     if(user)
     {
         let reason = args.slice(1).join(" ") || "no reason specified";
-        msg.delete();
         
         let kick_embed = new Discord.RichEmbed()
             .setTitle(`You have been kicked from ${msg.guild.name}!`)
@@ -22,10 +21,14 @@ module.exports.run = async (bot, msg, args) => {
             .addField(`Reason:`, reason)
             .setFooter(`Powered by MieciekBot ${bot.settings.package_info.version}`, bot.settings.iconURL);
 
-        await user.send(kick_embed);
-        msg.channel.send(info_kick);
-        user.kick(reason).catch(err => {
-            msg.channel.send(`Error occurred: ${err.message}!`);
+        user.kick(reason)
+        .then(async () => {
+            msg.delete();
+            await user.send(kick_embed);
+            msg.channel.send(info_kick);
+        })
+        .catch(err => {
+            return msg.channel.send(`Error occurred: ${err.message}!`);
         });
     }
     else
