@@ -2,11 +2,16 @@ const Discord = require('discord.js');
 
 module.exports.run = async (bot, msg, args) => {
     let user = msg.mentions.members.first();
+    let reason = args.slice(1).join(" ") || "no reason specified";
 
     if(user)
     {
-        let reason = args.slice(1).join(" ") || "no reason specified";
-        
+        if(!user.kickable || user.id == msg.author.id)
+        {
+            msg.delete(bot.delete_timeout);
+            return msg.channel.send(this.error.not_kickable).then(msg => msg.delete(bot.delete_timeout));
+        }
+
         let kick_embed = new Discord.RichEmbed()
         .setTitle(`You have been kicked from ${msg.guild.name}!`)
         .setThumbnail(msg.guild.iconURL)
@@ -21,15 +26,12 @@ module.exports.run = async (bot, msg, args) => {
         .addField(`Reason:`, reason)
         .setFooter(`Powered by MieciekBot ${bot.settings.package_info.version}`, bot.settings.iconURL);
 
-        user.kick(reason)
-        .then(async () => {
-            msg.delete();
-            await user.send(kick_embed);
-            msg.channel.send(info_kick);
-        })
-        .catch(err => {
-            return msg.channel.send(`Error occurred: ${err.message}!`);
-        });
+        msg.delete();
+        
+        await user.send(kick_embed);
+        msg.channel.send(info_kick);
+        
+        user.kick(reason);
     }
     else
     {
@@ -50,5 +52,6 @@ module.exports.help ={
 }
 
 module.exports.error = {
-    "user_not_found": "User was not found on the server. Please, try again."
+    "user_not_found": "User was not found on the server. Please, try again.",
+    "not_kickable": "I cannot kick that user."
 }

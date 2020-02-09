@@ -14,6 +14,11 @@ module.exports.run = async (bot, msg, args) => {
     }
     else if(args[0] == "bot")
     {
+        if(process.env.DEBUG == "true")
+        {
+            bot.settings.package_info.version += "-beta";
+        }
+        
         let message = new Discord.RichEmbed()
         .setTitle(`INFO: MieciekBot`)
         .setThumbnail(bot.settings.iconURL)
