@@ -3,8 +3,8 @@ const fs = require("fs");
 
 module.exports.run = async (bot, msg, args) => {
     let help = new Discord.RichEmbed()
-        .setTitle("Commands:")
-        .addField(`${bot.prefix}${this.help.name} ${this.help.args}`, `${this.help.description}`);
+    .setTitle("Commands:")
+    .addField(`${bot.prefix}${this.help.name} ${this.help.args}`, `${this.help.description}`);
 
     bot.commands.forEach((value, index) => {
         if(value.help.name !== "help" && bot.allowed_roles.includes(value.help.permission))
