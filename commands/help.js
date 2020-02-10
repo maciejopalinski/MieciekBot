@@ -13,6 +13,7 @@ module.exports.run = async (bot, msg, args) => {
         }
     });
     
+    help.setFooter(`Powered by MieciekBot ${bot.settings.version}`, bot.settings.iconURL);
     msg.channel.send(help);
 }
 

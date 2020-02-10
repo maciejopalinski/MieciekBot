@@ -8,23 +8,20 @@ module.exports.run = async (bot, msg, args) => {
         .setThumbnail(`${msg.guild.iconURL}`)
         .addField(`Owner:`, `${msg.guild.owner.user.tag}`)
         .addField(`Created at:`, `${msg.guild.owner.joinedAt.toDateString()}`)
-        .addField(`Members:`, `${msg.guild.memberCount}`);
+        .addField(`Members:`, `${msg.guild.memberCount}`)
+        .setFooter(`Powered by MieciekBot ${bot.settings.version}`, bot.settings.iconURL);
 
         msg.channel.send(message);
     }
     else if(args[0] == "bot")
     {
-        if(process.env.DEBUG == "true")
-        {
-            bot.settings.package_info.version += "-beta";
-        }
-        
         let message = new Discord.RichEmbed()
         .setTitle(`INFO: MieciekBot`)
         .setThumbnail(bot.settings.iconURL)
         .addField(`Author:`, `PoProstuMieciek`)
-        .addField(`Version:`, `${bot.settings.package_info.version}`)
-        .addField(`GitHub repository:`, `${bot.settings.package_info.repository.url}`);
+        .addField(`Version:`, `${bot.settings.version}`)
+        .addField(`GitHub repository:`, `${bot.settings.repository}`)
+        .setFooter(`Powered by MieciekBot ${bot.settings.version}`, bot.settings.iconURL);
 
         msg.channel.send(message);
     }

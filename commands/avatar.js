@@ -5,7 +5,8 @@ module.exports.run = async (bot, msg, args) => {
 
     let avatar_embed = new Discord.RichEmbed()
     .setTitle(`AVATAR: ${user.username}`)
-    .setImage(user.avatarURL || user.displayAvatarURL);
+    .setImage(user.avatarURL || user.displayAvatarURL)
+    .setFooter(`Powered by MieciekBot ${bot.settings.version}`, bot.settings.iconURL);
 
     msg.channel.send(avatar_embed);
 }

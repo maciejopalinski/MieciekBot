@@ -17,7 +17,8 @@ module.exports.run = async (bot, msg, args) => {
         .addField(`msg:delete_timeout`, `${bot.delete_timeout}`)
         .addField(`role:owner`, `<@&${bot.settings.roles.id[3]}> (${bot.settings.roles.id[3]})`)
         .addField(`role:admin`, `<@&${bot.settings.roles.id[2]}> (${bot.settings.roles.id[2]})`)
-        .addField(`role:user`, `<@&${bot.settings.roles.id[1]}> (${bot.settings.roles.id[1]})`);
+        .addField(`role:user`, `<@&${bot.settings.roles.id[1]}> (${bot.settings.roles.id[1]})`)
+        .setFooter(`Powered by MieciekBot ${bot.settings.version}`, bot.settings.iconURL);
 
         msg.channel.send(help);
     }
