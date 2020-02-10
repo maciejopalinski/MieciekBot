@@ -172,9 +172,16 @@ bot.on('message', async msg => {
                         bot.allowed_roles = role.allowed_roles[last_max];
                         bot.settings = {
                             roles: role,
-                            package_info: package_info,
+                            version: package_info.version,
+                            repository: package_info.repository.url,
                             iconURL: "https://cdn.discordapp.com/avatars/510925936393322497/15784b2d9cf8df572617b493bc79c707.png?size=4096"
                         };
+
+                        if(process.env.DEBUG == "true")
+                        {
+                            bot.settings.version += "-beta";
+                        }
+
                         commandfile.run(bot, msg, args);
                     }
                     else

@@ -17,14 +17,14 @@ module.exports.run = async (bot, msg, args) => {
         .setThumbnail(msg.guild.iconURL)
         .addField(`Kicked by:`, msg.author.username)
         .addField(`Reason:`, reason)
-        .setFooter(`Powered by MieciekBot ${bot.settings.package_info.version}`, bot.settings.iconURL);
+        .setFooter(`Powered by MieciekBot ${bot.settings.version}`, bot.settings.iconURL);
         
         let info_kick = new Discord.RichEmbed()
         .setTitle(`${user.displayName} has been kicked from server!`)
         .setThumbnail(msg.guild.iconURL)
         .addField(`Kicked by:`, msg.author.username)
         .addField(`Reason:`, reason)
-        .setFooter(`Powered by MieciekBot ${bot.settings.package_info.version}`, bot.settings.iconURL);
+        .setFooter(`Powered by MieciekBot ${bot.settings.version}`, bot.settings.iconURL);
 
         msg.delete();
         
