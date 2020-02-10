@@ -11,7 +11,7 @@ module.exports.run = async (bot, msg, args) => {
         .addField(`Reported user:`, `${user.displayName}`)
         .addField(`Reported by:`, `${msg.author.username}`)
         .addField(`Reason:`, `${reason}`)
-        .setFooter(`Powered by MieciekBot ${bot.settings.package_info.version}`, bot.settings.iconURL);
+        .setFooter(`Powered by MieciekBot ${bot.settings.version}`, bot.settings.iconURL);
 
         msg.delete();
         msg.channel.send(report_embed);

@@ -35,7 +35,7 @@ module.exports.run = async (bot, msg, args) => {
             .setTitle(`Welcome on ${msg.guild.name}!`)
             .setThumbnail(msg.guild.iconURL)
             .addField(`Now, you can see all channels on the server.`, `Have fun!`)
-            .setFooter(`Powered by MieciekBot ${bot.settings.package_info.version}`, bot.settings.iconURL);
+            .setFooter(`Powered by MieciekBot ${bot.settings.version}`, bot.settings.iconURL);
 
             return msg.author.send(welcome_embed);
         });
