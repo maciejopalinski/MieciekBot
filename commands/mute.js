@@ -60,6 +60,5 @@ module.exports.help = {
 }
 
 module.exports.error = {
-    "unknown": "Unknown error occurred. Please, try again later.",
     "not_mutable": "I cannot mute this user."
 }

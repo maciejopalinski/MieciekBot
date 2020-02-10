@@ -43,5 +43,3 @@ module.exports.help = {
     permission: "USER",
     description: "prints info about server or bot"
 }
-
-module.exports.error = {}
