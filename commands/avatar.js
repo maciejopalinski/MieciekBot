@@ -23,6 +23,3 @@ module.exports.help = {
     permission: "USER",
     description: "shows user avatar"
 }
-
-module.exports.error = {
-}

@@ -36,5 +36,3 @@ module.exports.help = {
     permission: "@everyone",
     description: "adds the user role"
 }
-
-module.exports.error = {}
