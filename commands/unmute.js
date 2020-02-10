@@ -1,12 +1,4 @@
 const Discord = require("discord.js");
-const mongoose = require("mongoose");
-
-const Settings = require("../models/settings.js");
-
-mongoose.connect(process.env.DATABASE, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-});
 
 module.exports.run = async (bot, msg, args) => {
     let user = msg.mentions.members.first();
