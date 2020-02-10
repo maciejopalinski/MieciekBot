@@ -10,7 +10,6 @@ mongoose.connect(process.env.DATABASE, {
 
 module.exports.run = async (bot, msg, args) => {
     let user = msg.mentions.members.first();
-    let reason = args.slice(1).join(" ") || "no reason specified";
 
     if(!user.kickable || user.id == msg.author.id)
     {
@@ -34,7 +33,6 @@ module.exports.run = async (bot, msg, args) => {
     .setTitle(`You have been unmuted on ${msg.guild.name}!`)
     .setThumbnail(msg.guild.iconURL)
     .addField(`Unmuted by:`, msg.author.username)
-    .addField(`Reason:`, reason)
     .setFooter(`Powered by MieciekBot ${bot.settings.version}`, bot.settings.iconURL);
         
     let info_mute = new Discord.RichEmbed()
