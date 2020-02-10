@@ -15,9 +15,10 @@ module.exports.run = async (bot, msg, args) => {
         .setTitle(`Settings:`)
         .addField(`prefix`, `${bot.prefix}`)
         .addField(`msg:delete_timeout`, `${bot.delete_timeout}`)
-        .addField(`role:owner`, `<@&${bot.settings.roles.id[3]}> (${bot.settings.roles.id[3]})`)
-        .addField(`role:admin`, `<@&${bot.settings.roles.id[2]}> (${bot.settings.roles.id[2]})`)
-        .addField(`role:user`, `<@&${bot.settings.roles.id[1]}> (${bot.settings.roles.id[1]})`)
+        .addField(`role:owner`, `<@&${bot.settings.roles.id[4]}> (${bot.settings.roles.id[4]})`)
+        .addField(`role:admin`, `<@&${bot.settings.roles.id[3]}> (${bot.settings.roles.id[3]})`)
+        .addField(`role:user`, `<@&${bot.settings.roles.id[2]}> (${bot.settings.roles.id[2]})`)
+        .addField(`role:muted`, `<@&${bot.settings.roles.id[0]}> (${bot.settings.roles.id[0]})`)
         .setFooter(`Powered by MieciekBot ${bot.settings.version}`, bot.settings.iconURL);
 
         msg.channel.send(help);
@@ -88,6 +89,11 @@ module.exports.run = async (bot, msg, args) => {
                 {
                     settings.roles.user = role.id;
                     msg.channel.send(`Successfully changed 'role:user' value to <@&${role.id}> (${role.id}).`);
+                }
+                else if(key == "role:muted")
+                {
+                    settings.roles.muted = role.id;
+                    msg.channel.send(`Successfully changed 'role:muted' value to <@&${role.id}> (${role.id}).`);
                 }
                 else
                 {

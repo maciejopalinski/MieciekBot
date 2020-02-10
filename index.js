@@ -118,18 +118,21 @@ bot.on('message', async msg => {
                     actual: -1,
                     id: [
                         msg.guild.defaultRole.id,
+                        res.roles.muted,
                         res.roles.user,
                         res.roles.admin,
                         res.roles.owner
                     ],
                     name: [
                         "@everyone",
+                        "MUTE",
                         "USER",
                         "ADMIN",
                         "OWNER"
                     ],
                     allowed_roles: [
                         ["@everyone"],
+                        ["MUTED"],
                         ["USER"],
                         ["USER", "ADMIN"],
                         ["USER", "ADMIN", "OWNER"]
