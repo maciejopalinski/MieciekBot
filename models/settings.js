@@ -8,7 +8,7 @@ const settingsSchema = mongoose.Schema({
 		owner: String,
 		admin: String,
 		user: String,
-		muted: String
+		mute: String
 	}
 });
 
