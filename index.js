@@ -114,43 +114,49 @@ bot.on('message', async msg => {
                 if(err) console.log(err);
 
                 let member = msg.member.roles;
-                let role = {
+                let permission = {
                     actual: -1,
-                    id: [
-                        msg.guild.defaultRole.id,
-                        res.roles.muted,
-                        res.roles.user,
-                        res.roles.admin,
-                        res.roles.owner
-                    ],
-                    name: [
-                        "@everyone",
-                        "MUTE",
-                        "USER",
-                        "ADMIN",
-                        "OWNER"
-                    ],
-                    allowed_roles: [
-                        ["@everyone"],
-                        ["MUTED"],
-                        ["USER"],
-                        ["USER", "ADMIN"],
-                        ["USER", "ADMIN", "OWNER"]
+                    nodes: [
+                        {
+                            name: "@everyone",
+                            id: msg.guild.defaultRole.id,
+                            allowed_roles: ["@everyone"]
+                        },
+                        {
+                            name: "MUTE",
+                            id: res.roles.mute,
+                            allowed_roles: ["MUTE"]
+                        },
+                        {
+                            name: "USER",
+                            id: res.roles.user,
+                            allowed_roles: ["USER"]
+                        },
+                        {
+                            name: "ADMIN",
+                            id: res.roles.admin,
+                            allowed_roles: ["USER", "ADMIN"]
+                        },
+                        {
+                            name: "OWNER",
+                            id: res.roles.owner,
+                            allowed_roles: ["USER", "ADMIN", "OWNER"]
+                        }
                     ]
                 };
 
                 let last_max = -1;
-                role.id.forEach((value, index) => {
-                    if(member.some(role => role.id == value) && index > last_max)
+                permission.nodes.forEach((value, index) => {
+                    if(member.some(r => r.id == value.id) && index > last_max)
                     {
                         last_max = index;
                     }
                 });
-                role.actual = last_max;
+                permission.actual = last_max;
 
                 let ok = false;
-                role.name.forEach((value, index) => {
-                    if(commandfile.help.permission == value && last_max >= index)
+                permission.nodes.forEach((value, index) => {
+                    if(commandfile.help.permission == value.name && last_max >= index)
                     {
                         ok = true;
                     }
@@ -173,7 +179,7 @@ bot.on('message', async msg => {
                     if(args.length >= required_args)
                     {
                         bot.settings = {
-                            roles: role,
+                            role: permission,
                             version: package_info.version,
                             repository: package_info.repository.url,
                             iconURL: "https://cdn.discordapp.com/avatars/510925936393322497/15784b2d9cf8df572617b493bc79c707.png?size=4096"
