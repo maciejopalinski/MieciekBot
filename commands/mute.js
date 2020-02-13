@@ -10,15 +10,17 @@ module.exports.run = async (bot, msg, args) => {
         return msg.channel.send(this.error.not_mutable).then(msg => msg.delete(bot.delete_timeout));
     }
 
-    let role_index = bot.settings.roles.name.findIndex(res => res == "MUTE");
-    let mute_role = msg.guild.roles.find(role => role.id == bot.settings.roles.id[role_index]);
+    let index = {
+        mute: bot.settings.role.nodes.findIndex(r => r.name == "MUTE"),
+        user: bot.settings.role.nodes.findIndex(r => r.name == "USER")
+    }
+    let mute_role = msg.guild.roles.find(r => r.id == bot.settings.role.nodes[index.mute].id);
+    let user_role = msg.guild.roles.find(r => r.id == bot.settings.role.nodes[index.user].id);
 
-    role_index = bot.settings.roles.name.findIndex(res => res == "USER");
-    let user_role = msg.guild.roles.find(role => role.id == bot.settings.roles.id[role_index]);
     if(!mute_role)
     {
         msg.delete(bot.delete_timeout);
-        return msg.channel.send(`Muted role (${bot.settings.roles.id[0]}) was not found on the server. Please, edit your configuration.`)
+        return msg.channel.send(`Muted role (${bot.settings.role.nodes[index.mute].id}) was not found on the server. Please, edit your configuration.`)
         .then(msg => msg.delete(bot.delete_timeout));
     }
 

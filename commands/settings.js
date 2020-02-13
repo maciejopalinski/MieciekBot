@@ -11,14 +11,21 @@ mongoose.connect(process.env.DATABASE, {
 module.exports.run = async (bot, msg, args) => {
     if(!args[0])
     {
+        let index = {
+            owner: bot.settings.role.nodes.findIndex(r => r.name == "OWNER"),
+            admin: bot.settings.role.nodes.findIndex(r => r.name == "ADMIN"),
+            user: bot.settings.role.nodes.findIndex(r => r.name == "USER"),
+            muted: bot.settings.role.nodes.findIndex(r => r.name == "MUTE")
+        };
+
         let help = new Discord.RichEmbed()
         .setTitle(`Settings:`)
         .addField(`prefix`, `${bot.prefix}`)
         .addField(`msg:delete_timeout`, `${bot.delete_timeout}`)
-        .addField(`role:owner`, `<@&${bot.settings.roles.id[4]}> (${bot.settings.roles.id[4]})`)
-        .addField(`role:admin`, `<@&${bot.settings.roles.id[3]}> (${bot.settings.roles.id[3]})`)
-        .addField(`role:user`, `<@&${bot.settings.roles.id[2]}> (${bot.settings.roles.id[2]})`)
-        .addField(`role:muted`, `<@&${bot.settings.roles.id[0]}> (${bot.settings.roles.id[0]})`)
+        .addField(`role:owner`, `<@&${bot.settings.role.nodes[index.owner].id}> (${bot.settings.role.nodes[index.owner].id})`)
+        .addField(`role:admin`, `<@&${bot.settings.role.nodes[index.admin].id}> (${bot.settings.role.nodes[index.admin].id})`)
+        .addField(`role:user`, `<@&${bot.settings.role.nodes[index.user].id}> (${bot.settings.role.nodes[index.user].id})`)
+        .addField(`role:muted`, `<@&${bot.settings.role.nodes[index.muted].id}> (${bot.settings.role.nodes[index.muted].id})`)
         .setFooter(`Powered by MieciekBot ${bot.settings.version}`, bot.settings.iconURL);
 
         msg.channel.send(help);

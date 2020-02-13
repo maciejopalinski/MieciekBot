@@ -1,10 +1,12 @@
 const Discord = require("discord.js");
 
 module.exports.run = async (bot, msg, args) => {
-    if(bot.settings.roles.actual == bot.settings.roles.name.findIndex(res => res == "@everyone"))
+    if(bot.settings.role.actual == bot.settings.role.nodes.findIndex(r => r.name == "@everyone"))
     {
-        let role_index = bot.settings.roles.name.findIndex(res => res == "USER");
-        let user_role = msg.guild.roles.find(role => role.id == bot.settings.roles.id[role_index]);
+        let index = {
+            user: bot.settings.role.nodes.findIndex(r => r.name == "USER")
+        };
+        let user_role = msg.guild.roles.find(role => role.id == bot.settings.role.nodes[index.user].id);
         if(!user_role)
         {
             msg.delete(bot.delete_timeout);
