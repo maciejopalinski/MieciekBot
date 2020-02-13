@@ -1,17 +1,20 @@
 const Discord = require("discord.js");
 
 module.exports.run = async (bot, msg, args) => {
+    let actual = bot.settings.role.actual;
     if(args[0] != "all")
     {
-        bot.settings.roles.actual = bot.settings.roles.name.findIndex(r => r == "USER");
+        actual = bot.settings.role.nodes.findIndex(r => r.name == "USER");
     }
 
     let help = new Discord.RichEmbed()
     .setTitle("Commands:")
     .addField(`${bot.prefix}${this.help.name} ${this.help.args}`, `${this.help.description}`);
 
+    let allowed_roles = bot.settings.role.nodes[actual].allowed_roles;
+    
     bot.commands.forEach((value, index) => {
-        if(value.help.name !== "help" && bot.settings.roles.allowed_roles[bot.settings.roles.actual].includes(value.help.permission))
+        if(value.help.name !== "help" && allowed_roles.includes(value.help.permission))
         {
             help.addField(`${bot.prefix}${value.help.name} ${value.help.args.join(" ")}`, `${value.help.description}`);
         }
