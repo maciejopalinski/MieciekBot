@@ -172,7 +172,6 @@ bot.on('message', async msg => {
                     
                     if(args.length >= required_args)
                     {
-                        bot.allowed_roles = role.allowed_roles[last_max];
                         bot.settings = {
                             roles: role,
                             version: package_info.version,
