@@ -15,6 +15,7 @@
     "dependencies": {
         "discord.js": "^11.5.1",
         "mongoose": "^5.8.7",
+        "octonode": "^0.9.5",
         "random-puppy": "^1.1.0"
     },
     "devDependencies": {
