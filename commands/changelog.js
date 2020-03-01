@@ -15,7 +15,7 @@ module.exports.run = async (bot, msg, args) => {
         .setTitle(`CHANGELOG: MieciekBot`)
         .setURL(latest.html_url)
         .addField(latest.name, `Released by ${latest.author.login}`)
-        .addField(`Notes`, latest.body.replace("# ", ""))
+        .addField(`Notes`, latest.body.split("#").join(""))
         .setFooter(`Powered by MieciekBot ${bot.settings.version}`, bot.settings.iconURL);
 
         msg.channel.send(changelog_embed);
