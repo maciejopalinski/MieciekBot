@@ -20,7 +20,7 @@ module.exports.run = async (bot, msg, args) => {
     if(!mute_role)
     {
         msg.delete(bot.delete_timeout);
-        return msg.channel.send(`Muted role (${bot.settings.role.nodes[index.mute].id}) was not found on the server. Please, edit your configuration.`)
+        return msg.channel.send(`Mute role (${bot.settings.role.nodes[index.mute].id}) was not found on the server. Please, edit your configuration.`)
         .then(msg => msg.delete(bot.delete_timeout));
     }
 

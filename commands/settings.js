@@ -15,7 +15,7 @@ module.exports.run = async (bot, msg, args) => {
             owner: bot.settings.role.nodes.findIndex(r => r.name == "OWNER"),
             admin: bot.settings.role.nodes.findIndex(r => r.name == "ADMIN"),
             user: bot.settings.role.nodes.findIndex(r => r.name == "USER"),
-            muted: bot.settings.role.nodes.findIndex(r => r.name == "MUTE")
+            mute: bot.settings.role.nodes.findIndex(r => r.name == "MUTE")
         };
 
         let help = new Discord.RichEmbed()
@@ -25,7 +25,7 @@ module.exports.run = async (bot, msg, args) => {
         .addField(`role:owner`, `<@&${bot.settings.role.nodes[index.owner].id}> (${bot.settings.role.nodes[index.owner].id})`)
         .addField(`role:admin`, `<@&${bot.settings.role.nodes[index.admin].id}> (${bot.settings.role.nodes[index.admin].id})`)
         .addField(`role:user`, `<@&${bot.settings.role.nodes[index.user].id}> (${bot.settings.role.nodes[index.user].id})`)
-        .addField(`role:muted`, `<@&${bot.settings.role.nodes[index.muted].id}> (${bot.settings.role.nodes[index.muted].id})`)
+        .addField(`role:mute`, `<@&${bot.settings.role.nodes[index.mute].id}> (${bot.settings.role.nodes[index.mute].id})`)
         .setFooter(`Powered by MieciekBot ${bot.settings.version}`, bot.settings.iconURL);
 
         msg.channel.send(help);
@@ -97,10 +97,10 @@ module.exports.run = async (bot, msg, args) => {
                     settings.roles.user = role.id;
                     msg.channel.send(`Successfully changed 'role:user' value to <@&${role.id}> (${role.id}).`);
                 }
-                else if(key == "role:muted")
+                else if(key == "role:mute")
                 {
-                    settings.roles.muted = role.id;
-                    msg.channel.send(`Successfully changed 'role:muted' value to <@&${role.id}> (${role.id}).`);
+                    settings.roles.mute = role.id;
+                    msg.channel.send(`Successfully changed 'role:mute' value to <@&${role.id}> (${role.id}).`);
                 }
                 else
                 {
