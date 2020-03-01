@@ -3,7 +3,10 @@ const Discord = require("discord.js");
 module.exports.run = async (bot, msg, args) => {
     const commandfile = bot.commands.get(args[0]) || bot.aliases.get(args[0]);
 
-    if(!commandfile)
+    let actual = bot.settings.role.actual;
+    let allowed_roles = bot.settings.role.nodes[actual].allowed_roles;
+
+    if(!commandfile || !allowed_roles.includes(commandfile.help.permission))
     {
         msg.delete(bot.delete_timeout);
         return msg.channel.send(this.error.cmd_not_found).then(msg => msg.delete(bot.delete_timeout));
