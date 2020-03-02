@@ -6,7 +6,7 @@ module.exports.run = async (bot, msg, args) => {
     let actual = bot.settings.role.actual;
     let allowed_roles = bot.settings.role.nodes[actual].allowed_roles;
 
-    if(!commandfile || !allowed_roles.includes(commandfile.help.permission))
+    if(!commandfile || !allowed_roles.includes(commandfile.help.permission) && commandfile.help.name != "help")
     {
         msg.delete(bot.delete_timeout);
         return msg.channel.send(this.error.cmd_not_found).then(msg => msg.delete(bot.delete_timeout));
@@ -16,7 +16,7 @@ module.exports.run = async (bot, msg, args) => {
     .setTitle(`ALIASES: /command/${commandfile.help.name}`)
     .addField(`${bot.prefix}${commandfile.help.name} ${commandfile.help.args.join(" ")}`, commandfile.help.description)
     .addBlankField()
-    .addField(`Aliases:`, commandfile.help.aliases.join(", "))
+    .addField(`Aliases:`, commandfile.help.aliases.join(", ") || "-none-")
     .setFooter(`Powered by MieciekBot ${bot.settings.version}`, bot.settings.iconURL);
 
     msg.channel.send(aliases_embed);
