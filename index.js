@@ -187,7 +187,7 @@ bot.on('message', async msg => {
 
                         if(process.env.DEBUG == "true")
                         {
-                            bot.settings.version += "-beta";
+                            bot.settings.version += "-dev";
                         }
 
                         commandfile.run(bot, msg, args);
