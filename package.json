@@ -1,6 +1,6 @@
 {
     "name": "mieciekbot",
-    "version": "1.6.1",
+    "version": "1.6.2",
     "description": "NodeJS Discord Bot",
     "repository": {
         "url": "https://github.com/PoProstuMieciek/MieciekBot"
@@ -16,6 +16,7 @@
         "discord.js": "^11.5.1",
         "mongoose": "^5.8.7",
         "octonode": "^0.9.5",
+        "random-number-csprng": "^1.0.2",
         "random-puppy": "^1.1.0"
     },
     "devDependencies": {
