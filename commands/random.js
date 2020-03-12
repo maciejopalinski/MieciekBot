@@ -1,18 +1,19 @@
 const Discord = require("discord.js");
+const RandomNumber = require("random-number-csprng");
 
 module.exports.run = async (bot, msg, args) => {
     let range = parseInt(args[0]);
 
     if(range > 1 && range <= 65535)
     {
-        let random = Math.floor(Math.random() * range) + 1;
-        
-        let random_embed = new Discord.RichEmbed()
-        .setTitle(`Random: 1 - ${range}`)
-        .addField(`Random number from 1 to ${range}:`, random)
-        .setFooter(`Powered by MieciekBot ${bot.settings.version}`, bot.settings.iconURL);
+        RandomNumber(1, range).then(random => {
+            let random_embed = new Discord.RichEmbed()
+            .setTitle(`Random: 1 - ${range}`)
+            .addField(`Random number from 1 to ${range}:`, random)
+            .setFooter(`Powered by MieciekBot ${bot.settings.version}`, bot.settings.iconURL);
 
-        msg.channel.send(random_embed);
+            msg.channel.send(random_embed);
+        });
     }
     else
     {
