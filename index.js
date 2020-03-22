@@ -14,6 +14,7 @@ mongoose.connect(process.env.DATABASE, {
 bot.prefix = "!";
 bot.commands = new Discord.Collection();
 bot.aliases = new Discord.Collection();
+bot.queue = new Map();
 
 
 fs.readdir("./commands/", (err, files) => {
@@ -43,15 +44,15 @@ bot.on('ready', async () => {
         {
             status: "online",
             game: {
-                name: "Metallica",
-                type: "LISTENING"
+                type: "LISTENING",
+                name: "Metallica"
             }
         },
         {
-            status: "idle",
+            status: "online",
             game: {
-                name: "Visual Studio Code",
-                type: "PLAYING"
+                type: "PLAYING",
+                name: "Visual Studio Code"
             }
         }
     ];
@@ -133,14 +134,19 @@ bot.on('message', async msg => {
                             allowed_roles: ["USER"]
                         },
                         {
+                            name: "DJ",
+                            id: res.roles.dj,
+                            allowed_roles: ["USER", "DJ"]
+                        },
+                        {
                             name: "ADMIN",
                             id: res.roles.admin,
-                            allowed_roles: ["USER", "ADMIN"]
+                            allowed_roles: ["USER", "DJ", "ADMIN"]
                         },
                         {
                             name: "OWNER",
                             id: res.roles.owner,
-                            allowed_roles: ["USER", "ADMIN", "OWNER"]
+                            allowed_roles: ["USER", "DJ", "ADMIN", "OWNER"]
                         }
                     ]
                 };
