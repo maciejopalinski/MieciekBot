@@ -7,6 +7,7 @@ const settingsSchema = mongoose.Schema({
 	roles: {
 		owner: String,
 		admin: String,
+		dj: String,
 		user: String,
 		mute: String
 	}
