@@ -141,12 +141,12 @@ bot.on('message', async msg => {
                         {
                             name: "ADMIN",
                             id: res.roles.admin,
-                            allowed_roles: ["USER", "ADMIN"]
+                            allowed_roles: ["USER", "DJ", "ADMIN"]
                         },
                         {
                             name: "OWNER",
                             id: res.roles.owner,
-                            allowed_roles: ["USER", "ADMIN", "OWNER"]
+                            allowed_roles: ["USER", "DJ", "ADMIN", "OWNER"]
                         }
                     ]
                 };
