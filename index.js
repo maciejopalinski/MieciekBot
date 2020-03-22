@@ -44,15 +44,15 @@ bot.on('ready', async () => {
         {
             status: "online",
             game: {
-                name: "Metallica",
-                type: "LISTENING"
+                type: "LISTENING",
+                name: "Metallica"
             }
         },
         {
-            status: "idle",
+            status: "online",
             game: {
-                name: "Visual Studio Code",
-                type: "PLAYING"
+                type: "PLAYING",
+                name: "Visual Studio Code"
             }
         }
     ];
