@@ -1,5 +1,6 @@
 const Discord = require("discord.js");
 const YTDL = require("ytdl-core");
+const Search = require("yt-search");
 
 module.exports.run = async (bot, msg, args) => {
     let queue = bot.queue;
@@ -12,7 +13,26 @@ module.exports.run = async (bot, msg, args) => {
         return msg.channel.send(this.error.voice_channel).then(msg => msg.delete(bot.delete_timeout));
     }
 
+    let validate = YTDL.validateURL(args[0]);
+    if(!validate)
+    {
+        let search_results = await Search(args.join(" "));
+        if(search_results.videos.length > 0)
+        {
+            args[0] = search_results.videos[0].url;
+        }
+        else
+        {
+            msg.delete(bot.delete_timeout);
+            return msg.channel.send(this.error.not_found).then(msg => msg.delete(bot.delete_timeout));
+        }
+    }
+
     let song_info = await YTDL.getInfo(args[0]);
+    let song = {
+        title: song_info.title,
+        url: song_info.video_url
+    };
 
     if(!server_queue)
     {
@@ -28,7 +48,7 @@ module.exports.run = async (bot, msg, args) => {
 
         queue.set(msg.guild.id, server_queue_constructor);
 
-        server_queue_constructor.songs.push(song_info);
+        server_queue_constructor.songs.push(song);
 
         try {
             let connection = await voice_channel.join();
@@ -43,7 +63,7 @@ module.exports.run = async (bot, msg, args) => {
     else
     {
         server_queue.songs.push(song);
-        return msg.channel.send(`${song_info.title} has been added to the queue.`);
+        return msg.channel.send(`**${song.title}** has been added to the queue.`);
     }
 }
 
@@ -58,7 +78,7 @@ module.exports.play = (bot, msg, song) => {
     }
 
     let dispatcher = server_queue.connection
-    .playStream(YTDL(song.video_url, {filter: "audioonly"}))
+    .playStream(YTDL(song.url, {filter: "audioonly"}))
     .on("end", () => {
         if(!server_queue.loop)
         {
@@ -86,5 +106,6 @@ module.exports.help = {
 }
 
 module.exports.error = {
-    "voice_channel": "You must be in a voice channel to play music."
+    "voice_channel": "You must be in a voice channel to play music.",
+    "not_found": "Video with that name or URL was not found on YouTube."
 }
