@@ -22,6 +22,7 @@ module.exports.run = async (bot, msg, args) => {
             connection: null,
             songs: [],
             volume: 5,
+            loop: false,
             playing: true
         };
 
@@ -58,8 +59,11 @@ module.exports.play = (bot, msg, song) => {
 
     let dispatcher = server_queue.connection
     .playStream(YTDL(song.video_url, {filter: "audioonly"}))
-    .on("finish", () => {
-        server_queue.songs.shift();
+    .on("end", () => {
+        if(!server_queue.loop)
+        {
+            server_queue.songs.shift();
+        }
         this.play(bot, msg, server_queue.songs[0]);
     })
     .on("error", (err) => console.log(err));
