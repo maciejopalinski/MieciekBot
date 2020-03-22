@@ -14,6 +14,7 @@ mongoose.connect(process.env.DATABASE, {
 bot.prefix = "!";
 bot.commands = new Discord.Collection();
 bot.aliases = new Discord.Collection();
+bot.queue = new Map();
 
 
 fs.readdir("./commands/", (err, files) => {
