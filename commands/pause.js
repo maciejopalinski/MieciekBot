@@ -32,7 +32,7 @@ module.exports.help = {
         "resume"
     ],
     args: [],
-    permission: "USER",
+    permission: "DJ",
     description: "pauses/resumes played music"
 }
 

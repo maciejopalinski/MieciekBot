@@ -28,7 +28,7 @@ module.exports.help = {
     name: "loop",
     aliases: [],
     args: [],
-    permission: "USER",
+    permission: "DJ",
     description: "loops played music"
 }
 

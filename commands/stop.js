@@ -21,7 +21,7 @@ module.exports.help = {
     name: "stop",
     aliases: [],
     args: [],
-    permission: "USER",
+    permission: "DJ",
     description: "stops played music"
 }
 

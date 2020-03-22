@@ -81,7 +81,7 @@ module.exports.help = {
     args: [
         "<url>"
     ],
-    permission: "USER",
+    permission: "DJ",
     description: "plays music in voice channel"
 }
 
