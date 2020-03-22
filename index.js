@@ -134,6 +134,11 @@ bot.on('message', async msg => {
                             allowed_roles: ["USER"]
                         },
                         {
+                            name: "DJ",
+                            id: res.roles.dj,
+                            allowed_roles: ["USER", "DJ"]
+                        },
+                        {
                             name: "ADMIN",
                             id: res.roles.admin,
                             allowed_roles: ["USER", "ADMIN"]
