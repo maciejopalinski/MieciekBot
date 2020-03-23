@@ -41,7 +41,7 @@ module.exports.run = async (bot, msg, args) => {
             voice_channel: voice_channel,
             connection: null,
             songs: [],
-            volume: 5,
+            volume: 100,
             loop: false,
             playing: true
         };
@@ -88,7 +88,7 @@ module.exports.play = (bot, msg, song) => {
     })
     .on("error", (err) => console.log(err));
 
-    dispatcher.setVolumeLogarithmic(server_queue.volume / 5);
+    dispatcher.setVolumeLogarithmic(server_queue.volume / 100);
     server_queue.text_channel.send(`Now playing: **${song.title}**`);
 }
 
