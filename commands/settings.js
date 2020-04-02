@@ -1,7 +1,7 @@
 const Discord = require("discord.js");
 const mongoose = require("mongoose");
 
-const Settings = require("../models/settings.js");
+const Servers = require("../models/servers.js");
 
 mongoose.connect(process.env.DATABASE, {
     useNewUrlParser: true,
@@ -27,7 +27,7 @@ module.exports.run = async (bot, msg, args) => {
     {
         let key = args[0], value = args.slice(1).join(" ");
 
-        await Settings.findOne({
+        await Servers.findOne({
             serverID: msg.guild.id
         }, (err, settings) => {
             if(!settings)
