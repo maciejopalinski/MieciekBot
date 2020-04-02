@@ -3,7 +3,10 @@ const fs = require("fs");
 const mongoose = require("mongoose");
 const package_info = require("./package.json");
 
-const Settings = require("./models/settings.js");
+const Servers = require("./models/servers.js");
+const Users = require("./models/users.js");
+
+const XPCalc = require("./lib/experience.js");
 
 const bot = new Discord.Client();
 mongoose.connect(process.env.DATABASE, {
@@ -66,7 +69,7 @@ bot.on('ready', async () => {
 });
 
 bot.on('guildCreate', guild => {
-    const newSettings = new Settings({
+    const new_server = new Servers({
         serverID: guild.id,
         prefix: "!",
         delete_timeout: 3000,
@@ -76,11 +79,11 @@ bot.on('guildCreate', guild => {
             user: ""
         }
     });
-    newSettings.save().catch(err => console.log(err));
+    new_server.save().catch(err => console.log(err));
 });
 
 bot.on('guildDelete', guild => {
-    Settings.findOneAndDelete({
+    Servers.findOneAndDelete({
         serverID: guild.id
     }, (err, res) => {
         res.save().catch(err => console.log(err));
@@ -91,7 +94,7 @@ bot.on('message', async msg => {
     if (msg.author.bot) return;
     if (msg.channel.type === "dm") return;
 
-    await Settings.findOne({
+    await Servers.findOne({
         serverID: msg.guild.id
     }, (err, res) => {
         if (err) console.log(err);
@@ -107,8 +110,7 @@ bot.on('message', async msg => {
     let commandfile = bot.commands.get(cmd.slice(bot.prefix.length)) || bot.aliases.get(cmd.slice(bot.prefix.length));
     if (msg.content.startsWith(bot.prefix) && commandfile)
     {
-
-        Settings.findOne({
+        Servers.findOne({
             serverID: msg.guild.id
         }, (err, res) => {
             if (err) console.log(err);
