@@ -212,6 +212,39 @@ bot.on('message', async msg => {
             }
         });
     }
+    else
+    {
+        Users.findOne({
+            serverID: msg.guild.id,
+            userID: msg.member.id
+        }, (err, res) => {
+            if (err) console.log(err);
+
+            if(!res)
+            {
+                const new_user = new Users({
+                    serverID: msg.guild.id,
+                    userID: msg.member.id,
+                    level: 0,
+                    xp: 0
+                });
+
+                new_user.save();
+            }
+            else
+            {
+                res.xp += 2;
+
+                if(res.xp >= XPCalc.getXp(res.level + 1))
+                {
+                    res.level += 1;
+                    msg.channel.send(`${msg.member.displayName} advanced to level ${res.level}!`);
+                }
+
+                res.save();
+            }
+        })
+    }
 });
 
 bot.login(process.env.BOT_TOKEN);
