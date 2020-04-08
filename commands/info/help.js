@@ -25,7 +25,6 @@ module.exports.run = async (bot, msg, args) => {
         }
     });
 
-    console.log(total_commands);
     if(total_commands <= 0)
     {
         help.addField(`There weren't any available commands for you.`, '\u200b');
