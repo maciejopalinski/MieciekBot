@@ -10,7 +10,8 @@ const serversSchema = mongoose.Schema({
 		dj: String,
 		user: String,
 		mute: String
-	}
+	},
+	spam_channels: [String]
 });
 
 module.exports = mongoose.model("Servers", serversSchema);

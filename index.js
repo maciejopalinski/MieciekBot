@@ -50,10 +50,6 @@ categories.forEach(category => {
 
 if(total_commands > 0)
 {
-    // bot.categories.forEach((cat, index) => {
-    //     console.debug(`[DEBUG] bot.categories[${index}] = "${cat}"`);
-    // });
-
     console.info(`\n[INFO] ${total_commands} commands loaded`);
     console.info(`[INFO] ${bot.categories.length} categories loaded\n`);
 }
@@ -96,8 +92,11 @@ bot.on('guildCreate', guild => {
         roles: {
             owner: "",
             admin: "",
-            user: ""
-        }
+            dj: "",
+            user: "",
+            mute: ""
+        },
+        spam_channels: []
     });
     new_server.save().catch(err => console.error(err));
 });
@@ -105,8 +104,8 @@ bot.on('guildCreate', guild => {
 bot.on('guildDelete', guild => {
     Servers.findOneAndDelete({
         serverID: guild.id
-    }, (err, res) => {
-        res.save().catch(err => console.error(err));
+    }, err => {
+        if(err) console.error(err);
     });
 });
 
@@ -121,6 +120,7 @@ bot.on('message', async msg => {
 
         bot.prefix = res.prefix;
         bot.delete_timeout = res.delete_timeout;
+        bot.spam_channels = res.spam_channels;
     });
 
     let messageArray = msg.content.split(" ");
@@ -180,6 +180,12 @@ bot.on('message', async msg => {
                 }
             });
             permission.actual = last_max;
+            
+            if(msg.author.id == msg.guild.ownerID)
+            {
+                permission.actual = permission.nodes.findIndex(n => n.name == "OWNER");
+                last_max = permission.actual;
+            }
 
             let ok = false;
             permission.nodes.forEach((value, index) => {
@@ -232,7 +238,7 @@ bot.on('message', async msg => {
             }
         });
     }
-    else
+    else if(!bot.spam_channels.includes(msg.channel.id))
     {
         Users.findOne({
             serverID: msg.guild.id,
@@ -253,7 +259,7 @@ bot.on('message', async msg => {
             }
             else
             {
-                res.xp += 2;
+                res.xp += 1;
 
                 if(res.xp >= XPCalc.getXp(res.level + 1))
                 {

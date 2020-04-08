@@ -15,6 +15,7 @@ module.exports.run = async (bot, msg, args) => {
         .setTitle(`Settings:`)
         .addField(`prefix`, `${bot.prefix}`)
         .addField(`delete_timeout`, `${bot.delete_timeout}`)
+        .addField(`spam_channels`, `["${bot.spam_channels.join("\", \"")}"]`)
         .setFooter(`Powered by MieciekBot ${bot.settings.version}`, bot.settings.iconURL);
 
         bot.settings.role.nodes.forEach(role => {
@@ -65,6 +66,23 @@ module.exports.run = async (bot, msg, args) => {
                     }
                 });
             }
+            else if(key == "spam_channels")
+            {
+                if(value == "add")
+                {
+                    let exists = settings.spam_channels.some(e => e == msg.channel.id);
+                    if(!exists)
+                    {
+                        settings.spam_channels.push(msg.channel.id);
+                    }
+                }
+                else if(value == "remove")
+                {
+                    settings.spam_channels = settings.spam_channels.filter(e => e != msg.channel.id);
+                }
+
+                info = `["${settings.spam_channels.join("\", \"")}"]`;
+            }
 
             settings.save();
             if(info)
@@ -101,7 +119,7 @@ module.exports.help = {
 }
 
 module.exports.error = {
-    "no_value": "No key value specified.\nUsage: !settings [key] [value | @role]",
+    "no_value": "No value specified.\nUsage: !settings [key] [value | @role]",
     "not_found": "Role with that ID was not found on the server.",
     "setting_not_found": "That settings was not found in the database.",
     "unknown": "Unknown error occurred. Please, try again later."
