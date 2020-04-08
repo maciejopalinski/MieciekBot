@@ -95,7 +95,8 @@ bot.on('guildCreate', guild => {
             dj: "",
             user: "",
             mute: ""
-        }
+        },
+        spam_channels: []
     });
     new_server.save().catch(err => console.error(err));
 });
@@ -119,6 +120,7 @@ bot.on('message', async msg => {
 
         bot.prefix = res.prefix;
         bot.delete_timeout = res.delete_timeout;
+        bot.spam_channels = res.spam_channels;
     });
 
     let messageArray = msg.content.split(" ");
@@ -236,7 +238,7 @@ bot.on('message', async msg => {
             }
         });
     }
-    else
+    else if(!bot.spam_channels.includes(msg.channel.id))
     {
         Users.findOne({
             serverID: msg.guild.id,
