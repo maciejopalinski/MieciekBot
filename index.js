@@ -96,7 +96,9 @@ bot.on('guildCreate', guild => {
         roles: {
             owner: "",
             admin: "",
-            user: ""
+            dj: "",
+            user: "",
+            mute: ""
         }
     });
     new_server.save().catch(err => console.error(err));
