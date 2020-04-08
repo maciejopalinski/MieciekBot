@@ -7,7 +7,7 @@ module.exports.run = async (bot, msg, args) => {
     let repository = Client.repo("PoProstuMieciek/MieciekBot");
     
     let releases = repository.releases((err, res) => {
-        if(err) console.log(err);
+        if(err) console.error(err);
 
         let latest = res[0];
 

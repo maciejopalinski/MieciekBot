@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const settingsSchema = mongoose.Schema({
+const serversSchema = mongoose.Schema({
 	serverID: String,
 	prefix: String,
 	delete_timeout: Number,
@@ -13,4 +13,4 @@ const settingsSchema = mongoose.Schema({
 	}
 });
 
-module.exports = mongoose.model("Settings", settingsSchema);
+module.exports = mongoose.model("Servers", serversSchema);

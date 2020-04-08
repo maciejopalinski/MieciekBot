@@ -3,7 +3,10 @@ const fs = require("fs");
 const mongoose = require("mongoose");
 const package_info = require("./package.json");
 
-const Settings = require("./models/settings.js");
+const Servers = require("./models/servers.js");
+const Users = require("./models/users.js");
+
+const XPCalc = require("./lib/experience.js");
 
 const bot = new Discord.Client();
 mongoose.connect(process.env.DATABASE, {
@@ -15,29 +18,49 @@ bot.prefix = "!";
 bot.commands = new Discord.Collection();
 bot.aliases = new Discord.Collection();
 bot.queue = new Map();
+bot.categories = [];
 
+console.info(`[INFO] Initializing...\n`);
+console.info(`[INFO] Starting commands loading...`);
 
-fs.readdir("./commands/", (err, files) => {
-    if(err) throw err;
+let categories = fs.readdirSync("./commands");
+let total_commands = 0;
+categories.forEach(category => {
+    let commands = fs.readdirSync(`./commands/${category}`);
+    let jsfiles = commands.filter(f => f.split(".").pop() === "js");
+    total_commands += jsfiles.length;
+    
+    commands.forEach(command => {
+        let props = require(`./commands/${category}/${command}`);
+        props.help.category = category;
 
-    console.log(`[INFO] Initializing...\n`);
-    console.log(`[INFO] Starting commands loading...`);
-    let jsfiles = files.filter(f => f.split(".").pop() === "js");
-    if(jsfiles.length <= 0)
-    {
-        console.log(`[WARN] Commands not found!\n`);
-        return;
-    }
-    jsfiles.forEach((file, index) => {
-        let props = require(`./commands/${file}`);
+        if(!bot.categories.includes(category))
+        {
+            bot.categories.push(category);
+        }
+
         props.help.aliases.forEach(value => {
             bot.aliases.set(value, props);
         });
-        console.log(`[INFO] ${file} loaded`);
         bot.commands.set(props.help.name, props);
+
+        console.info(`[INFO] ${category}/${command} loaded`);
     });
-    console.log(`[INFO] ${jsfiles.length} commands loaded\n`);
 });
+
+if(total_commands > 0)
+{
+    // bot.categories.forEach((cat, index) => {
+    //     console.debug(`[DEBUG] bot.categories[${index}] = "${cat}"`);
+    // });
+
+    console.info(`\n[INFO] ${total_commands} commands loaded`);
+    console.info(`[INFO] ${bot.categories.length} categories loaded\n`);
+}
+else
+{
+    console.warn(`[WARN] Commands not found!\n`);
+}
 
 bot.on('ready', async () => {
     let status = [
@@ -57,16 +80,16 @@ bot.on('ready', async () => {
         }
     ];
 
-    setInterval(function() {
+    setInterval(function () {
         let index = Math.floor(Math.random() * status.length);
         bot.user.setPresence(status[index]);
     }, 5000);
 
-    console.log(`[INFO] Running...`);
+    console.info(`[INFO] Running...`);
 });
 
 bot.on('guildCreate', guild => {
-    const newSettings = new Settings({
+    const new_server = new Servers({
         serverID: guild.id,
         prefix: "!",
         delete_timeout: 3000,
@@ -76,25 +99,25 @@ bot.on('guildCreate', guild => {
             user: ""
         }
     });
-    newSettings.save().catch(err => console.log(err));
+    new_server.save().catch(err => console.error(err));
 });
 
 bot.on('guildDelete', guild => {
-    Settings.findOneAndDelete({
+    Servers.findOneAndDelete({
         serverID: guild.id
     }, (err, res) => {
-        res.save().catch(err => console.log(err));
+        res.save().catch(err => console.error(err));
     });
 });
 
 bot.on('message', async msg => {
-    if(msg.author.bot) return;
-    if(msg.channel.type === "dm") return;
+    if (msg.author.bot) return;
+    if (msg.channel.type === "dm") return;
 
-    await Settings.findOne({
+    await Servers.findOne({
         serverID: msg.guild.id
     }, (err, res) => {
-        if(err) console.log(err);
+        if (err) console.error(err);
 
         bot.prefix = res.prefix;
         bot.delete_timeout = res.delete_timeout;
@@ -105,112 +128,142 @@ bot.on('message', async msg => {
     let args = messageArray.slice(1);
 
     let commandfile = bot.commands.get(cmd.slice(bot.prefix.length)) || bot.aliases.get(cmd.slice(bot.prefix.length));
-    if(commandfile)
+    if (msg.content.startsWith(bot.prefix) && commandfile)
     {
-        if(msg.content.startsWith(bot.prefix))
-        {
-            Settings.findOne({
-                serverID: msg.guild.id
-            }, (err, res) => {
-                if(err) console.log(err);
+        Servers.findOne({
+            serverID: msg.guild.id
+        }, (err, res) => {
+            if (err) console.error(err);
 
-                let member = msg.member.roles;
-                let permission = {
-                    actual: -1,
-                    nodes: [
-                        {
-                            name: "@everyone",
-                            id: msg.guild.defaultRole.id,
-                            allowed_roles: ["@everyone"]
-                        },
-                        {
-                            name: "MUTE",
-                            id: res.roles.mute,
-                            allowed_roles: ["MUTE"]
-                        },
-                        {
-                            name: "USER",
-                            id: res.roles.user,
-                            allowed_roles: ["USER"]
-                        },
-                        {
-                            name: "DJ",
-                            id: res.roles.dj,
-                            allowed_roles: ["USER", "DJ"]
-                        },
-                        {
-                            name: "ADMIN",
-                            id: res.roles.admin,
-                            allowed_roles: ["USER", "DJ", "ADMIN"]
-                        },
-                        {
-                            name: "OWNER",
-                            id: res.roles.owner,
-                            allowed_roles: ["USER", "DJ", "ADMIN", "OWNER"]
-                        }
-                    ]
-                };
-
-                let last_max = -1;
-                permission.nodes.forEach((value, index) => {
-                    if(member.some(r => r.id == value.id) && index > last_max)
+            let member = msg.member.roles;
+            let permission = {
+                actual: -1,
+                nodes: [
                     {
-                        last_max = index;
-                    }
-                });
-                permission.actual = last_max;
-
-                let ok = false;
-                permission.nodes.forEach((value, index) => {
-                    if(commandfile.help.permission == value.name && last_max >= index)
+                        name: "@everyone",
+                        id: msg.guild.defaultRole.id,
+                        allowed_roles: ["@everyone"]
+                    },
                     {
-                        ok = true;
+                        name: "MUTE",
+                        id: res.roles.mute,
+                        allowed_roles: ["MUTE"]
+                    },
+                    {
+                        name: "USER",
+                        id: res.roles.user,
+                        allowed_roles: ["USER"]
+                    },
+                    {
+                        name: "DJ",
+                        id: res.roles.dj,
+                        allowed_roles: ["USER", "DJ"]
+                    },
+                    {
+                        name: "ADMIN",
+                        id: res.roles.admin,
+                        allowed_roles: ["USER", "DJ", "ADMIN"]
+                    },
+                    {
+                        name: "OWNER",
+                        id: res.roles.owner,
+                        allowed_roles: ["USER", "DJ", "ADMIN", "OWNER"]
                     }
-                });
+                ]
+            };
 
-                if(ok)
+            let last_max = -1;
+            permission.nodes.forEach((value, index) => {
+                if (member.some(r => r.id == value.id) && index > last_max)
                 {
-                    let required_args = 0, optional_args = 0;
-                    commandfile.help.args.forEach(value => {
-                        if(value.startsWith('<'))
-                        {
-                            required_args += 1;
-                        }
-                        if(value.startsWith('['))
-                        {
-                            optional_args += 1;
-                        }
-                    });
-                    
-                    if(args.length >= required_args)
-                    {
-                        bot.settings = {
-                            role: permission,
-                            version: package_info.version,
-                            repository: package_info.repository.url,
-                            iconURL: "https://cdn.discordapp.com/avatars/510925936393322497/15784b2d9cf8df572617b493bc79c707.png?size=4096"
-                        };
+                    last_max = index;
+                }
+            });
+            permission.actual = last_max;
 
-                        if(process.env.DEBUG == "true")
-                        {
-                            bot.settings.version += "-dev";
-                        }
+            let ok = false;
+            permission.nodes.forEach((value, index) => {
+                if (commandfile.help.permission == value.name && last_max >= index)
+                {
+                    ok = true;
+                }
+            });
 
-                        commandfile.run(bot, msg, args);
-                    }
-                    else
+            if (ok)
+            {
+                let required_args = 0, optional_args = 0;
+                commandfile.help.args.forEach(value => {
+                    if (value.startsWith('<'))
                     {
-                        let err = `Usage: ${bot.prefix}${commandfile.help.name} ${commandfile.help.args.join(" ")}`;
-                        msg.delete(bot.delete_timeout);
-                        msg.channel.send(err).then(msg => msg.delete(bot.delete_timeout));
+                        required_args += 1;
                     }
+                    if (value.startsWith('['))
+                    {
+                        optional_args += 1;
+                    }
+                });
+
+                if (args.length >= required_args)
+                {
+                    bot.settings = {
+                        role: permission,
+                        version: package_info.version,
+                        repository: package_info.repository.url,
+                        iconURL: "https://cdn.discordapp.com/avatars/510925936393322497/15784b2d9cf8df572617b493bc79c707.png?size=4096"
+                    };
+
+                    if (process.env.DEBUG == "true")
+                    {
+                        bot.settings.version += "-dev";
+                    }
+
+                    commandfile.run(bot, msg, args);
                 }
                 else
                 {
+                    let err = `Usage: ${bot.prefix}${commandfile.help.name} ${commandfile.help.args.join(" ")}`;
                     msg.delete(bot.delete_timeout);
+                    msg.channel.send(err).then(msg => msg.delete(bot.delete_timeout));
                 }
-            });
-        }
+            }
+            else
+            {
+                msg.delete(bot.delete_timeout);
+            }
+        });
+    }
+    else
+    {
+        Users.findOne({
+            serverID: msg.guild.id,
+            userID: msg.member.id
+        }, (err, res) => {
+            if (err) console.error(err);
+
+            if(!res)
+            {
+                const new_user = new Users({
+                    serverID: msg.guild.id,
+                    userID: msg.member.id,
+                    level: 0,
+                    xp: 0
+                });
+
+                new_user.save();
+            }
+            else
+            {
+                res.xp += 2;
+
+                if(res.xp >= XPCalc.getXp(res.level + 1))
+                {
+                    res.level += 1;
+                    msg.channel.send(`${msg.member.displayName} advanced to level ${res.level}!`);
+                }
+
+                res.save();
+            }
+        })
     }
 });
 
