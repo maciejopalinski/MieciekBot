@@ -18,29 +18,49 @@ bot.prefix = "!";
 bot.commands = new Discord.Collection();
 bot.aliases = new Discord.Collection();
 bot.queue = new Map();
+bot.categories = [];
 
+console.info(`[INFO] Initializing...\n`);
+console.info(`[INFO] Starting commands loading...`);
 
-fs.readdir("./commands/", (err, files) => {
-    if (err) throw err;
+let categories = fs.readdirSync("./commands");
+let total_commands = 0;
+categories.forEach(category => {
+    let commands = fs.readdirSync(`./commands/${category}`);
+    let jsfiles = commands.filter(f => f.split(".").pop() === "js");
+    total_commands += jsfiles.length;
+    
+    commands.forEach(command => {
+        let props = require(`./commands/${category}/${command}`);
+        props.help.category = category;
 
-    console.log(`[INFO] Initializing...\n`);
-    console.log(`[INFO] Starting commands loading...`);
-    let jsfiles = files.filter(f => f.split(".").pop() === "js");
-    if (jsfiles.length <= 0)
-    {
-        console.log(`[WARN] Commands not found!\n`);
-        return;
-    }
-    jsfiles.forEach((file, index) => {
-        let props = require(`./commands/${file}`);
+        if(!bot.categories.includes(category))
+        {
+            bot.categories.push(category);
+        }
+
         props.help.aliases.forEach(value => {
             bot.aliases.set(value, props);
         });
-        console.log(`[INFO] ${file} loaded`);
         bot.commands.set(props.help.name, props);
+
+        console.info(`[INFO] ${category}/${command} loaded`);
     });
-    console.log(`[INFO] ${jsfiles.length} commands loaded\n`);
 });
+
+if(total_commands > 0)
+{
+    // bot.categories.forEach((cat, index) => {
+    //     console.debug(`[DEBUG] bot.categories[${index}] = "${cat}"`);
+    // });
+
+    console.info(`\n[INFO] ${total_commands} commands loaded`);
+    console.info(`[INFO] ${bot.categories.length} categories loaded\n`);
+}
+else
+{
+    console.warn(`[WARN] Commands not found!\n`);
+}
 
 bot.on('ready', async () => {
     let status = [
@@ -65,7 +85,7 @@ bot.on('ready', async () => {
         bot.user.setPresence(status[index]);
     }, 5000);
 
-    console.log(`[INFO] Running...`);
+    console.info(`[INFO] Running...`);
 });
 
 bot.on('guildCreate', guild => {
@@ -79,14 +99,14 @@ bot.on('guildCreate', guild => {
             user: ""
         }
     });
-    new_server.save().catch(err => console.log(err));
+    new_server.save().catch(err => console.error(err));
 });
 
 bot.on('guildDelete', guild => {
     Servers.findOneAndDelete({
         serverID: guild.id
     }, (err, res) => {
-        res.save().catch(err => console.log(err));
+        res.save().catch(err => console.error(err));
     });
 });
 
@@ -97,7 +117,7 @@ bot.on('message', async msg => {
     await Servers.findOne({
         serverID: msg.guild.id
     }, (err, res) => {
-        if (err) console.log(err);
+        if (err) console.error(err);
 
         bot.prefix = res.prefix;
         bot.delete_timeout = res.delete_timeout;
@@ -113,7 +133,7 @@ bot.on('message', async msg => {
         Servers.findOne({
             serverID: msg.guild.id
         }, (err, res) => {
-            if (err) console.log(err);
+            if (err) console.error(err);
 
             let member = msg.member.roles;
             let permission = {
@@ -218,7 +238,7 @@ bot.on('message', async msg => {
             serverID: msg.guild.id,
             userID: msg.member.id
         }, (err, res) => {
-            if (err) console.log(err);
+            if (err) console.error(err);
 
             if(!res)
             {

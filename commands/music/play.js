@@ -55,7 +55,7 @@ module.exports.run = async (bot, msg, args) => {
             server_queue_constructor.connection = connection;
             this.play(bot, msg, server_queue_constructor.songs[0]);
         } catch(err) {
-            console.log(err);
+            console.error(err);
             queue.delete(msg.guild.id);
             return msg.channel.send(`Error: ${err}`);
         }
@@ -86,7 +86,7 @@ module.exports.play = (bot, msg, song) => {
         }
         this.play(bot, msg, server_queue.songs[0]);
     })
-    .on("error", (err) => console.log(err));
+    .on("error", (err) => console.error(err));
 
     dispatcher.setVolumeLogarithmic(server_queue.volume / 100);
     server_queue.text_channel.send(`Now playing: **${song.title}**`);
