@@ -1,7 +1,7 @@
 const Discord = require("discord.js");
 const mongoose = require("mongoose");
 
-const Warns = require("../models/warns.js");
+const Warns = require("../../models/warns.js");
 
 mongoose.connect(process.env.DATABASE, {
     useNewUrlParser: true,
@@ -44,7 +44,7 @@ module.exports.run = async (bot, msg, args) => {
             reason: reason,
             timestamp: date_string
         });
-        newWarn.save().catch(err => console.log(err));
+        newWarn.save().catch(err => console.error(err));
 
         msg.delete();
         

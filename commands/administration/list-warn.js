@@ -1,7 +1,7 @@
 const Discord = require("discord.js");
 const mongoose = require("mongoose");
 
-const Warns = require("../models/warns.js");
+const Warns = require("../../models/warns.js");
 
 mongoose.connect(process.env.DATABASE, {
     useNewUrlParser: true,

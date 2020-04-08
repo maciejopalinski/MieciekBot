@@ -1,9 +1,9 @@
 const Discord = require("discord.js");
 const mongoose = require("mongoose");
 
-const Users = require("../models/users.js");
+const Users = require("../../models/users.js");
 
-const XPCalc = require("../lib/experience.js");
+const XPCalc = require("../../lib/experience.js");
 
 mongoose.connect(process.env.DATABASE, {
     useNewUrlParser: true,
@@ -17,7 +17,7 @@ module.exports.run = async (bot, msg, args) => {
         serverID: msg.guild.id,
         userID: user.id
     }, (err, res) => {
-        if (err) console.log(err);
+        if (err) console.error(err);
 
         if(!res)
         {
