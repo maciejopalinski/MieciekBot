@@ -261,7 +261,7 @@ bot.on('message', async msg => {
             }
             else
             {
-                res.xp += 2;
+                res.xp += 1;
 
                 if(res.xp >= XPCalc.getXp(res.level + 1))
                 {
