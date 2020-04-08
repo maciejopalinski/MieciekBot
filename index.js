@@ -107,8 +107,8 @@ bot.on('guildCreate', guild => {
 bot.on('guildDelete', guild => {
     Servers.findOneAndDelete({
         serverID: guild.id
-    }, (err, res) => {
-        res.save().catch(err => console.error(err));
+    }, err => {
+        if(err) console.error(err);
     });
 });
 
