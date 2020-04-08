@@ -50,10 +50,6 @@ categories.forEach(category => {
 
 if(total_commands > 0)
 {
-    // bot.categories.forEach((cat, index) => {
-    //     console.debug(`[DEBUG] bot.categories[${index}] = "${cat}"`);
-    // });
-
     console.info(`\n[INFO] ${total_commands} commands loaded`);
     console.info(`[INFO] ${bot.categories.length} categories loaded\n`);
 }
