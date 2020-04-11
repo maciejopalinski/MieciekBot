@@ -1,5 +1,9 @@
 const Discord = require("discord.js");
 const mongoose = require("mongoose");
+const Canvas = require("canvas");
+
+Canvas.registerFont("assets/fonts/Bebas-Regular.ttf", {family: "Bebas-Regular"});
+Canvas.registerFont("assets/fonts/AldotheApache.ttf", {family: "AldoTheApache"});
 
 const Users = require("../../models/users.js");
 
@@ -11,7 +15,7 @@ mongoose.connect(process.env.DATABASE, {
 });
 
 module.exports.run = async (bot, msg, args) => {
-    let user = msg.mentions.users.first() || msg.member;
+    let user = msg.mentions.members.first() || msg.member;
 
     Users.findOne({
         serverID: msg.guild.id,
@@ -28,29 +32,66 @@ module.exports.run = async (bot, msg, args) => {
                 xp: 0
             });
             new_user.save();
+
+            var res = {level: 0, xp: 0};
         }
-        else
-        {
-            let progress_bar = `[`;
-            let start = XPCalc.getXp(res.level);
-            let dest = XPCalc.getXp(res.level + 1);
 
-            let percent = (res.xp - start) / (dest - start) * 100;
+        let level = res.level;
+        let xp = res.xp;
+        
+        let size = { width: 900, height: 300 };
+        let level_graphics = Canvas.createCanvas(size.width, size.height);
+        let ctx = level_graphics.getContext("2d");
 
-            for (let i = 0; i < 20; i++)
-            {
-                if(i < percent / 5)
-                {
-                    progress_bar += `=`;
-                }
-                else
-                {
-                    progress_bar += `   `;
-                }
-            }
-            progress_bar += `]`;
+        // background
+        ctx.fillStyle = "rgb(34, 37, 43)";
+        ctx.fillRect(0, 0, size.width, size.height);
 
-            msg.channel.send(`Level: ${res.level}\nXP: ${res.xp}\n${progress_bar} ${Math.round(percent)}%\n${start}XP => ${dest}XP`);
+        // nickname
+        ctx.font = "80px AldoTheApache";
+        ctx.fillStyle = "rgb(255, 255, 255)";
+        ctx.fillText(user.user.tag, 320, 110, 540);
+
+        // progress bar
+        let start = XPCalc.getXp(level);
+        let dest = XPCalc.getXp(level + 1);
+        let percent = (xp - start) / (dest - start) * 100;
+
+        ctx.fillStyle = "rgb(255, 255, 255)";
+        ctx.fillRect(320, 200, 540, 40);
+
+        ctx.fillStyle = "rgb(113, 235, 52)";
+        ctx.fillRect(320, 200, Math.ceil(540 * percent / 100), 40);
+
+        // xp text
+        ctx.font = "35px Bebas-Regular";
+        ctx.fillStyle = "rgb(255, 255, 255)";
+        if(dest >= 1000) { text = `${xp / 1000}K / ${dest / 1000}K XP`; } else { text = `${xp} / ${dest} XP`; }
+        let text_box = ctx.measureText(text);
+
+        ctx.fillText(text, 860-text_box.width, 192);
+
+        // level text
+        ctx.font = "45px Bebas-Regular";
+        ctx.fillStyle = "rgb(255, 255, 255)";
+        ctx.fillText(`Level ${level}`, 320, 192);
+
+        // avatar
+        let avatar = new Canvas.Image();
+        avatar.src = user.user.avatarURL;
+        avatar.onload = () => {
+            ctx.strokeStyle = "rgb(54, 57, 63)";
+            ctx.beginPath();
+            ctx.arc(128+30, 128+22, 128, 0, 2 * Math.PI);
+            ctx.stroke();
+            ctx.clip();
+            ctx.drawImage(avatar, 30, 22, 256, 256);
+
+            // send attachment
+            let stream = level_graphics.createPNGStream();
+            let attachment = new Discord.Attachment(stream);
+
+            msg.channel.send(attachment);
         }
     });
 }
