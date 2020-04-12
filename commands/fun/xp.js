@@ -20,7 +20,7 @@ module.exports.run = async (bot, msg, args) => {
     Users.findOne({
         serverID: msg.guild.id,
         userID: user.id
-    }, (err, res) => {
+    }, async (err, res) => {
         if (err) console.error(err);
 
         if(!res)
@@ -77,22 +77,18 @@ module.exports.run = async (bot, msg, args) => {
         ctx.fillText(`Level ${level}`, 320, 192);
 
         // avatar
-        let avatar = new Canvas.Image();
-        avatar.src = user.user.avatarURL;
-        avatar.onload = () => {
-            ctx.strokeStyle = "rgb(54, 57, 63)";
-            ctx.beginPath();
-            ctx.arc(128+30, 128+22, 128, 0, 2 * Math.PI);
-            ctx.stroke();
-            ctx.clip();
-            ctx.drawImage(avatar, 30, 22, 256, 256);
+        let avatar = await Canvas.loadImage(user.user.avatarURL);
+            
+        ctx.strokeStyle = "rgb(54, 57, 63)";
+        ctx.beginPath();
+        ctx.arc(128+30, 128+22, 128, 0, 2 * Math.PI);
+        ctx.closePath();
+        ctx.clip();
+        ctx.drawImage(avatar, 30, 22, 256, 256);
 
-            // send attachment
-            let stream = level_graphics.createPNGStream();
-            let attachment = new Discord.Attachment(stream);
-
-            msg.channel.send(attachment);
-        }
+        // send attachment
+        let attachment = new Discord.Attachment(level_graphics.toBuffer());
+        msg.channel.send(attachment);
     });
 }
 
