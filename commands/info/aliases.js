@@ -1,5 +1,10 @@
 const Discord = require("discord.js");
 
+/**
+ * @param {Discord.Client} bot 
+ * @param {Discord.Message} msg 
+ * @param {Array<String>} args 
+ */
 module.exports.run = async (bot, msg, args) => {
     const commandfile = bot.commands.get(args[0]) || bot.aliases.get(args[0]);
 

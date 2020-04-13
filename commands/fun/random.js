@@ -1,6 +1,11 @@
 const Discord = require("discord.js");
 const RandomNumber = require("random-number-csprng");
 
+/**
+ * @param {Discord.Client} bot 
+ * @param {Discord.Message} msg 
+ * @param {Array<String>} args 
+ */
 module.exports.run = async (bot, msg, args) => {
     let range = parseInt(args[0]);
 

@@ -1,5 +1,10 @@
 const Discord = require('discord.js');
 
+/**
+ * @param {Discord.Client} bot 
+ * @param {Discord.Message} msg 
+ * @param {Array<String>} args 
+ */
 module.exports.run = async (bot, msg, args) => {
     let user = msg.mentions.members.first();
     let reason = args.slice(1).join(" ") || "no reason specified";

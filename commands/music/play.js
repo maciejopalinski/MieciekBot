@@ -2,6 +2,11 @@ const Discord = require("discord.js");
 const YTDL = require("ytdl-core");
 const Search = require("yt-search");
 
+/**
+ * @param {Discord.Client} bot 
+ * @param {Discord.Message} msg 
+ * @param {Array<String>} args 
+ */
 module.exports.run = async (bot, msg, args) => {
     let queue = bot.queue;
     let server_queue = bot.queue.get(msg.guild.id);
@@ -67,6 +72,11 @@ module.exports.run = async (bot, msg, args) => {
     }
 }
 
+/**
+ * @param {Discord.Client} bot 
+ * @param {Discord.Message} msg 
+ * @param {Object} song 
+ */
 module.exports.play = (bot, msg, song) => {
     let queue = bot.queue;
     let server_queue = bot.queue.get(msg.guild.id);

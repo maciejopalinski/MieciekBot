@@ -1,6 +1,11 @@
 const Discord = require("discord.js");
 const RandomPuppy = require("random-puppy");
 
+/**
+ * @param {Discord.Client} bot 
+ * @param {Discord.Message} msg 
+ * @param {Array<String>} args 
+ */
 module.exports.run = async (bot, msg, args) => {
     let subReddits = [
         "dankmeme",

@@ -1,5 +1,10 @@
 const Discord = require("discord.js");
 
+/**
+ * @param {Discord.Client} bot 
+ * @param {Discord.Message} msg 
+ * @param {Array<String>} args 
+ */
 module.exports.run = async (bot, msg, args) => {
     let messages = args[0] || 100;
     if(messages >= 2 && messages <= 100)

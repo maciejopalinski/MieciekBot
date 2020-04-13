@@ -3,6 +3,11 @@ const GitHub = require("octonode");
 
 const Client = GitHub.client(process.env.GITHUB_API_TOKEN);
 
+/**
+ * @param {Discord.Client} bot 
+ * @param {Discord.Message} msg 
+ * @param {Array<String>} args 
+ */
 module.exports.run = async (bot, msg, args) => {
     let repository = Client.repo("PoProstuMieciek/MieciekBot");
     
