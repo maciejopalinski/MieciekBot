@@ -21,6 +21,7 @@ module.exports.run = async (bot, msg, args) => {
         .addField(`Author:`, `PoProstuMieciek`)
         .addField(`Version:`, `${bot.settings.version}`)
         .addField(`GitHub repository:`, `${bot.settings.repository}`)
+        .addField(`Invite me to your server:`, `https://discordapp.com/oauth2/authorize?client_id=${bot.user.id}&scope=bot&permissions=8`)
         .setFooter(`Powered by MieciekBot ${bot.settings.version}`, bot.settings.iconURL);
 
         msg.channel.send(message);
