@@ -20,6 +20,8 @@ bot.aliases = new Discord.Collection();
 bot.queue = new Map();
 bot.categories = [];
 
+bot.game = { hangman: new Map() };
+
 console.info(`[INFO] Initializing...\n`);
 console.info(`[INFO] Starting commands loading...`);
 

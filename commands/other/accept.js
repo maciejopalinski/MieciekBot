@@ -1,5 +1,10 @@
 const Discord = require("discord.js");
 
+/**
+ * @param {Discord.Client} bot 
+ * @param {Discord.Message} msg 
+ * @param {Array<String>} args 
+ */
 module.exports.run = async (bot, msg, args) => {
     if(bot.settings.role.actual == bot.settings.role.nodes.findIndex(r => r.name == "@everyone"))
     {
