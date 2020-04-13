@@ -1,5 +1,10 @@
 const Discord = require("discord.js");
 
+/**
+ * @param {Discord.Client} bot 
+ * @param {Discord.Message} msg 
+ * @param {Array<String>} args 
+ */
 module.exports.run = async (bot, msg, args) => {
     let queue = bot.queue;
     let server_queue = bot.queue.get(msg.guild.id);
