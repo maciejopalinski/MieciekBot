@@ -1,6 +1,6 @@
 {
     "name": "mieciekbot",
-    "version": "1.10.2",
+    "version": "1.10.3",
     "description": "NodeJS Discord Bot",
     "repository": {
         "url": "https://github.com/PoProstuMieciek/MieciekBot"
