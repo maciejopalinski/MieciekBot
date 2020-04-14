@@ -106,7 +106,7 @@ bot.on('guildCreate', guild => {
 
     let guild_members = [];
     guild.members.forEach(member => {
-        if(member.id != bot.user.id)
+        if(!member.user.bot)
         {
             guild_members.push({
                 serverID: member.guild.id,
@@ -119,6 +119,10 @@ bot.on('guildCreate', guild => {
 
     Users.insertMany(guild_members, err => {
         if(err) console.error(err);
+    });
+
+    guild.owner.send(`Hi! I just configured your server. Please, set up all required permissions, roles and other useful properties. Have a good time!`).catch(err => {
+        if (err) guild.leave();
     });
 });
 
@@ -176,6 +180,12 @@ bot.on('message', async msg => {
         serverID: msg.guild.id
     }, (err, res) => {
         if (err) console.error(err);
+
+        if (!res)
+        {
+            msg.channel.send(`Oops! I did not properly configure your server... Please, invite me once again. https://discordapp.com/oauth2/authorize?client_id=${bot.user.id}&scope=bot&permissions=8`);
+            return msg.guild.leave();
+        }
 
         bot.prefix = res.prefix;
         bot.delete_timeout = res.delete_timeout;
