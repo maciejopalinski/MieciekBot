@@ -19,6 +19,7 @@ bot.commands = new Discord.Collection();
 bot.aliases = new Discord.Collection();
 bot.queue = new Map();
 bot.categories = [];
+bot.spam_channels = [];
 
 bot.game = { hangman: new Map() };
 
@@ -101,6 +102,23 @@ bot.on('guildCreate', guild => {
         spam_channels: []
     });
     new_server.save().catch(err => console.error(err));
+
+    let guild_members = [];
+    guild.members.forEach(member => {
+        if(member.id != bot.user.id)
+        {
+            guild_members.push({
+                serverID: member.guild.id,
+                userID: member.id,
+                level: 0,
+                xp: 0
+            });
+        }
+    });
+
+    Users.insertMany(guild_members, err => {
+        if(err) console.error(err);
+    });
 });
 
 bot.on('guildDelete', guild => {
@@ -109,7 +127,32 @@ bot.on('guildDelete', guild => {
     }, err => {
         if(err) console.error(err);
     });
+
+    Users.deleteMany({
+        serverID: guild.id
+    }, err => {
+        if(err) console.error(err);
+    });
 });
+
+bot.on('guildMemberAdd', member => {
+    const new_member = new Users({
+        serverID: member.guild.id,
+        userID: member.id,
+        level: 0,
+        xp: 0
+    });
+    new_member.save().catch(err => console.error(err));
+});
+
+bot.on('guildMemberRemove', member => {
+    Users.findOneAndDelete({
+        serverID: member.guild.id,
+        userID: member.id
+    }, err => {
+        if(err) console.error(err);
+    });
+})
 
 bot.on('message', async msg => {
     if (msg.author.bot) return;
