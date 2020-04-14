@@ -10,6 +10,7 @@ module.exports.run = async (bot, msg, args) => {
     if(messages >= 2 && messages <= 100)
     {
         await msg.delete();
+        bot.game.hangman.delete(msg.guild.id);
         msg.channel.bulkDelete(messages).catch(err => {
             msg.channel.send(err.message).then(msg => msg.delete(bot.delete_timeout));
         });
