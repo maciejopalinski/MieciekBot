@@ -5,6 +5,7 @@ const package_info = require("./package.json");
 
 const Servers = require("./models/servers.js");
 const Users = require("./models/users.js");
+const Warns = require("./models/warns.js");
 
 const XPCalc = require("./lib/experience.js");
 
@@ -133,6 +134,12 @@ bot.on('guildDelete', guild => {
     }, err => {
         if(err) console.error(err);
     });
+
+    Warns.deleteMany({
+        serverID: guild.id
+    }, err => {
+        if(err) console.error(err);
+    });
 });
 
 bot.on('guildMemberAdd', member => {
@@ -152,6 +159,13 @@ bot.on('guildMemberRemove', member => {
     }, err => {
         if(err) console.error(err);
     });
+
+    Warns.findOneAndDelete({
+        serverID: member.guild.id,
+        userID: member.id
+    }, err => {
+        if(err) console.error(err);
+    })
 })
 
 bot.on('message', async msg => {
