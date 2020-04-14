@@ -164,7 +164,7 @@ bot.on('guildMemberRemove', member => {
         if(err) console.error(err);
     });
 
-    Warns.findOneAndDelete({
+    Warns.deleteMany({
         serverID: member.guild.id,
         userID: member.id
     }, err => {
