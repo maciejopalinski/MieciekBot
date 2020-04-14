@@ -27,6 +27,7 @@ module.exports.run = async (bot, msg, args) => {
         options.qs = { country: country };
         Request(options, async (err, res, body) => {
             if(err) return console.error(err);
+            body = JSON.parse(body);
 
             msg.channel.send(create_embed(bot, body, "Global"));
         });
@@ -38,13 +39,21 @@ module.exports.run = async (bot, msg, args) => {
 
         Request(options, async (err, res, body) => {
             if(err) return console.error(err);
-            
-            let verified_country = body.response.first();
+            body = JSON.parse(body);
+
+            if(body.results == 0)
+            {
+                msg.delete(bot.delete_timeout);
+                return msg.channel.send(`That country was not found in the database.`).then(msg => msg.delete(bot.delete_timeout));
+            }
+
+            let verified_country = body.response[0];
             options.url = 'https://covid-193.p.rapidapi.com/statistics';
             options.qs = { country: verified_country };
 
             Request(options, async (err, res, body) => {
                 if(err) return console.error(err);
+                body = JSON.parse(body);
 
                 msg.channel.send(create_embed(bot, body, verified_country));
             });
@@ -72,8 +81,6 @@ module.exports.help = {
  * @returns {Discord.RichEmbed}
  */
 function create_embed(bot, body, header) {
-    body = JSON.parse(body);
-    
     let time = new Date(Date.parse(body.response[0].time));
 
     let cv_embed = new Discord.RichEmbed()
