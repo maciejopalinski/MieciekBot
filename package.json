@@ -22,6 +22,7 @@
         "opusscript": "0.0.7",
         "random-number-csprng": "^1.0.2",
         "random-puppy": "^1.1.0",
+        "request": "^2.88.2",
         "yt-search": "^1.1.2",
         "ytdl-core": "^2.0.1"
     },
