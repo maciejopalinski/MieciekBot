@@ -7,10 +7,16 @@ const Discord = require("discord.js");
  */
 module.exports.run = async (bot, msg, args) => {
     let messages = args[0] || 100;
+
+    if(bot.game.hangman.has(msg.guild.id))
+    {
+        msg.delete(bot.delete_timeout);
+        return msg.channel.send(`There is a hangman game running at the moment... Please, try again later.`).then(msg => msg.delete(bot.delete_timeout));
+    }
+
     if(messages >= 2 && messages <= 100)
     {
         await msg.delete();
-        bot.game.hangman.delete(msg.guild.id);
         msg.channel.bulkDelete(messages).catch(err => {
             msg.channel.send(err.message).then(msg => msg.delete(bot.delete_timeout));
         });
