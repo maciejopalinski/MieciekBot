@@ -146,6 +146,6 @@ async function collect(bot, channel, word, guess_word, guess_msg, health, maxHea
     })
     .catch(collected => {
         bot.game.hangman.delete(channel.guild.id);
-        guess_msg.edit(`\`\`\`20 seconds passed. Game aborted.\`\`\``);
+        guess_msg.edit(`\`\`\`30 seconds passed. Game aborted.\`\`\``);
     });
 }
