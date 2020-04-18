@@ -15,11 +15,9 @@
     "dependencies": {
         "canvas": "^2.6.1",
         "discord.js": "^11.5.1",
-        "ffmpeg": "0.0.4",
-        "fluent-ffmpeg": "^2.1.2",
         "mongoose": "^5.9.9",
+        "node-opus": "^0.3.3",
         "octonode": "^0.9.5",
-        "opusscript": "0.0.7",
         "random-number-csprng": "^1.0.2",
         "random-puppy": "^1.1.0",
         "request": "^2.88.2",
