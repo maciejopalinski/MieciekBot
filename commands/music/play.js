@@ -36,7 +36,8 @@ module.exports.run = async (bot, msg, args) => {
     let song_info = await YTDL.getInfo(args[0]);
     let song = {
         title: song_info.title,
-        url: song_info.video_url
+        url: song_info.video_url,
+        duration: song_info.length_seconds
     };
 
     if(!server_queue)
@@ -88,6 +89,13 @@ module.exports.play = (bot, msg, song) => {
     }
 
     let dispatcher = server_queue.connection
+    .on("disconnect", (err) => {
+        if(err) console.error(err);
+
+        server_queue.songs = [];
+        server_queue.connection.dispatcher.end();
+        msg.channel.send(this.error.stopped);
+    })
     .playStream(YTDL(song.url, {filter: "audioonly"}))
     .on("end", () => {
         if(!server_queue.loop)
@@ -109,7 +117,7 @@ module.exports.help = {
         "p"
     ],
     args: [
-        "<url>"
+        "<url|search>"
     ],
     permission: "DJ",
     description: "plays music in voice channel"
@@ -117,5 +125,6 @@ module.exports.help = {
 
 module.exports.error = {
     "voice_channel": "You must be in a voice channel to play music.",
-    "not_found": "Video with that name or URL was not found on YouTube."
+    "not_found": "Video with that name or URL was not found on YouTube.",
+    "stopped": "Disconnected from voice channel. Music stopped."
 }
