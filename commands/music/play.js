@@ -92,9 +92,12 @@ module.exports.play = (bot, msg, song) => {
     .on("disconnect", (err) => {
         if(err) console.error(err);
 
-        server_queue.songs = [];
-        server_queue.connection.dispatcher.end();
-        msg.channel.send(this.error.stopped);
+        if(server_queue.connection.dispatcher)
+        {
+            server_queue.songs = [];
+            server_queue.connection.dispatcher.end();
+            msg.channel.send(this.error.stopped);
+        }
     })
     .playStream(YTDL(song.url, {filter: "audioonly"}))
     .on("end", () => {
