@@ -9,7 +9,7 @@ module.exports.run = async (bot, msg, args) => {
     let queue = bot.queue;
     let server_queue = bot.queue.get(msg.guild.id);
 
-    if(server_queue && server_queue.playing)
+    if(server_queue)
     {
         msg.channel.send(this.error.skipped);
         server_queue.connection.dispatcher.end();

@@ -23,6 +23,22 @@ module.exports.run = async (bot, msg, args) => {
         dmchannel.awaitMessages(filter, { maxMatches: 1, time: 15000, errors: ['time'] })
         .then(async collected => {
             let word = collected.first().content.toLowerCase();
+
+            if(word.length < 4 || word.length > 25)
+            {
+                bot.game.hangman.delete(msg.guild.id);
+                await dmchannel.send(`Your sentence should be 4-25 characters long. Game aborted.`);
+                msg.author.deleteDM();
+                return msg.channel.send(`<@${msg.member.id}> canceled. Game aborted.`);
+            }
+            if(!word.match(/^[a-zA-Z\s]+$/g))
+            {
+                bot.game.hangman.delete(msg.guild.id);
+                await dmchannel.send(`Your sentence contains not allowed characters. Game aborted.`);
+                msg.author.deleteDM();
+                return msg.channel.send(`<@${msg.member.id}> canceled. Game aborted.`);
+            }
+
             let guess_word = [];
             for(let char of word)
             {
@@ -69,7 +85,7 @@ module.exports.help = {
  * @param {Number} maxHealth 
  */
 async function collect(bot, channel, word, guess_word, guess_msg, health, maxHealth) {
-    const filter = m => m.content != " " && !m.content.includes(bot.prefix) && !m.author.bot && m.author != guess_msg.sentence_picked_by;
+    const filter = m => m.content != " " && !m.content.includes(bot.prefix) && !m.author.bot ;//&& m.author != guess_msg.sentence_picked_by;
     channel.awaitMessages(filter, { maxMatches: 1, time: 30000, errors: ['time'] })
     .then(async collected => {
         let first = collected.first();
@@ -91,6 +107,12 @@ async function collect(bot, channel, word, guess_word, guess_msg, health, maxHea
                 match_text += ` `;
             }
         });
+
+        if(guess_msg.deleted)
+        {
+            bot.game.hangman.delete(channel.guild.id);
+            return channel.send(`Error occurred. Game aborted.`);
+        }
 
         if(guess_word.every(v => v.mode == "shown"))
         {
@@ -114,6 +136,7 @@ async function collect(bot, channel, word, guess_word, guess_msg, health, maxHea
             {
                 await first.react("🚫");
                 first.delete(300);
+                guess_msg.edit(`\`\`\`Health: ${health-1}/${maxHealth}\n\n${match_text}\`\`\``);
                 collect(bot, channel, word, guess_word, guess_msg, health - 1, maxHealth);
             }
         }
@@ -132,19 +155,24 @@ async function collect(bot, channel, word, guess_word, guess_msg, health, maxHea
             {
                 await first.react("🚫");
                 first.delete(300);
-    
+
                 if(health - 1 <= 0)
                 {
                     bot.game.hangman.delete(channel.guild.id);
                     return guess_msg.edit(`\`\`\`Health: 0/${maxHealth}\n\n${word}\nYou lose!\`\`\``);
                 }
-    
+
                 guess_msg.edit(`\`\`\`Health: ${health-1}/${maxHealth}\n\n${match_text}\`\`\``);
                 collect(bot, channel, word, guess_word, guess_msg, health - 1, maxHealth);
             }
         }
     })
     .catch(collected => {
+        if(guess_msg.deleted)
+        {
+            bot.game.hangman.delete(channel.guild.id);
+            return channel.send(`Error occurred. Game aborted.`);
+        }
         bot.game.hangman.delete(channel.guild.id);
         guess_msg.edit(`\`\`\`30 seconds passed. Game aborted.\`\`\``);
     });
