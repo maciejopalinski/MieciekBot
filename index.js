@@ -62,7 +62,7 @@ else
     console.warn(`[WARN] Commands not found!\n`);
 }
 
-bot.on('ready', async () => {
+bot.on('ready', () => {
     let status = [
         {
             status: "online",
@@ -170,7 +170,7 @@ bot.on('guildMemberRemove', member => {
     }, err => {
         if(err) console.error(err);
     })
-})
+});
 
 bot.on('message', async msg => {
     if (msg.author.bot) return;
