@@ -9,7 +9,7 @@ const Request = require("request");
 module.exports.run = async (bot, msg, args) => {
     let country = new String();
     if(!args[0] || args[0] == "world" || args[0] == "global" || args[0] == "all") country = "all";
-    else country = args[0];
+    else country = args.join(" ");
 
     var options = {
         method: 'GET',
@@ -65,7 +65,7 @@ module.exports.help = {
     name: "coronavirus",
     aliases: [
         "cvirus",
-        "cvstat"
+        "cvstats"
     ],
     args: [
         "[country|world|global|all]"
