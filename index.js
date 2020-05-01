@@ -68,7 +68,14 @@ bot.on('ready', () => {
             status: "online",
             game: {
                 type: "LISTENING",
-                name: "Metallica"
+                name: "Megadeth"
+            }
+        },
+        {
+            status: "online",
+            game: {
+                type: "LISTENING",
+                name: "Slipknot"
             }
         },
         {
@@ -76,6 +83,13 @@ bot.on('ready', () => {
             game: {
                 type: "PLAYING",
                 name: "Visual Studio Code"
+            }
+        },
+        {
+            status: "online",
+            game: {
+                type: "PLAYING",
+                name: `on ${bot.guilds.size} ${bot.guilds.size > 1 ? "servers" : "server"}`
             }
         }
     ];
