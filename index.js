@@ -62,13 +62,20 @@ else
     console.warn(`[WARN] Commands not found!\n`);
 }
 
-bot.on('ready', async () => {
+bot.on('ready', () => {
     let status = [
         {
             status: "online",
             game: {
                 type: "LISTENING",
-                name: "Metallica"
+                name: "Megadeth"
+            }
+        },
+        {
+            status: "online",
+            game: {
+                type: "LISTENING",
+                name: "Slipknot"
             }
         },
         {
@@ -77,6 +84,13 @@ bot.on('ready', async () => {
                 type: "PLAYING",
                 name: "Visual Studio Code"
             }
+        },
+        {
+            status: "online",
+            game: {
+                type: "PLAYING",
+                name: `on ${bot.guilds.size} ${bot.guilds.size > 1 ? "servers" : "server"}`
+            }
         }
     ];
 
@@ -84,6 +98,37 @@ bot.on('ready', async () => {
         let index = Math.floor(Math.random() * status.length);
         bot.user.setPresence(status[index]);
     }, 5000);
+
+    bot.guilds.forEach(guild => {
+        Servers.findOne({
+            serverID: guild.id
+        }, (err, res) => {
+            if(err) console.error(err);
+
+            if(!res)
+            {
+                let custom_guild = guild;
+                guild.members = new Discord.Collection();
+                bot.emit('guildCreate', custom_guild);
+                console.warn(`[WARN] Added new guild to the database.\nGuildID: ${guild.id}`);
+            }
+        });
+
+        guild.members.forEach(member => {
+            Users.findOne({
+                serverID: guild.id,
+                userID: member.id
+            }, (err, res) => {
+                if(err) console.error(err);
+
+                if(!res && !member.user.bot)
+                {
+                    bot.emit('guildMemberAdd', member);
+                    console.warn(`[WARN] Added new guild member to the database.\nGuildID: ${guild.id}\nMemberID: ${member.id}`)
+                }
+            })
+        });
+    });
 
     console.info(`[INFO] Running...`);
 });
@@ -121,9 +166,10 @@ bot.on('guildCreate', guild => {
         if(err) console.error(err);
     });
 
-    guild.owner.send(`Hi! I just configured your server. Please, set up all required permissions, roles and other useful properties. Have a good time!`).catch(err => {
-        if (err) guild.leave();
-    });
+    let owner = bot.users.get(guild.ownerID);
+    if(!owner) guild.leave();
+    
+    owner.send(`Hi! I just configured your '${guild.name}' server. Please, set up all required permissions, roles and other useful properties. Have a good time!`);
 });
 
 bot.on('guildDelete', guild => {
@@ -170,7 +216,7 @@ bot.on('guildMemberRemove', member => {
     }, err => {
         if(err) console.error(err);
     })
-})
+});
 
 bot.on('message', async msg => {
     if (msg.author.bot) return;
@@ -203,6 +249,12 @@ bot.on('message', async msg => {
             serverID: msg.guild.id
         }, (err, res) => {
             if (err) console.error(err);
+
+            if (!res)
+            {
+                msg.channel.send(`Oops! I did not properly configure your server... Please, invite me once again. https://discordapp.com/oauth2/authorize?client_id=${bot.user.id}&scope=bot&permissions=8`);
+                return msg.guild.leave();
+            }
 
             let member = msg.member.roles;
             let permission = {

@@ -58,6 +58,18 @@ module.exports.run = async (bot, msg, args) => {
 
         try {
             let connection = await voice_channel.join();
+            connection.on("disconnect", (err) => {
+                if(err) console.error(err);
+        
+                let server_queue = bot.queue.get(msg.guild.id);
+                if(server_queue.connection.dispatcher)
+                {
+                    server_queue.songs = [];
+                    server_queue.connection.dispatcher.end();
+                    msg.channel.send(this.error.stopped);
+                }
+            });
+
             server_queue_constructor.connection = connection;
             this.play(bot, msg, server_queue_constructor.songs[0]);
         } catch(err) {
@@ -68,6 +80,12 @@ module.exports.run = async (bot, msg, args) => {
     }
     else
     {
+        if(server_queue.songs.length >= 24)
+        {
+            msg.delete(bot.delete_timeout);
+            return msg.channel.send(this.error.queue_length).then(msg => msg.delete(bot.delete_timeout));
+        }
+        
         server_queue.songs.push(song);
         return msg.channel.send(`**${song.title}** has been added to the queue.`);
     }
@@ -89,16 +107,6 @@ module.exports.play = (bot, msg, song) => {
     }
 
     let dispatcher = server_queue.connection
-    .on("disconnect", (err) => {
-        if(err) console.error(err);
-
-        if(server_queue.connection.dispatcher)
-        {
-            server_queue.songs = [];
-            server_queue.connection.dispatcher.end();
-            msg.channel.send(this.error.stopped);
-        }
-    })
     .playStream(YTDL(song.url, {filter: "audioonly"}))
     .on("end", () => {
         if(!server_queue.loop)
@@ -129,5 +137,6 @@ module.exports.help = {
 module.exports.error = {
     "voice_channel": "You must be in a voice channel to play music.",
     "not_found": "Video with that name or URL was not found on YouTube.",
-    "stopped": "Disconnected from voice channel. Music stopped."
+    "stopped": "Disconnected from voice channel. Music stopped.",
+    "queue_length": "Cannot add new tracks to the music queue. Queue can be up to 24 tracks long."
 }
