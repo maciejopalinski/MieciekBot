@@ -289,6 +289,11 @@ bot.on('message', async msg => {
                         name: "OWNER",
                         id: res.roles.owner,
                         allowed_roles: ["USER", "DJ", "ADMIN", "OWNER"]
+                    },
+                    {
+                        name: "BOT_OWNER",
+                        id: "510925936393322497",
+                        allowed_roles: ["USER", "DJ", "ADMIN", "OWNER", "BOT_OWNER"]
                     }
                 ]
             };
