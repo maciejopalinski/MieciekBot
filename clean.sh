@@ -1,1 +1,1 @@
-rm logs/*.log tmp/*.zip
+rm logs/*.log

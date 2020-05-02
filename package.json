@@ -1,19 +1,18 @@
 {
     "name": "mieciekbot",
-    "version": "1.12.0",
+    "version": "1.11.2",
     "description": "NodeJS Discord Bot",
     "repository": {
         "url": "https://github.com/PoProstuMieciek/MieciekBot"
     },
     "main": "index.js",
     "scripts": {
-        "start": "node index.js > logs/mieciekbot-`date +%Y%m%d%H%M%S`.log",
+        "start": "node index.js",
         "start:dev": "node -r dotenv/config index.js > logs/mieciekbot-`date +%Y%m%d%H%M%S`.log",
         "debug": "node -r dotenv/config --nolazy --inspect-brk=9229 index.js > logs/mieciekbot-`date +%Y%m%d%H%M%S`.log"
     },
     "author": "PoProstuMieciek",
     "dependencies": {
-        "archiver": "^4.0.1",
         "canvas": "^2.6.1",
         "discord.js": "^11.5.1",
         "mongoose": "^5.9.9",
