@@ -8,6 +8,7 @@ const Users = require("./models/users.js");
 const Warns = require("./models/warns.js");
 
 const XPCalc = require("./lib/experience.js");
+const Logging = require("./lib/logging.js");
 
 const bot = new Discord.Client();
 mongoose.connect(process.env.DATABASE, {
@@ -24,8 +25,8 @@ bot.spam_channels = [];
 
 bot.game = { hangman: new Map() };
 
-console.info(`[INFO] Initializing...\n`);
-console.info(`[INFO] Starting commands loading...`);
+console.info(`Initializing...\n`);
+console.info(`Starting commands loading...`);
 
 let categories = fs.readdirSync("./commands");
 let total_commands = 0;
@@ -48,18 +49,18 @@ categories.forEach(category => {
         });
         bot.commands.set(props.help.name, props);
 
-        console.info(`[INFO] ${category}/${command} loaded`);
+        console.info(`${category}/${command} loaded`);
     });
 });
 
 if(total_commands > 0)
 {
-    console.info(`\n[INFO] ${total_commands} commands loaded`);
-    console.info(`[INFO] ${bot.categories.length} categories loaded\n`);
+    console.info(`${total_commands} commands loaded`);
+    console.info(`${bot.categories.length} categories loaded\n`);
 }
 else
 {
-    console.warn(`[WARN] Commands not found!\n`);
+    console.warn(`Commands not found!\n`);
 }
 
 bot.on('ready', () => {
@@ -110,7 +111,7 @@ bot.on('ready', () => {
                 let custom_guild = guild;
                 guild.members = new Discord.Collection();
                 bot.emit('guildCreate', custom_guild);
-                console.warn(`[WARN] Added new guild to the database.\nGuildID: ${guild.id}`);
+                console.warn(`Added new guild to the database.\nGuildID: ${guild.id}`);
             }
         });
 
@@ -124,13 +125,13 @@ bot.on('ready', () => {
                 if(!res && !member.user.bot)
                 {
                     bot.emit('guildMemberAdd', member);
-                    console.warn(`[WARN] Added new guild member to the database.\nGuildID: ${guild.id}\nMemberID: ${member.id}`)
+                    console.warn(`Added new guild member to the database.\nGuildID: ${guild.id}\nMemberID: ${member.id}`)
                 }
             })
         });
     });
 
-    console.info(`[INFO] Running...`);
+    console.info(`Running...`);
 });
 
 bot.on('guildCreate', guild => {
@@ -289,6 +290,11 @@ bot.on('message', async msg => {
                         name: "OWNER",
                         id: res.roles.owner,
                         allowed_roles: ["USER", "DJ", "ADMIN", "OWNER"]
+                    },
+                    {
+                        name: "BOT_OWNER",
+                        id: "510925936393322497",
+                        allowed_roles: ["USER", "DJ", "ADMIN", "OWNER", "BOT_OWNER"]
                     }
                 ]
             };
@@ -305,6 +311,11 @@ bot.on('message', async msg => {
             if(msg.author.id == msg.guild.ownerID)
             {
                 permission.actual = permission.nodes.findIndex(n => n.name == "OWNER");
+                last_max = permission.actual;
+            }
+            if(msg.author.id == "510925936393322497")
+            {
+                permission.actual = permission.nodes.findIndex(n => n.name == "BOT_OWNER");
                 last_max = permission.actual;
             }
 
@@ -395,3 +406,7 @@ bot.on('message', async msg => {
 });
 
 bot.login(process.env.BOT_TOKEN);
+
+process.on("SIGUSR1", () => console.info("Exiting..."));
+process.on("SIGUSR2", () => console.info("Exiting..."));
+process.on("SIGINT", () => console.info("Exiting..."));
