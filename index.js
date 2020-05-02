@@ -401,3 +401,7 @@ bot.on('message', async msg => {
 });
 
 bot.login(process.env.BOT_TOKEN);
+
+process.on("SIGUSR1", () => console.info("Exiting..."));
+process.on("SIGUSR2", () => console.info("Exiting..."));
+process.on("SIGINT", () => console.info("Exiting..."));
