@@ -46,7 +46,7 @@ module.exports.run = async (bot, msg, args) => {
             for (let i = 1; i <= 10; i++)
             {
                 let elem = res[i];
-                rank_embed.addField(`${index}. @${msg.guild.members.get(elem.userID).user.tag}`, `${elem.xp} XP (Level ${elem.level})`);
+                rank_embed.addField(`${i}. @${msg.guild.members.get(elem.userID).user.tag}`, `${elem.xp} XP (Level ${elem.level})`);
             }
         }
 
