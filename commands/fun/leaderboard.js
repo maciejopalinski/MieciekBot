@@ -56,7 +56,9 @@ module.exports.run = async (bot, msg, args) => {
 
 module.exports.help = {
     name: "leaderboard",
-    aliases: [],
+    aliases: [
+        "rank"
+    ],
     args: [],
     permission: "USER",
     description: "displays server activity leaderboard"
