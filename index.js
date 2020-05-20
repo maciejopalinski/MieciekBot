@@ -7,8 +7,8 @@ const Servers = require("./models/servers.js");
 const Users = require("./models/users.js");
 const Warns = require("./models/warns.js");
 
-const XPCalc = require("./lib/experience.js");
-const Logging = require("./lib/logging.js");
+const XPCalc = require("./util/experience.js");
+const Logging = require("./util/logging.js");
 
 const bot = new Discord.Client();
 mongoose.connect(process.env.DATABASE, {

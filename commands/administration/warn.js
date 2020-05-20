@@ -19,7 +19,7 @@ module.exports.run = async (bot, msg, args) => {
 
     if(user)
     {
-        if(user.id == msg.author.id)
+        if(user.id == msg.author.id || user.user.bot)
         {
             msg.delete(bot.delete_timeout);
             return msg.channel.send(this.error.not_warnable).then(msg => msg.delete(bot.delete_timeout));

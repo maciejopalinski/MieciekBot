@@ -7,7 +7,7 @@ Canvas.registerFont("assets/fonts/AldotheApache.ttf", {family: "AldoTheApache"})
 
 const Users = require("../../models/users.js");
 
-const XPCalc = require("../../lib/experience.js");
+const XPCalc = require("../../util/experience.js");
 
 mongoose.connect(process.env.DATABASE, {
     useNewUrlParser: true,
@@ -21,6 +21,12 @@ mongoose.connect(process.env.DATABASE, {
  */
 module.exports.run = async (bot, msg, args) => {
     let user = msg.mentions.members.first() || msg.member;
+    
+    if(user.user.bot)
+    {
+        msg.delete(bot.delete_timeout);
+        return msg.channel.send(this.error.bot).then(msg => msg.delete(bot.delete_timeout));
+    }
 
     Users.findOne({
         serverID: msg.guild.id,
@@ -106,3 +112,7 @@ module.exports.help = {
     permission: "USER",
     description: "displays user experience points"
 }
+
+module.exports.error = {
+    "bot": "This user is a bot. It cannot collect XP points."
+};
