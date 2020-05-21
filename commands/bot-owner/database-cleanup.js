@@ -1,5 +1,6 @@
 const Discord = require("discord.js");
 const Users = require("../../models/users.js");
+const Servers = require("../../models/servers.js");
 
 /**
  * @param {Discord.Client} bot 
@@ -12,11 +13,11 @@ module.exports.run = async (bot, msg, args) => {
     await Users.find({}, (err, res) => {
         if (err) return console.error(err);
 
-        let removed = 0;
+        let bots = 0;
         res.forEach(val => {
             let user = bot.users.get(val.userID);
 
-            if(user.bot)
+            if(user && user.bot)
             {
                 console.debug(`Deleting bot... (UNM:${user.username}, UID:${user.id}, SID:${val.serverID})`);
 
@@ -26,12 +27,30 @@ module.exports.run = async (bot, msg, args) => {
                 }, err => {
                     if(err) return console.error(err);
                 });
-                removed++;
+                bots++;
             }
         });
 
-        msg.channel.send(`Database cleanup finished. Removed ${removed} bots from database.`)
-        console.info(`Database cleanup finished. Removed ${removed} bots from database.`);
+        Servers.find({}, (err, res) => {
+            if (err) return console.error(err);
+
+            let servers = 0;
+            res.forEach(val => {
+                let server = bot.guilds.get(val.serverID) || undefined;
+
+                if(!server)
+                {
+                    console.debug(`Deleting guild... (GID:${val.serverID})`);
+
+                    bot.emit("guildDelete", {id: val.serverID});
+                    servers++;
+                }
+            });
+
+            let info = `Database cleanup finished. Removed ${bots} bots and ${servers} servers from database.`;
+            msg.channel.send(info);
+            console.info(info);
+        });
     });
 }
 
