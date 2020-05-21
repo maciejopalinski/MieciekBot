@@ -396,7 +396,7 @@ bot.on('message', async msg => {
                 if(res.xp >= XPCalc.getXp(res.level + 1))
                 {
                     res.level += 1;
-                    msg.channel.send(`${msg.member.displayName} advanced to level ${res.level}!`);
+                    msg.channel.send(`<@${msg.member.id}> advanced to level ${res.level}!`);
                 }
 
                 res.save();
