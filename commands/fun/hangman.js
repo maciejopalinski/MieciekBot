@@ -85,7 +85,7 @@ module.exports.help = {
  * @param {Number} maxHealth 
  */
 async function collect(bot, channel, word, guess_word, guess_msg, health, maxHealth) {
-    const filter = m => m.content != " " && !m.content.includes(bot.prefix) && !m.author.bot ;//&& m.author != guess_msg.sentence_picked_by;
+    const filter = m => m.content != " " && !m.content.includes(bot.prefix) && !m.author.bot && m.author != guess_msg.sentence_picked_by;
     channel.awaitMessages(filter, { maxMatches: 1, time: 30000, errors: ['time'] })
     .then(async collected => {
         let first = collected.first();
