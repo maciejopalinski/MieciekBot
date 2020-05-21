@@ -25,7 +25,7 @@ bot.spam_channels = [];
 
 bot.game = { hangman: new Map() };
 
-console.info(`Initializing...\n`);
+console.info(`Initializing MieciekBot ${package_info.version}...\n`);
 console.info(`Starting commands loading...`);
 
 let categories = fs.readdirSync("./commands");
