@@ -13,15 +13,16 @@ module.exports.run = async (bot, msg, args) => {
     {
         if(server_queue.volume != 500)
         {
+            server_queue.last_volume = server_queue.volume;
             server_queue.volume = 500;
             server_queue.connection.dispatcher.setVolumeLogarithmic(500 / 100);
             msg.channel.send(this.error.turn_on);
         }
         else
         {
-            server_queue.volume = 100;
-            server_queue.connection.dispatcher.setVolumeLogarithmic(100 / 100);
-            msg.channel.send(this.error.turn_off);  
+            server_queue.volume = server_queue.last_volume;
+            server_queue.connection.dispatcher.setVolumeLogarithmic(server_queue.last_volume / 100);
+            msg.channel.send(this.error.turn_off + ` Volume: ${server_queue.volume}.`);
         }
     }
     else

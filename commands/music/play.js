@@ -48,6 +48,7 @@ module.exports.run = async (bot, msg, args) => {
             connection: null,
             songs: [],
             volume: 100,
+            last_volume: 100,
             loop: false,
             playing: true
         };
