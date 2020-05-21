@@ -16,15 +16,19 @@ mongoose.connect(process.env.DATABASE, {
 module.exports.run = async (bot, msg, args) => {
     if(!args[0])
     {
+        let spam_channels_info = "";
+        if(bot.spam_channels.length >= 1) spam_channels_info = `[<#${bot.spam_channels.join(">, <#")}>]`;
+        else spam_channels_info = `[]`;
+
         let help = new Discord.RichEmbed()
         .setTitle(`Settings:`)
         .addField(`prefix`, `${bot.prefix}`)
         .addField(`delete_timeout`, `${bot.delete_timeout}`)
-        .addField(`spam_channels`, `["${bot.spam_channels.join("\", \"")}"]`)
+        .addField(`spam_channels`, spam_channels_info)
         .setFooter(`Powered by MieciekBot ${bot.settings.version}`, bot.settings.iconURL);
 
         bot.settings.role.nodes.forEach(role => {
-            if(role.name != "@everyone") help.addField(`role:${role.name.toLowerCase()}`, `<@&${role.id}> (${role.id})`);
+            if(role.name != "@everyone" && role.name != "BOT_OWNER") help.addField(`role:${role.name.toLowerCase()}`, `<@&${role.id}> (${role.id})`);
         });
 
         msg.channel.send(help);
@@ -86,7 +90,8 @@ module.exports.run = async (bot, msg, args) => {
                     settings.spam_channels = settings.spam_channels.filter(e => e != msg.channel.id);
                 }
 
-                info = `["${settings.spam_channels.join("\", \"")}"]`;
+                if(settings.spam_channels.length >= 1) info = `[<#${settings.spam_channels.join(">, <#")}>]`;
+                else info = `[]`;
             }
 
             settings.save();
