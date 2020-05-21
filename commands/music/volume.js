@@ -9,17 +9,19 @@ module.exports.run = async (bot, msg, args) => {
     let queue = bot.queue;
     let server_queue = bot.queue.get(msg.guild.id);
 
-    if(!args[0] || args[0] < 0 || args[0] > 200)
+    let new_volume = parseInt(args[0]) || undefined;
+    if(!new_volume || new_volume < 1 || new_volume > 200)
     {
         msg.delete(bot.delete_timeout);
-        return msg.channel.send(this.error.value).then(msg => msg.delete(bot.delete_timeout));
+        return msg.channel.send(this.error.value + ` Volume: ${server_queue.volume}.`).then(msg => msg.delete(bot.delete_timeout));
     }
 
     if(server_queue && server_queue.playing)
     {
-        server_queue.volume = args[0];
-        server_queue.connection.dispatcher.setVolumeLogarithmic(args[0] / 100);
-        msg.channel.send(this.error.done + args[0] + ".");
+        server_queue.last_volume = server_queue.volume;
+        server_queue.volume = new_volume;
+        server_queue.connection.dispatcher.setVolumeLogarithmic(new_volume / 100);
+        msg.channel.send(this.error.done + new_volume + ".");
     }
     else
     {
@@ -34,7 +36,7 @@ module.exports.help = {
         "vol"
     ],
     args: [
-        "<0-200>"
+        "[0-200]"
     ],
     permission: "DJ",
     description: "sets volume to given value (100 - normal)."
@@ -42,6 +44,6 @@ module.exports.help = {
 
 module.exports.error = {
     "music_play": "There must be a song in queue.",
-    "value": "Please, enter number between 0 - 200.",
+    "value": "Please, enter integer between 1 - 200.",
     "done": "Successfully set the volume to "
 }
