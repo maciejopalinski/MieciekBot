@@ -48,7 +48,7 @@ module.exports.run = async (bot, msg, args) => {
         }
 
         let level = res.level;
-        let xp = res.xp;
+        let xp = parseFloat(res.xp.toFixed(2));
         
         let size = { width: 900, height: 300 };
         let level_graphics = Canvas.createCanvas(size.width, size.height);

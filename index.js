@@ -1,6 +1,7 @@
 const Discord = require("discord.js");
 const fs = require("fs");
 const mongoose = require("mongoose");
+const EmojiRegex = require("emoji-regex");
 const package_info = require("./package.json");
 
 const Servers = require("./models/servers.js");
@@ -170,7 +171,9 @@ bot.on('guildCreate', guild => {
     let owner = bot.users.get(guild.ownerID);
     if(!owner) guild.leave();
     
-    owner.send(`Hi! I just configured your '${guild.name}' server. Please, set up all required permissions, roles and other useful properties. Have a good time!`);
+    owner.send(`Hi! I just configured your '${guild.name}' server. Please, set up all required permissions, roles and other useful properties. Have a good time!`).catch(err => {
+        if(err) return console.error(err);
+    });
 });
 
 bot.on('guildDelete', guild => {
@@ -391,7 +394,32 @@ bot.on('message', async msg => {
             }
             else
             {
-                res.xp += 1;
+                const regex = EmojiRegex();
+
+                // remove spaces, @everyone, @here, custom discord emojis and unicode emojis
+                msg.content = msg.content
+                .replace(/\s/g, "")
+                .replace(/@everyone/g, "")
+                .replace(/@here/g, "")
+                .replace(/<:[A-Za-z0-9_]+:[0-9]+>/g, "")
+                .replace(regex, "");
+
+                // <@!> - user
+                // <#> - channel
+                // <@&> - role
+                // remove channel, role and user mentions
+                let length = msg.content.length;
+                length -= msg.mentions.channels.size * 21;
+                length -= msg.mentions.roles.size * 22;
+                length -= msg.mentions.users.size * 22;
+
+                let add_exp = length <= 3 ? 0 : parseFloat((length/20).toFixed(2));
+                if(add_exp > 2) add_exp = 2;
+
+                res.xp += add_exp;
+
+                console.debug(length);
+                console.debug(`XP: ${add_exp}`);
 
                 if(res.xp >= XPCalc.getXp(res.level + 1))
                 {
@@ -406,7 +434,3 @@ bot.on('message', async msg => {
 });
 
 bot.login(process.env.BOT_TOKEN);
-
-process.on("SIGUSR1", () => console.info("Exiting..."));
-process.on("SIGUSR2", () => console.info("Exiting..."));
-process.on("SIGINT", () => console.info("Exiting..."));
