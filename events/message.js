@@ -10,7 +10,7 @@ const EmojiRegex = require("emoji-regex");
 const package_info = require("../package.json");
 const Servers = require("../models/servers.js");
 const Users = require("../models/users.js");
-const XPCalc = require("./util/experience.js");
+const XPCalc = require("../util/experience.js");
 
 bot.on('message', async msg => {
     if (msg.author.bot) return;
