@@ -1,6 +1,6 @@
 const Discord = require("discord.js");
 const YTDL = require("ytdl-core");
-const Search = require("yt-search");
+const Search = require("youtube-search");
 
 /**
  * @param {Discord.Client} bot 
@@ -21,10 +21,14 @@ module.exports.run = async (bot, msg, args) => {
     let validate = YTDL.validateURL(args[0]);
     if(!validate)
     {
-        let search_results = await Search(args.join(" "));
-        if(search_results.videos.length > 0)
+        let search_options = {
+            maxResults: 10,
+            key: process.env.GOOGLE_API_KEY
+        };
+        let search_results = await Search(args.join(" "), search_options);
+        if(search_results.results.length > 0)
         {
-            args[0] = search_results.videos[0].url;
+            args[0] = search_results.results.find(val => val.kind == "youtube#video").link;
         }
         else
         {
