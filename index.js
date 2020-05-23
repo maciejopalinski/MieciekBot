@@ -418,9 +418,6 @@ bot.on('message', async msg => {
 
                 res.xp += add_exp;
 
-                console.debug(length);
-                console.debug(`XP: ${add_exp}`);
-
                 if(res.xp >= XPCalc.getXp(res.level + 1))
                 {
                     res.level += 1;
