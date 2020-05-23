@@ -412,14 +412,12 @@ bot.on('message', async msg => {
                 length -= msg.mentions.channels.size * 21;
                 length -= msg.mentions.roles.size * 22;
                 length -= msg.mentions.users.size * 22;
+                length += msg.attachments.size >= 1 ? 40 : 0;
 
                 let add_exp = length <= 3 ? 0 : parseFloat((length/20).toFixed(2));
                 if(add_exp > 2) add_exp = 2;
 
                 res.xp += add_exp;
-
-                console.debug(length);
-                console.debug(`XP: ${add_exp}`);
 
                 if(res.xp >= XPCalc.getXp(res.level + 1))
                 {
