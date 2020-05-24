@@ -21,6 +21,9 @@ module.exports.run = async (bot, msg, args) => {
     let validate = YTDL.validateURL(args[0]);
     if(!validate)
     {
+        /**
+         * @type {Search.YouTubeSearchOptions}
+         */
         let search_options = {
             maxResults: 10,
             key: process.env.GOOGLE_API_KEY
@@ -29,6 +32,11 @@ module.exports.run = async (bot, msg, args) => {
         if(search_results.results.length > 0)
         {
             args[0] = search_results.results.find(val => val.kind == "youtube#video").link;
+            if(!YTDL.validateURL(args[0]))
+            {
+                msg.delete(bot.delete_timeout);
+                return msg.channel.send(this.error.not_found).then(msg => msg.delete(bot.delete_timeout));
+            }
         }
         else
         {
