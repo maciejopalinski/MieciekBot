@@ -19,11 +19,11 @@ module.exports.run = async (bot, msg, args) => {
 
             if(user && user.bot)
             {
-                console.debug(`Deleting bot... (UNM:${user.username}, UID:${user.id}, SID:${val.serverID})`);
+                console.debug(`Deleting bot... (UID:${val.userID}, SID:${val.serverID})`);
 
                 Users.deleteOne({
                     serverID: val.serverID,
-                    userID: user.id
+                    userID: val.userID
                 }, err => {
                     if(err) return console.error(err);
                 });

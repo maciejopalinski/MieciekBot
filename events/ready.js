@@ -58,7 +58,7 @@ bot.on('ready', () => {
                 let custom_guild = guild;
                 guild.members = new Discord.Collection();
                 bot.emit('guildCreate', custom_guild);
-                console.warn(`Added new guild to the database.\nGuildID: ${guild.id}`);
+                console.debug(`Adding new guild to the database... (GID:${guild.id})`);
             }
         });
 
@@ -72,9 +72,9 @@ bot.on('ready', () => {
                 if(!res && !member.user.bot)
                 {
                     bot.emit('guildMemberAdd', member);
-                    console.warn(`Added new guild member to the database.\nGuildID: ${guild.id}\nMemberID: ${member.id}`)
+                    console.debug(`Adding new guild member to the database... (GID:${guild.id} UID:${member.id})`);
                 }
-            })
+            });
         });
     });
 
