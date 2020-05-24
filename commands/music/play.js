@@ -1,6 +1,6 @@
 const Discord = require("discord.js");
 const YTDL = require("ytdl-core");
-const Search = require("yt-search");
+const Search = require("youtube-search");
 
 /**
  * @param {Discord.Client} bot 
@@ -21,10 +21,22 @@ module.exports.run = async (bot, msg, args) => {
     let validate = YTDL.validateURL(args[0]);
     if(!validate)
     {
-        let search_results = await Search(args.join(" "));
-        if(search_results.videos.length > 0)
+        /**
+         * @type {Search.YouTubeSearchOptions}
+         */
+        let search_options = {
+            maxResults: 10,
+            key: process.env.GOOGLE_API_KEY
+        };
+        let search_results = await Search(args.join(" "), search_options);
+        if(search_results.results.length > 0)
         {
-            args[0] = search_results.videos[0].url;
+            args[0] = search_results.results.find(val => val.kind == "youtube#video").link;
+            if(!YTDL.validateURL(args[0]))
+            {
+                msg.delete(bot.delete_timeout);
+                return msg.channel.send(this.error.not_found).then(msg => msg.delete(bot.delete_timeout));
+            }
         }
         else
         {
@@ -81,7 +93,7 @@ module.exports.run = async (bot, msg, args) => {
     }
     else
     {
-        if(server_queue.songs.length >= 24)
+        if(server_queue.songs.length >= 20)
         {
             msg.delete(bot.delete_timeout);
             return msg.channel.send(this.error.queue_length).then(msg => msg.delete(bot.delete_timeout));
@@ -139,5 +151,5 @@ module.exports.error = {
     "voice_channel": "You must be in a voice channel to play music.",
     "not_found": "Video with that name or URL was not found on YouTube.",
     "stopped": "Disconnected from voice channel. Music stopped.",
-    "queue_length": "Cannot add new tracks to the music queue. Queue can be up to 24 tracks long."
+    "queue_length": "Cannot add new tracks to the music queue. Queue can be up to 20 tracks long."
 }
