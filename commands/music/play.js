@@ -93,7 +93,7 @@ module.exports.run = async (bot, msg, args) => {
     }
     else
     {
-        if(server_queue.songs.length >= 24)
+        if(server_queue.songs.length >= 20)
         {
             msg.delete(bot.delete_timeout);
             return msg.channel.send(this.error.queue_length).then(msg => msg.delete(bot.delete_timeout));
@@ -151,5 +151,5 @@ module.exports.error = {
     "voice_channel": "You must be in a voice channel to play music.",
     "not_found": "Video with that name or URL was not found on YouTube.",
     "stopped": "Disconnected from voice channel. Music stopped.",
-    "queue_length": "Cannot add new tracks to the music queue. Queue can be up to 24 tracks long."
+    "queue_length": "Cannot add new tracks to the music queue. Queue can be up to 20 tracks long."
 }
