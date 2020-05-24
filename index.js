@@ -3,7 +3,6 @@ const Logging = require("./util/logging.js");
 const Loader = require("./util/loader.js");
 
 const bot = new Discord.Client();
-module.exports = { bot: bot };
 
 bot.prefix = "!";
 bot.commands = new Discord.Collection();
@@ -12,6 +11,8 @@ bot.queue = new Map();
 bot.categories = [];
 bot.spam_channels = [];
 bot.game = { hangman: new Map() };
+
+module.exports = { bot: bot };
 
 Loader.init();
 Loader.events(bot);
