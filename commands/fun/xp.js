@@ -48,7 +48,7 @@ module.exports.run = async (bot, msg, args) => {
         }
 
         let level = res.level;
-        let xp = parseFloat(res.xp.toFixed(2));
+        let xp = res.xp;
         
         let size = { width: 900, height: 300 };
         let level_graphics = Canvas.createCanvas(size.width, size.height);
@@ -77,7 +77,7 @@ module.exports.run = async (bot, msg, args) => {
         // xp text
         ctx.font = "35px Bebas-Regular";
         ctx.fillStyle = "rgb(255, 255, 255)";
-        if(dest >= 1000) { text = `${xp / 1000}K / ${dest / 1000}K XP`; } else { text = `${xp} / ${dest} XP`; }
+        if(dest >= 1000) { text = `${(xp / 1000).toFixed(3)}K / ${(dest / 1000).toFixed(3)}K XP`; } else { text = `${xp.toFixed(2)} / ${dest.toFixed(2)} XP`; }
         let text_box = ctx.measureText(text);
 
         ctx.fillText(text, 860-text_box.width, 192);
