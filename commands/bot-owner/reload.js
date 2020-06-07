@@ -6,6 +6,8 @@ const Discord = require("discord.js");
  * @param {Array<String>} args 
  */
 module.exports.run = async (bot, msg, args) => {
+    let commands_reloaded = 0;
+
     Object.keys(require.cache).forEach(value => {
         if(!value.includes("node_modules"))
         {
@@ -15,9 +17,12 @@ module.exports.run = async (bot, msg, args) => {
                 delete require.cache[value];
                 const props = require(value);
                 bot.commands.set(props.help.name, props);
+                commands_reloaded++;
             }
         }
     });
+
+    console.info(`${commands_reloaded} commands reloaded`);
 }
 
 module.exports.help = {
