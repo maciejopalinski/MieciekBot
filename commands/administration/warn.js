@@ -33,9 +33,9 @@ module.exports.run = async (bot, msg, args) => {
         .setFooter(`Powered by MieciekBot ${bot.settings.version}`, bot.settings.iconURL);
         
         let info_warn = new Discord.RichEmbed()
-        .setTitle(`${user.displayName} has been warned!`)
+        .setTitle(`${user.user.username} has been warned!`)
         .setThumbnail(msg.guild.iconURL)
-        .addField(`Warned by:`, msg.author.username)
+        .addField(`Warned by:`, `<@${msg.author.id}>`)
         .addField(`Reason:`, reason)
         .setFooter(`Powered by MieciekBot ${bot.settings.version}`, bot.settings.iconURL);
 

@@ -35,9 +35,9 @@ module.exports.run = async (bot, msg, args) => {
     .setFooter(`Powered by MieciekBot ${bot.settings.version}`, bot.settings.iconURL);
         
     let info_mute = new Discord.RichEmbed()
-    .setTitle(`${user.displayName} has been unmuted!`)
+    .setTitle(`${user.user.username} has been unmuted!`)
     .setThumbnail(msg.guild.iconURL)
-    .addField(`Unmuted by:`, msg.author.username)
+    .addField(`Unmuted by:`, `<@${msg.author.username}>`)
     .setFooter(`Powered by MieciekBot ${bot.settings.version}`, bot.settings.iconURL);
 
     msg.delete();
