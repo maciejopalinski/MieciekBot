@@ -76,6 +76,24 @@ bot.on('ready', () => {
                 }
             });
         });
+
+        Users.find({
+            serverID: guild.id
+        }, (err, res) => {
+            let guild_users = guild.members.filter(member => !member.user.bot);
+            res.forEach(member => {
+                if(!guild_users.delete(member.userID))
+                {
+                    bot.emit('guildMemberRemove', {
+                        id: member.userID,
+                        guild: {
+                            id: guild.id
+                        }
+                    });
+                    console.debug(`Deleting old guild member from the database... (GID:${guild.id} UID:${member.userID})`);
+                }
+            });
+        });
     });
 
     console.info(`Running...`);
