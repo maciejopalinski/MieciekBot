@@ -80,6 +80,8 @@ bot.on('ready', () => {
         Users.find({
             serverID: guild.id
         }, (err, res) => {
+            if(err) console.error(err);
+            
             let guild_users = guild.members.filter(member => !member.user.bot);
             res.forEach(member => {
                 if(!guild_users.delete(member.userID))
@@ -93,6 +95,19 @@ bot.on('ready', () => {
                     console.debug(`Deleting old guild member from the database... (GID:${guild.id} UID:${member.userID})`);
                 }
             });
+        });
+    });
+
+    Servers.find({}, (err, res) => {
+        if(err) console.error(err);
+
+        let bot_guilds = bot.guilds;
+        res.forEach(guild => {
+            if(!bot_guilds.delete(guild.serverID))
+            {
+                bot.emit('guildDelete', { id: guild.serverID });
+                console.debug(`Deleting old guild and its members from the database... (GID:${guild.serverID})`);
+            } 
         });
     });
 
