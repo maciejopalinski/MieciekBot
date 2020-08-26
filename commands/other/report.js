@@ -12,9 +12,9 @@ module.exports.run = async (bot, msg, args) => {
     if(reason && user)
     {
         let report_embed = new Discord.RichEmbed()
-        .setTitle(`REPORT: ${user.displayName}`)
-        .addField(`Reported user:`, `${user.displayName}`)
-        .addField(`Reported by:`, `${msg.author.username}`)
+        .setTitle(`REPORT: ${user.user.username}`)
+        .addField(`Reported user:`, `<@${user.id}>`)
+        .addField(`Reported by:`, `<@${msg.author.id}>`)
         .addField(`Reason:`, `${reason}`)
         .setFooter(`Powered by MieciekBot ${bot.settings.version}`, bot.settings.iconURL);
 

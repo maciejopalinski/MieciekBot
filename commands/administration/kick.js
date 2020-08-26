@@ -25,9 +25,9 @@ module.exports.run = async (bot, msg, args) => {
         .setFooter(`Powered by MieciekBot ${bot.settings.version}`, bot.settings.iconURL);
         
         let info_kick = new Discord.RichEmbed()
-        .setTitle(`${user.displayName} has been kicked from server!`)
+        .setTitle(`${user.user.username} has been kicked from server!`)
         .setThumbnail(msg.guild.iconURL)
-        .addField(`Kicked by:`, msg.author.username)
+        .addField(`Kicked by:`, `<@${msg.author.username}>`)
         .addField(`Reason:`, reason)
         .setFooter(`Powered by MieciekBot ${bot.settings.version}`, bot.settings.iconURL);
 

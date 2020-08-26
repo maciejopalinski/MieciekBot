@@ -25,7 +25,7 @@ module.exports.run = async (bot, msg, args) => {
         .setFooter(`Powered by MieciekBot ${bot.settings.version}`, bot.settings.iconURL);
         
         let info_ban = new Discord.RichEmbed()
-        .setTitle(`${user.displayName} has been banned!`)
+        .setTitle(`${user.user.username} has been banned!`)
         .setThumbnail(msg.guild.iconURL)
         .addField(`Banned by:`, msg.author.username)
         .addField(`Reason:`, reason)

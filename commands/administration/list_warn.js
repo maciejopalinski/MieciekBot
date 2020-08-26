@@ -19,8 +19,8 @@ module.exports.run = async (bot, msg, args) => {
     if(user)
     {
         let warns_embed = new Discord.RichEmbed()
-        .setTitle(`WARNS: ${user.displayName}`)
-        .setDescription(`List of ${user.displayName} warnings:`)
+        .setTitle(`WARNS: ${user.user.username}`)
+        .setDescription(`List of ${user.user.username} warnings:`)
         .setFooter(`Powered by MieciekBot ${bot.settings.version}`, bot.settings.iconURL);
 
         Warns.find({
