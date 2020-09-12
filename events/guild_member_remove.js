@@ -6,18 +6,18 @@ mongoose.connect(process.env.DATABASE, {
     useUnifiedTopology: true
 });
 
-const Users = require("../models/users.js");
-const Warns = require("../models/warns.js");
+const User = require("../models/user.js");
+const Warn = require("../models/warn.js");
 
 bot.on('guildMemberRemove', member => {
-    Users.findOneAndDelete({
+    User.findOneAndDelete({
         serverID: member.guild.id,
         userID: member.id
     }, err => {
         if(err) console.error(err);
     });
 
-    Warns.deleteMany({
+    Warn.deleteMany({
         serverID: member.guild.id,
         userID: member.id
     }, err => {

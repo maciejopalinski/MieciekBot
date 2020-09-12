@@ -6,11 +6,11 @@ mongoose.connect(process.env.DATABASE, {
     useUnifiedTopology: true
 });
 
-const Servers = require("../models/servers.js");
-const Users = require("../models/users.js");
+const Server = require("../models/server.js");
+const User = require("../models/user.js");
 
-bot.on('guildCreate', guild => {
-    const new_server = new Servers({
+bot.on('guildCreate', (guild, ignore_members) => {
+    const new_server = new Server({
         serverID: guild.id,
         prefix: "!",
         delete_timeout: 3000,
@@ -25,26 +25,29 @@ bot.on('guildCreate', guild => {
     });
     new_server.save().catch(err => console.error(err));
 
-    let guild_members = [];
-    guild.members.forEach(member => {
-        if(!member.user.bot)
-        {
-            guild_members.push({
-                serverID: member.guild.id,
-                userID: member.id,
-                level: 0,
-                xp: 0
-            });
-        }
-    });
+    if(ignore_members != true)
+    {
+        let guild_members = [];
+        guild.members.cache.forEach(member => {
+            if(!member.user.bot)
+            {
+                guild_members.push({
+                    serverID: member.guild.id,
+                    userID: member.id,
+                    level: 0,
+                    xp: 0
+                });
+            }
+        });
 
-    Users.insertMany(guild_members, err => {
-        if(err) console.error(err);
-    });
-
-    let owner = bot.users.get(guild.ownerID);
-    if(!owner) guild.leave();
+        User.insertMany(guild_members, err => {
+            if(err) console.error(err);
+        });
+    }
     
+    let owner = bot.users.cache.get(guild.ownerID);
+    if(!owner) return guild.leave();
+
     owner.send(`Hi! I just configured your '${guild.name}' server. Please, set up all required permissions, roles and other useful properties. Have a good time!`).catch(err => {
         if(err) return console.error(err);
     });

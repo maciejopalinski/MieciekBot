@@ -8,15 +8,15 @@ mongoose.connect(process.env.DATABASE, {
 
 const EmojiRegex = require("emoji-regex");
 const package_info = require("../package.json");
-const Servers = require("../models/servers.js");
-const Users = require("../models/users.js");
+const Server = require("../models/server.js");
+const User = require("../models/user.js");
 const XPCalc = require("../util/experience.js");
 
 bot.on('message', async msg => {
     if (msg.author.bot) return;
     if (msg.channel.type === "dm") return;
 
-    await Servers.findOne({
+    await Server.findOne({
         serverID: msg.guild.id
     }, (err, res) => {
         if (err) console.error(err);
@@ -39,7 +39,7 @@ bot.on('message', async msg => {
     let commandfile = bot.commands.get(cmd.slice(bot.prefix.length)) || bot.aliases.get(cmd.slice(bot.prefix.length));
     if (msg.content.startsWith(bot.prefix) && commandfile)
     {
-        Servers.findOne({
+        Server.findOne({
             serverID: msg.guild.id
         }, (err, res) => {
             if (err) console.error(err);
@@ -56,7 +56,7 @@ bot.on('message', async msg => {
                 nodes: [
                     {
                         name: "@everyone",
-                        id: msg.guild.defaultRole.id,
+                        id: msg.guild.roles.everyone.id,
                         allowed_roles: ["@everyone"]
                     },
                     {
@@ -94,7 +94,7 @@ bot.on('message', async msg => {
 
             let last_max = -1;
             permission.nodes.forEach((value, index) => {
-                if (member.some(r => r.id == value.id) && index > last_max)
+                if (member.cache.some(r => r.id == value.id) && index > last_max)
                 {
                     last_max = index;
                 }
@@ -153,19 +153,19 @@ bot.on('message', async msg => {
                 else
                 {
                     let err = `Usage: ${bot.prefix}${commandfile.help.name} ${commandfile.help.args.join(" ")}`;
-                    msg.delete(bot.delete_timeout);
-                    msg.channel.send(err).then(msg => msg.delete(bot.delete_timeout));
+                    msg.delete({ timeout: bot.delete_timeout });
+                    msg.channel.send(err).then(msg => msg.delete({ timeout: bot.delete_timeout }));
                 }
             }
             else
             {
-                msg.delete(bot.delete_timeout);
+                msg.delete({ timeout: bot.delete_timeout });
             }
         });
     }
     else if(!bot.spam_channels.includes(msg.channel.id))
     {
-        Users.findOne({
+        User.findOne({
             serverID: msg.guild.id,
             userID: msg.member.id
         }, (err, res) => {
@@ -173,7 +173,7 @@ bot.on('message', async msg => {
 
             if(!res)
             {
-                const new_user = new Users({
+                const new_user = new User({
                     serverID: msg.guild.id,
                     userID: msg.member.id,
                     level: 0,

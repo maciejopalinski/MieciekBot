@@ -6,10 +6,10 @@ mongoose.connect(process.env.DATABASE, {
     useUnifiedTopology: true
 });
 
-const Users = require("../models/users.js");
+const User = require("../models/user.js");
 
 bot.on('guildMemberAdd', member => {
-    const new_member = new Users({
+    const new_member = new User({
         serverID: member.guild.id,
         userID: member.id,
         level: 0,

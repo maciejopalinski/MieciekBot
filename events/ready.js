@@ -7,37 +7,42 @@ mongoose.connect(process.env.DATABASE, {
 });
 
 const Discord = require("discord.js");
-const Servers = require("../models/servers.js");
-const Users = require("../models/users.js");
+const Server = require("../models/server.js");
+const User = require("../models/user.js");
 
-bot.on('ready', () => {
+bot.on('ready', async () => {
+
     let status = [
         {
             status: "online",
-            game: {
+            activity: {
                 type: "LISTENING",
-                name: "Megadeth"
+                name: "Megadeth",
+                url: "https://github.com/PoProstuMieciek/"
             }
         },
         {
             status: "online",
-            game: {
+            activity: {
                 type: "LISTENING",
-                name: "Slipknot"
+                name: "Slipknot",
+                url: "https://github.com/PoProstuMieciek/"
             }
         },
         {
             status: "online",
-            game: {
+            activity: {
                 type: "PLAYING",
-                name: "Visual Studio Code"
+                name: "Visual Studio Code",
+                url: "https://github.com/PoProstuMieciek/"
             }
         },
         {
             status: "online",
-            game: {
+            activity: {
                 type: "PLAYING",
-                name: `on ${bot.guilds.size} ${bot.guilds.size > 1 ? "servers" : "server"}`
+                name: `on ${bot.guilds.cache.size} ${bot.guilds.cache.size > 1 ? "servers" : "server"}`,
+                url: "https://github.com/PoProstuMieciek/"
             }
         }
     ];
@@ -47,69 +52,54 @@ bot.on('ready', () => {
         bot.user.setPresence(status[index]);
     }, 5000);
 
-    bot.guilds.forEach(guild => {
-        Servers.findOne({
-            serverID: guild.id
-        }, (err, res) => {
-            if(err) console.error(err);
+    console.info(`Running...`);
 
-            if(!res)
+    // database cleanup
+    bot.guilds.cache.forEach(async guild => {
+
+        // delete old members
+        let db_guild_members = await User.find({ serverID: guild.id }).exec();
+        let guild_users = guild.members.cache.filter(member => !member.user.bot);
+        db_guild_members.forEach(member => {
+            if(!guild_users.delete(member.userID))
             {
-                let custom_guild = guild;
-                guild.members = new Discord.Collection();
-                bot.emit('guildCreate', custom_guild);
-                console.debug(`Adding new guild to the database... (GID:${guild.id})`);
+                bot.emit('guildMemberRemove', {
+                    id: member.userID,
+                    guild: {
+                        id: guild.id
+                    }
+                });
+                console.debug(`Deleting old guild member from the database... (GID:${guild.id} UID:${member.userID})`);
             }
         });
 
-        guild.members.forEach(member => {
-            Users.findOne({
-                serverID: guild.id,
-                userID: member.id
-            }, (err, res) => {
-                if(err) console.error(err);
-
-                if(!res && !member.user.bot)
-                {
-                    bot.emit('guildMemberAdd', member);
-                    console.debug(`Adding new guild member to the database... (GID:${guild.id} UID:${member.id})`);
-                }
-            });
-        });
-
-        Users.find({
-            serverID: guild.id
-        }, (err, res) => {
-            if(err) console.error(err);
-            
-            let guild_users = guild.members.filter(member => !member.user.bot);
-            res.forEach(member => {
-                if(!guild_users.delete(member.userID))
-                {
-                    bot.emit('guildMemberRemove', {
-                        id: member.userID,
-                        guild: {
-                            id: guild.id
-                        }
-                    });
-                    console.debug(`Deleting old guild member from the database... (GID:${guild.id} UID:${member.userID})`);
-                }
-            });
-        });
-    });
-
-    Servers.find({}, (err, res) => {
-        if(err) console.error(err);
-
-        let bot_guilds = bot.guilds;
-        res.forEach(guild => {
-            if(!bot_guilds.delete(guild.serverID))
+        // add new guilds
+        let db_guild = await Server.findOne({ serverID: guild.id }).exec();
+        if(!db_guild)
+        {
+            bot.emit('guildCreate', guild, true);
+            console.debug(`Adding new guild to the database... (GID:${guild.id})`);
+        }
+        
+        // add new members
+        guild.members.cache.forEach(async member => {
+            let db_member = await User.findOne({ serverID: guild.id, userID: member.id }).exec();
+            if(!db_member && !member.user.bot)
             {
-                bot.emit('guildDelete', { id: guild.serverID });
-                console.debug(`Deleting old guild and its members from the database... (GID:${guild.serverID})`);
-            } 
+                bot.emit('guildMemberAdd', member);
+                console.debug(`Adding new guild member to the database... (GID:${guild.id} UID:${member.id})`);
+            }
         });
     });
 
-    console.info(`Running...`);
+    // delete old guilds
+    let db_guilds = await Server.find({}).exec();
+    let bot_guilds = bot.guilds.cache;
+    db_guilds.forEach(guild => {
+        if(!bot_guilds.delete(guild.serverID))
+        {
+            bot.emit('guildDelete', { id: guild.serverID });
+            console.debug(`Deleting old guild and its members from the database... (GID:${guild.serverID})`);
+        } 
+    });
 });
