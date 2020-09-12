@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const warnsSchema = mongoose.Schema({
+const warnSchema = mongoose.Schema({
 	serverID: String,
     userID: String,
     warnedBy: String,
@@ -8,4 +8,4 @@ const warnsSchema = mongoose.Schema({
     timestamp: String
 });
 
-module.exports = mongoose.model("Warns", warnsSchema);
+module.exports = mongoose.model("Warn", warnSchema);
