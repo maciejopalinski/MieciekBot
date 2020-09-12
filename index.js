@@ -5,11 +5,11 @@ const Loader = require("./util/loader.js");
 const bot = new Discord.Client();
 
 bot.prefix = "!";
+bot.categories = [];
 bot.commands = new Discord.Collection();
 bot.aliases = new Discord.Collection();
-bot.queue = new Map();
-bot.categories = [];
 bot.spam_channels = [];
+bot.queue = new Map();
 bot.game = { hangman: new Map() };
 
 module.exports = { bot: bot };
