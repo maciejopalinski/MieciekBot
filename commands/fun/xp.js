@@ -5,7 +5,7 @@ const Canvas = require("canvas");
 Canvas.registerFont("assets/fonts/Bebas-Regular.ttf", {family: "Bebas-Regular"});
 Canvas.registerFont("assets/fonts/AldotheApache.ttf", {family: "AldoTheApache"});
 
-const Users = require("../../models/users.js");
+const User = require("../../models/user.js");
 
 const XPCalc = require("../../util/experience.js");
 
@@ -24,11 +24,11 @@ module.exports.run = async (bot, msg, args) => {
     
     if(user.user.bot)
     {
-        msg.delete(bot.delete_timeout);
-        return msg.channel.send(this.error.bot).then(msg => msg.delete(bot.delete_timeout));
+        msg.delete({ timeout: bot.delete_timeout });
+        return msg.channel.send(this.error.bot).then(msg => msg.delete({ timeout: bot.delete_timeout }));
     }
 
-    Users.findOne({
+    User.findOne({
         serverID: msg.guild.id,
         userID: user.id
     }, async (err, res) => {
@@ -36,7 +36,7 @@ module.exports.run = async (bot, msg, args) => {
 
         if(!res)
         {
-            const new_user = new Users({
+            const new_user = new User({
                 serverID: msg.guild.id,
                 userID: user.id,
                 level: 0,
@@ -88,7 +88,7 @@ module.exports.run = async (bot, msg, args) => {
         ctx.fillText(`Level ${level}`, 320, 192);
 
         // avatar
-        let avatar = await Canvas.loadImage(user.user.avatarURL);
+        let avatar = await Canvas.loadImage(user.user.avatarURL({ format: "jpg", size: 512 }) || user.user.defaultAvatarURL);
             
         ctx.strokeStyle = "rgb(54, 57, 63)";
         ctx.beginPath();
@@ -98,7 +98,7 @@ module.exports.run = async (bot, msg, args) => {
         ctx.drawImage(avatar, 30, 22, 256, 256);
 
         // send attachment
-        let attachment = new Discord.Attachment(level_graphics.toBuffer());
+        let attachment = new Discord.MessageAttachment(level_graphics.toBuffer());
         msg.channel.send(attachment);
     });
 }

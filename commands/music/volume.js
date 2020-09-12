@@ -12,8 +12,8 @@ module.exports.run = async (bot, msg, args) => {
     let new_volume = parseInt(args[0]) || undefined;
     if(!new_volume || new_volume < 1 || new_volume > 200)
     {
-        msg.delete(bot.delete_timeout);
-        return msg.channel.send(this.error.value + ` Volume: ${server_queue.volume}.`).then(msg => msg.delete(bot.delete_timeout));
+        msg.delete({ timeout: bot.delete_timeout });
+        return msg.channel.send(this.error.value + ` Volume: ${server_queue.volume}.`).then(msg => msg.delete({ timeout: bot.delete_timeout }));
     }
 
     if(server_queue && server_queue.playing)
@@ -25,8 +25,8 @@ module.exports.run = async (bot, msg, args) => {
     }
     else
     {
-        msg.delete(bot.delete_timeout);
-        return msg.channel.send(this.error.music_play).then(msg => msg.delete(bot.delete_timeout));
+        msg.delete({ timeout: bot.delete_timeout });
+        return msg.channel.send(this.error.music_play).then(msg => msg.delete({ timeout: bot.delete_timeout }));
     }
 }
 

@@ -1,7 +1,7 @@
 const Discord = require("discord.js");
 const mongoose = require("mongoose");
 
-const Servers = require("../../models/servers.js");
+const Server = require("../../models/server.js");
 
 mongoose.connect(process.env.DATABASE, {
     useNewUrlParser: true,
@@ -20,7 +20,7 @@ module.exports.run = async (bot, msg, args) => {
         if(bot.spam_channels.length >= 1) spam_channels_info = `[<#${bot.spam_channels.join(">, <#")}>]`;
         else spam_channels_info = `[]`;
 
-        let help = new Discord.RichEmbed()
+        let help = new Discord.MessageEmbed()
         .setTitle(`Settings:`)
         .addField(`prefix`, `${bot.prefix}`)
         .addField(`delete_timeout`, `${bot.delete_timeout}`)
@@ -37,13 +37,13 @@ module.exports.run = async (bot, msg, args) => {
     {
         let key = args[0], value = args.slice(1).join(" ");
 
-        await Servers.findOne({
+        await Server.findOne({
             serverID: msg.guild.id
         }, (err, settings) => {
             if(!settings)
             {
-                msg.delete(bot.delete_timeout);
-                return msg.channel.send(this.error.unknown).then(msg => msg.delete(bot.delete_timeout));
+                msg.delete({ timeout: bot.delete_timeout });
+                return msg.channel.send(this.error.unknown).then(msg => msg.delete({ timeout: bot.delete_timeout }));
             }
 
             let info = undefined;
@@ -63,8 +63,8 @@ module.exports.run = async (bot, msg, args) => {
 
                 if(!new_role)
                 {
-                    msg.delete(bot.delete_timeout);
-                    return msg.channel.send(this.error.not_found).then(msg => msg.delete(bot.delete_timeout));
+                    msg.delete({ timeout: bot.delete_timeout });
+                    return msg.channel.send(this.error.not_found).then(msg => msg.delete({ timeout: bot.delete_timeout }));
                 }
 
                 bot.settings.role.nodes.forEach(role => {
@@ -101,15 +101,15 @@ module.exports.run = async (bot, msg, args) => {
             }
             else
             {
-                msg.delete(bot.delete_timeout);
-                msg.channel.send(this.error.setting_not_found).then(msg => msg.delete(bot.delete_timeout));
+                msg.delete({ timeout: bot.delete_timeout });
+                msg.channel.send(this.error.setting_not_found).then(msg => msg.delete({ timeout: bot.delete_timeout }));
             }
         });
     }
     else
     {
-        msg.delete(bot.delete_timeout);
-        msg.channel.send(this.error.no_value).then(msg => msg.delete(bot.delete_timeout));
+        msg.delete({ timeout: bot.delete_timeout });
+        msg.channel.send(this.error.no_value).then(msg => msg.delete({ timeout: bot.delete_timeout }));
     }
 }
 

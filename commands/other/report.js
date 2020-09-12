@@ -11,7 +11,7 @@ module.exports.run = async (bot, msg, args) => {
 
     if(reason && user)
     {
-        let report_embed = new Discord.RichEmbed()
+        let report_embed = new Discord.MessageEmbed()
         .setTitle(`REPORT: ${user.user.username}`)
         .addField(`Reported user:`, `<@${user.id}>`)
         .addField(`Reported by:`, `<@${msg.author.id}>`)
@@ -23,8 +23,8 @@ module.exports.run = async (bot, msg, args) => {
     }
     else
     {
-        msg.delete(bot.delete_timeout);
-        msg.channel.send(this.error.no_arg).then(msg => msg.delete(bot.delete_timeout));
+        msg.delete({ timeout: bot.delete_timeout });
+        msg.channel.send(this.error.no_arg).then(msg => msg.delete({ timeout: bot.delete_timeout }));
     }
 }
 

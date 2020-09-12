@@ -10,21 +10,21 @@ module.exports.run = async (bot, msg, args) => {
 
     if(bot.game.hangman.has(msg.guild.id))
     {
-        msg.delete(bot.delete_timeout);
-        return msg.channel.send(`There is a hangman game running at the moment... Please, try again later.`).then(msg => msg.delete(bot.delete_timeout));
+        msg.delete({ timeout: bot.delete_timeout });
+        return msg.channel.send(`There is a hangman game running at the moment... Please, try again later.`).then(msg => msg.delete({ timeout: bot.delete_timeout }));
     }
 
     if(messages >= 2 && messages <= 100)
     {
         await msg.delete();
         msg.channel.bulkDelete(messages).catch(err => {
-            msg.channel.send(err.message).then(msg => msg.delete(bot.delete_timeout));
+            msg.channel.send(err.message).then(msg => msg.delete({ timeout: bot.delete_timeout }));
         });
     }
     else
     {
-        msg.delete(bot.delete_timeout);
-        msg.channel.send(this.error.wrong_amount).then(msg => msg.delete(bot.delete_timeout));
+        msg.delete({ timeout: bot.delete_timeout });
+        msg.channel.send(this.error.wrong_amount).then(msg => msg.delete({ timeout: bot.delete_timeout }));
     }
 }
 

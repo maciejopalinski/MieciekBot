@@ -11,11 +11,11 @@ module.exports.run = async (bot, msg, args) => {
     let queue = bot.queue;
     let server_queue = bot.queue.get(msg.guild.id);
 
-    let voice_channel = msg.member.voiceChannel;
+    let voice_channel = msg.member.voice.channel;
     if(!voice_channel)
     {
-        msg.delete(bot.delete_timeout);
-        return msg.channel.send(this.error.voice_channel).then(msg => msg.delete(bot.delete_timeout));
+        msg.delete({ timeout: bot.delete_timeout });
+        return msg.channel.send(this.error.voice_channel).then(msg => msg.delete({ timeout: bot.delete_timeout }));
     }
 
     let validate = YTDL.validateURL(args[0]);
@@ -34,22 +34,22 @@ module.exports.run = async (bot, msg, args) => {
             args[0] = search_results.results.find(val => val.kind == "youtube#video").link;
             if(!YTDL.validateURL(args[0]))
             {
-                msg.delete(bot.delete_timeout);
-                return msg.channel.send(this.error.not_found).then(msg => msg.delete(bot.delete_timeout));
+                msg.delete({ timeout: bot.delete_timeout });
+                return msg.channel.send(this.error.not_found).then(msg => msg.delete({ timeout: bot.delete_timeout }));
             }
         }
         else
         {
-            msg.delete(bot.delete_timeout);
-            return msg.channel.send(this.error.not_found).then(msg => msg.delete(bot.delete_timeout));
+            msg.delete({ timeout: bot.delete_timeout });
+            return msg.channel.send(this.error.not_found).then(msg => msg.delete({ timeout: bot.delete_timeout }));
         }
     }
 
     let song_info = await YTDL.getInfo(args[0]);
     let song = {
-        title: song_info.title,
-        url: song_info.video_url,
-        duration: song_info.length_seconds
+        title: song_info.videoDetails.title,
+        url: song_info.videoDetails.video_url,
+        duration: song_info.videoDetails.length_seconds
     };
 
     if(!server_queue)
@@ -88,15 +88,15 @@ module.exports.run = async (bot, msg, args) => {
         } catch(err) {
             console.error(err);
             queue.delete(msg.guild.id);
-            return msg.channel.send(`Error: ${err}`);
+            return msg.channel.send(`Error: ${err}\n\`\`\`\n${err.stack}\n\`\`\``);
         }
     }
     else
     {
         if(server_queue.songs.length >= 20)
         {
-            msg.delete(bot.delete_timeout);
-            return msg.channel.send(this.error.queue_length).then(msg => msg.delete(bot.delete_timeout));
+            msg.delete({ timeout: bot.delete_timeout });
+            return msg.channel.send(this.error.queue_length).then(msg => msg.delete({ timeout: bot.delete_timeout }));
         }
         
         server_queue.songs.push(song);
@@ -120,7 +120,7 @@ module.exports.play = (bot, msg, song) => {
     }
 
     let dispatcher = server_queue.connection
-    .playStream(YTDL(song.url, {filter: "audioonly"}))
+    .play(YTDL(song.url, { format: 'audioonly' }))
     .on("end", () => {
         if(!server_queue.loop)
         {

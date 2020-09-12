@@ -8,9 +8,9 @@ const Discord = require("discord.js");
 module.exports.run = async (bot, msg, args) => {
     if(args[0] == "server")
     {
-        let message = new Discord.RichEmbed()
+        let message = new Discord.MessageEmbed()
         .setTitle(`INFO: ${msg.guild.name}`)
-        .setThumbnail(`${msg.guild.iconURL}`)
+        .setThumbnail(msg.guild.iconURL({ size: 64 }))
         .addField(`Owner:`, `${msg.guild.owner.user.tag}`)
         .addField(`Created at:`, `${msg.guild.owner.joinedAt.toDateString()}`)
         .addField(`Members:`, `${msg.guild.memberCount}`)
@@ -20,10 +20,10 @@ module.exports.run = async (bot, msg, args) => {
     }
     else if(args[0] == "bot")
     {
-        let message = new Discord.RichEmbed()
+        let message = new Discord.MessageEmbed()
         .setTitle(`INFO: MieciekBot`)
         .setThumbnail(bot.settings.iconURL)
-        .addField(`Author:`, `PoProstuMieciek`)
+        .addField(`Author:`, `PoProstuMieciek#6099`)
         .addField(`Version:`, `${bot.settings.version}`)
         .addField(`GitHub repository:`, `${bot.settings.repository}`)
         .addField(`Invite me to your server:`, `https://discordapp.com/oauth2/authorize?client_id=${bot.user.id}&scope=bot&permissions=8`)
@@ -33,7 +33,7 @@ module.exports.run = async (bot, msg, args) => {
     }
     else
     {
-        msg.delete(bot.delete_timeout);
+        msg.delete({ timeout: bot.delete_timeout });
     }
 }
 

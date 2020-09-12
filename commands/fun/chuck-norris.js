@@ -16,7 +16,7 @@ module.exports.run = async (bot, msg, args) => {
         if(err) return console.error(err);
         body = JSON.parse(body);
 
-        const joke_embed = new Discord.RichEmbed()
+        const joke_embed = new Discord.MessageEmbed()
         .setTitle('Chuck Norris Joke')
         .setURL(body.url)
         .addField(body.value, '\u200b')

@@ -16,7 +16,7 @@ module.exports.run = async (bot, msg, args) => {
 
         let latest = res[0];
 
-        let changelog_embed = new Discord.RichEmbed()
+        let changelog_embed = new Discord.MessageEmbed()
         .setTitle(`CHANGELOG: MieciekBot`)
         .setURL(latest.html_url)
         .addField(latest.name, `Released by ${latest.author.login}`)

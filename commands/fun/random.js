@@ -12,7 +12,7 @@ module.exports.run = async (bot, msg, args) => {
     if(range > 1 && range <= 65535)
     {
         RandomNumber(1, range).then(random => {
-            let random_embed = new Discord.RichEmbed()
+            let random_embed = new Discord.MessageEmbed()
             .setTitle(`Random: 1 - ${range}`)
             .addField(`Random number from 1 to ${range}:`, random)
             .setFooter(`Powered by MieciekBot ${bot.settings.version}`, bot.settings.iconURL);
@@ -22,8 +22,8 @@ module.exports.run = async (bot, msg, args) => {
     }
     else
     {
-        msg.delete(bot.delete_timeout);
-        msg.channel.send(this.error.cannot_roll).then(msg => msg.delete(bot.delete_timeout));
+        msg.delete({ timeout: bot.delete_timeout });
+        msg.channel.send(this.error.cannot_roll).then(msg => msg.delete({ timeout: bot.delete_timeout }));
     }
 }
 

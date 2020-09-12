@@ -8,8 +8,8 @@ const Discord = require("discord.js");
 module.exports.run = async (bot, msg, args) => {
     if (bot.game.hangman.has(msg.guild.id))
     {
-        msg.delete(bot.delete_timeout);
-        return msg.channel.send(`The game already exists!`).then(msg => msg.delete(bot.delete_timeout));
+        msg.delete({ timeout: bot.delete_timeout });
+        return msg.channel.send(`The game already exists!`).then(msg => msg.delete({ timeout: bot.delete_timeout }));
     }
     
     bot.game.hangman.set(msg.guild.id, true);

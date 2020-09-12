@@ -1,7 +1,7 @@
 const Discord = require("discord.js");
 const mongoose = require("mongoose");
 
-const Warns = require("../../models/warns.js");
+const Warn = require("../../models/warn.js");
 
 mongoose.connect(process.env.DATABASE, {
     useNewUrlParser: true,
@@ -21,18 +21,18 @@ module.exports.run = async (bot, msg, args) => {
     {
         if(user.id == msg.author.id || user.user.bot)
         {
-            msg.delete(bot.delete_timeout);
-            return msg.channel.send(this.error.not_warnable).then(msg => msg.delete(bot.delete_timeout));
+            msg.delete({ timeout: bot.delete_timeout });
+            return msg.channel.send(this.error.not_warnable).then(msg => msg.delete({ timeout: bot.delete_timeout }));
         }
 
-        let warn_embed = new Discord.RichEmbed()
+        let warn_embed = new Discord.MessageEmbed()
         .setTitle(`You have been warned on ${msg.guild.name}!`)
         .setThumbnail(msg.guild.iconURL)
-        .addField(`Warned by:`, msg.author.username)
+        .addField(`Warned by:`, `<@${msg.author.id}>`)
         .addField(`Reason:`, reason)
         .setFooter(`Powered by MieciekBot ${bot.settings.version}`, bot.settings.iconURL);
         
-        let info_warn = new Discord.RichEmbed()
+        let info_warn = new Discord.MessageEmbed()
         .setTitle(`${user.user.username} has been warned!`)
         .setThumbnail(msg.guild.iconURL)
         .addField(`Warned by:`, `<@${msg.author.id}>`)
@@ -42,7 +42,7 @@ module.exports.run = async (bot, msg, args) => {
         let date = new Date();
         let date_string = `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`
 
-        const newWarn = new Warns({
+        const newWarn = new Warn({
             serverID: msg.guild.id,
             userID: user.id,
             warnedBy: msg.author.id,
@@ -58,8 +58,8 @@ module.exports.run = async (bot, msg, args) => {
     }
     else
     {
-        msg.delete(bot.delete_timeout);
-        msg.channel.send(this.error.user_not_found).then(msg => msg.delete(bot.delete_timeout));
+        msg.delete({ timeout: bot.delete_timeout });
+        msg.channel.send(this.error.user_not_found).then(msg => msg.delete({ timeout: bot.delete_timeout }));
     }
 }
 

@@ -12,8 +12,8 @@ module.exports.run = async (bot, msg, args) => {
     args[0] = parseInt(args[0]);
     if(args[0] <= 0 || args[0] > server_queue.songs.length - 1)
     {
-        msg.delete(bot.delete_timeout);
-        return msg.channel.send(this.error.invalid_num).then(msg => msg.delete(bot.delete_timeout));
+        msg.delete({ timeout: bot.delete_timeout });
+        return msg.channel.send(this.error.invalid_num).then(msg => msg.delete({ timeout: bot.delete_timeout }));
     }
 
     if(server_queue)
@@ -23,8 +23,8 @@ module.exports.run = async (bot, msg, args) => {
     }
     else
     {
-        msg.delete(bot.delete_timeout);
-        return msg.channel.send(this.error.must_play).then(msg => msg.delete(bot.delete_timeout));
+        msg.delete({ timeout: bot.delete_timeout });
+        return msg.channel.send(this.error.must_play).then(msg => msg.delete({ timeout: bot.delete_timeout }));
     }
 }
 

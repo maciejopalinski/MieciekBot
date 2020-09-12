@@ -1,7 +1,7 @@
 const Discord = require("discord.js");
 const mongoose = require("mongoose");
 
-const Warns = require("../../models/warns.js");
+const Warn = require("../../models/warn.js");
 
 mongoose.connect(process.env.DATABASE, {
     useNewUrlParser: true,
@@ -18,19 +18,19 @@ module.exports.run = async (bot, msg, args) => {
 
     if(user)
     {
-        let warns_embed = new Discord.RichEmbed()
+        let warns_embed = new Discord.MessageEmbed()
         .setTitle(`WARNS: ${user.user.username}`)
-        .setDescription(`List of ${user.user.username} warnings:`)
+        .setDescription(`List of <@${user.user.id}> warnings:`)
         .setFooter(`Powered by MieciekBot ${bot.settings.version}`, bot.settings.iconURL);
 
-        Warns.find({
+        Warn.find({
             serverID: msg.guild.id,
             userID: user.id
         }, (err, res) => {
             if(!res)
             {
-                msg.delete(bot.delete_timeout);
-                return msg.channel.send(this.error.unknown).then(msg => msg.delete(bot.delete_timeout));
+                msg.delete({ timeout: bot.delete_timeout });
+                return msg.channel.send(this.error.unknown).then(msg => msg.delete({ timeout: bot.delete_timeout }));
             }
 
             res.forEach(element => {
@@ -39,7 +39,7 @@ module.exports.run = async (bot, msg, args) => {
 
             if(res.length < 1)
             {
-                warns_embed.addField(`There are not any warnings for user`, `<@${user.id}>`);
+                warns_embed.addField(`There are not any warnings for this user.`, `\u200b`);
             }
 
             msg.channel.send(warns_embed);
@@ -47,8 +47,8 @@ module.exports.run = async (bot, msg, args) => {
     }
     else
     {
-        msg.delete(bot.delete_timeout);
-        msg.channel.send(this.error.user_not_found).then(msg => msg.delete(bot.delete_timeout));
+        msg.delete({ timeout: bot.delete_timeout });
+        msg.channel.send(this.error.user_not_found).then(msg => msg.delete({ timeout: bot.delete_timeout }));
     }
 }
 

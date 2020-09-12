@@ -20,7 +20,7 @@ module.exports.run = async (bot, msg, args) => {
     let random = subReddits[Math.floor(Math.random() * subReddits.length)];
 
     let img = await RandomPuppy(random);
-    let meme_embed = new Discord.RichEmbed()
+    let meme_embed = new Discord.MessageEmbed()
     .setTitle(`MEME: r/${random}`)
     .setImage(img)
     .setURL(`https://reddit.com/r/${random}`)

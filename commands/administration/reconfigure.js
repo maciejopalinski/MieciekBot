@@ -1,9 +1,5 @@
 const Discord = require("discord.js");
 
-const Servers = require("../../models/servers.js");
-const Users = require("../../models/users.js");
-const Warns = require("../../models/warns.js");
-
 /**
  * @param {Discord.Client} bot 
  * @param {Discord.Message} msg 
@@ -12,7 +8,7 @@ const Warns = require("../../models/warns.js");
 module.exports.run = async (bot, msg, args) => {    
     if(args[0] == `confirm${msg.guild.id}`)
     {
-        await msg.channel.send(`Reseting...`).then(msg => msg.delete(bot.delete_timeout));
+        await msg.channel.send(`Reseting...`).then(msg => msg.delete({ timeout: bot.delete_timeout }));
 
         bot.emit("guildDelete", msg.guild);
         bot.emit("guildCreate", msg.guild);

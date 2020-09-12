@@ -43,8 +43,8 @@ module.exports.run = async (bot, msg, args) => {
 
             if(body.results == 0)
             {
-                msg.delete(bot.delete_timeout);
-                return msg.channel.send(`That country was not found in the database.`).then(msg => msg.delete(bot.delete_timeout));
+                msg.delete({ timeout: bot.delete_timeout });
+                return msg.channel.send(`That country was not found in the database.`).then(msg => msg.delete({ timeout: bot.delete_timeout }));
             }
 
             let verified_country = body.response[0];
@@ -78,12 +78,12 @@ module.exports.help = {
  * @param {Object} body
  * @param {String} header
  * 
- * @returns {Discord.RichEmbed}
+ * @returns {Discord.MessageEmbed}
  */
 function create_embed(bot, body, header) {
     let time = new Date(Date.parse(body.response[0].time));
 
-    let cv_embed = new Discord.RichEmbed()
+    let cv_embed = new Discord.MessageEmbed()
     .setTitle(`COVID-19 ${header} Statistics`)
     .addField(`Total cases:`, new Intl.NumberFormat('en-US', { useGrouping: true }).format(body.response[0].cases.total))
     .addField(`Total deaths:`, new Intl.NumberFormat('en-US', { useGrouping: true }).format(body.response[0].deaths.total))

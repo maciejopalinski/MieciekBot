@@ -13,21 +13,21 @@ module.exports.run = async (bot, msg, args) => {
     {
         if(!user.kickable || user.id == msg.author.id)
         {
-            msg.delete(bot.delete_timeout);
-            return msg.channel.send(this.error.not_kickable).then(msg => msg.delete(bot.delete_timeout));
+            msg.delete({ timeout: bot.delete_timeout });
+            return msg.channel.send(this.error.not_kickable).then(msg => msg.delete({ timeout: bot.delete_timeout }));
         }
 
-        let kick_embed = new Discord.RichEmbed()
+        let kick_embed = new Discord.MessageEmbed()
         .setTitle(`You have been kicked from ${msg.guild.name}!`)
         .setThumbnail(msg.guild.iconURL)
-        .addField(`Kicked by:`, msg.author.username)
+        .addField(`Kicked by:`, `<@${msg.author.id}>`)
         .addField(`Reason:`, reason)
         .setFooter(`Powered by MieciekBot ${bot.settings.version}`, bot.settings.iconURL);
         
-        let info_kick = new Discord.RichEmbed()
+        let info_kick = new Discord.MessageEmbed()
         .setTitle(`${user.user.username} has been kicked from server!`)
         .setThumbnail(msg.guild.iconURL)
-        .addField(`Kicked by:`, `<@${msg.author.username}>`)
+        .addField(`Kicked by:`, `<@${msg.author.id}>`)
         .addField(`Reason:`, reason)
         .setFooter(`Powered by MieciekBot ${bot.settings.version}`, bot.settings.iconURL);
 
@@ -40,8 +40,8 @@ module.exports.run = async (bot, msg, args) => {
     }
     else
     {
-        msg.delete(bot.delete_timeout);
-        msg.channel.send(this.error.user_not_found).then(msg => msg.delete(bot.delete_timeout));
+        msg.delete({ timeout: bot.delete_timeout });
+        msg.channel.send(this.error.user_not_found).then(msg => msg.delete({ timeout: bot.delete_timeout }));
     }
 }
 

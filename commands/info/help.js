@@ -6,7 +6,7 @@ const Discord = require("discord.js");
  * @param {Array<String>} args 
  */
 module.exports.run = async (bot, msg, args) => {
-    let help = new Discord.RichEmbed();
+    let help = new Discord.MessageEmbed();
 
     let actual = bot.settings.role.actual;
     let allowed_roles = bot.settings.role.nodes[actual].allowed_roles;

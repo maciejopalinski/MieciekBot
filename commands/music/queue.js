@@ -11,7 +11,7 @@ module.exports.run = async (bot, msg, args) => {
 
     if(server_queue)
     {
-        let queue_embed = new Discord.RichEmbed()
+        let queue_embed = new Discord.MessageEmbed()
         .setTitle(`MUSIC QUEUE`)
         .setFooter(`Powered by MieciekBot ${bot.settings.version}`, bot.settings.iconURL);
 
@@ -27,8 +27,8 @@ module.exports.run = async (bot, msg, args) => {
     }
     else
     {
-        msg.delete(bot.delete_timeout);
-        return msg.channel.send(this.error.music_play).then(msg => msg.delete(bot.delete_timeout));
+        msg.delete({ timeout: bot.delete_timeout });
+        return msg.channel.send(this.error.music_play).then(msg => msg.delete({ timeout: bot.delete_timeout }));
     }
 }
 

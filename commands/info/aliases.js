@@ -13,14 +13,13 @@ module.exports.run = async (bot, msg, args) => {
 
     if(!commandfile || !allowed_roles.includes(commandfile.help.permission) && commandfile.help.name != "help")
     {
-        msg.delete(bot.delete_timeout);
-        return msg.channel.send(this.error.cmd_not_found).then(msg => msg.delete(bot.delete_timeout));
+        msg.delete({ timeout: bot.delete_timeout });
+        return msg.channel.send(this.error.cmd_not_found).then(msg => msg.delete({ timeout: bot.delete_timeout }));
     }
 
-    let aliases_embed = new Discord.RichEmbed()
+    let aliases_embed = new Discord.MessageEmbed()
     .setTitle(`ALIASES: /command/${commandfile.help.name}`)
     .addField(`${bot.prefix}${commandfile.help.name} ${commandfile.help.args.join(" ")}`, commandfile.help.description)
-    .addBlankField()
     .addField(`Aliases:`, commandfile.help.aliases.join(", ") || "-none-")
     .setFooter(`Powered by MieciekBot ${bot.settings.version}`, bot.settings.iconURL);
 
