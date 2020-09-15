@@ -1,5 +1,4 @@
 const Discord = require("discord.js");
-const { type } = require("os");
 
 /**
  * @param {Discord.Client} bot 
