@@ -1,6 +1,7 @@
 const Discord = require("discord.js");
 const YTDL = require("ytdl-core");
 const Search = require("youtube-search");
+const { canModifyQueue, play } = require("../../util/music.js");
 
 /**
  * @param {Discord.Client} bot 
@@ -8,11 +9,9 @@ const Search = require("youtube-search");
  * @param {Array<String>} args 
  */
 module.exports.run = async (bot, msg, args) => {
-    let queue = bot.queue;
-    let server_queue = bot.queue.get(msg.guild.id);
-
-    let voice_channel = msg.member.voice.channel;
-    if(!voice_channel)
+    const { channel } = msg.member.voice;
+    // TODO: test this if statement
+    if(!channel || !canModifyQueue(bot, msg))
     {
         msg.delete({ timeout: bot.delete_timeout });
         return msg.channel.send(this.error.voice_channel).then(msg => msg.delete({ timeout: bot.delete_timeout }));
@@ -21,13 +20,8 @@ module.exports.run = async (bot, msg, args) => {
     let validate = YTDL.validateURL(args[0]);
     if(!validate)
     {
-        /**
-         * @type {Search.YouTubeSearchOptions}
-         */
-        let search_options = {
-            maxResults: 10,
-            key: process.env.GOOGLE_API_KEY
-        };
+        /** @type {Search.YouTubeSearchOptions} */
+        let search_options = { maxResults: 10, key: process.env.GOOGLE_API_KEY };
         let search_results = await Search(args.join(" "), search_options);
         if(search_results.results.length > 0)
         {
@@ -49,89 +43,57 @@ module.exports.run = async (bot, msg, args) => {
     let song = {
         title: song_info.videoDetails.title,
         url: song_info.videoDetails.video_url,
-        duration: song_info.videoDetails.length_seconds
+        duration: song_info.videoDetails.lengthSeconds
     };
 
-    if(!server_queue)
-    {
-        let server_queue_constructor = {
-            text_channel: msg.channel,
-            voice_channel: voice_channel,
-            connection: null,
-            songs: [],
-            volume: 100,
-            last_volume: 100,
-            loop: false,
-            playing: true
-        };
+    let server_queue = bot.queue.get(msg.guild.id);
+    let server_queue_constructor = {
+        text_channel: msg.channel,
+        voice_channel: channel,
+        connection: null,
+        songs: [],
+        volume: 100,
+        last_volume: 100,
+        loop: false,
+        playing: true
+    };
 
-        queue.set(msg.guild.id, server_queue_constructor);
-
-        server_queue_constructor.songs.push(song);
-
-        try {
-            let connection = await voice_channel.join();
-            connection.on("disconnect", (err) => {
-                if(err) console.error(err);
-        
-                let server_queue = bot.queue.get(msg.guild.id);
-                if(server_queue.connection.dispatcher)
-                {
-                    server_queue.songs = [];
-                    server_queue.connection.dispatcher.end();
-                    msg.channel.send(this.error.stopped);
-                }
-            });
-
-            server_queue_constructor.connection = connection;
-            this.play(bot, msg, server_queue_constructor.songs[0]);
-        } catch(err) {
-            console.error(err);
-            queue.delete(msg.guild.id);
-            return msg.channel.send(`Error: ${err}\n\`\`\`\n${err.stack}\n\`\`\``);
-        }
-    }
-    else
+    if(server_queue)
     {
         if(server_queue.songs.length >= 20)
         {
             msg.delete({ timeout: bot.delete_timeout });
             return msg.channel.send(this.error.queue_length).then(msg => msg.delete({ timeout: bot.delete_timeout }));
         }
-        
         server_queue.songs.push(song);
         return msg.channel.send(`**${song.title}** has been added to the queue.`);
     }
-}
 
-/**
- * @param {Discord.Client} bot 
- * @param {Discord.Message} msg 
- * @param {Object} song 
- */
-module.exports.play = (bot, msg, song) => {
-    let queue = bot.queue;
-    let server_queue = bot.queue.get(msg.guild.id);
+    bot.queue.set(msg.guild.id, server_queue_constructor);
+    server_queue_constructor.songs.push(song);
 
-    if(!song)
-    {
-        server_queue.voice_channel.leave();
-        return queue.delete(msg.guild.id);
+    try {
+        let connection = await channel.join();
+        connection.on('disconnect', (err) => {
+            if(err) console.error(err);
+
+            if(server_queue.connection.dispatcher)
+            {
+                server_queue.songs = [];
+                server_queue.connection.dispatcher.end();
+                msg.channel.send(this.error.stopped);
+            }
+        });
+
+        server_queue_constructor.connection = connection;
+        await server_queue_constructor.connection.voice.setSelfDeaf(true);
+        play(bot, msg, server_queue_constructor.songs[0]);
+    } catch (err) {
+        console.error(err);
+        bot.queue.delete(msg.guild.id);
+        channel.leave();
+        return msg.channel.send(`Could not join the channel: ${err}`);
     }
-
-    let dispatcher = server_queue.connection
-    .play(YTDL(song.url, { format: 'audioonly' }))
-    .on("end", () => {
-        if(!server_queue.loop)
-        {
-            server_queue.songs.shift();
-        }
-        this.play(bot, msg, server_queue.songs[0]);
-    })
-    .on("error", (err) => console.error(err));
-
-    dispatcher.setVolumeLogarithmic(server_queue.volume / 100);
-    server_queue.text_channel.send(`Now playing: **${song.title}**`);
 }
 
 module.exports.help = {
