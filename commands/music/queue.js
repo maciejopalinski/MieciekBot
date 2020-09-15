@@ -22,7 +22,7 @@ module.exports.run = async (bot, msg, args) => {
             queue_embed.addField(`[${index}] ${song.title} (${progress}${secondsToDuration(song.duration)})`, song.url);
         });
 
-        queue_embed.addBlankField().addField(`LOOP: ${server_queue.loop}`, `Queue size: ${server_queue.songs.length}`);
+        queue_embed.addField(`LOOP: ${server_queue.loop}`, `Queue size: ${server_queue.songs.length}`);
         msg.channel.send(queue_embed);
     }
     else
