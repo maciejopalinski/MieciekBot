@@ -17,7 +17,7 @@
         "@discordjs/opus": "^0.3.2",
         "bufferutil": "^4.0.1",
         "canvas": "^2.6.1",
-        "discord.js": "^12.3.1",
+        "discord.js": "12.3.1",
         "emoji-regex": "^9.0.0",
         "ffmpeg-static": "^4.2.7",
         "mongoose": "^5.10.4",
