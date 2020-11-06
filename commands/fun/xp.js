@@ -7,8 +7,6 @@ Canvas.registerFont("assets/fonts/AldotheApache.ttf", {family: "AldoTheApache"})
 
 const User = require("../../models/user.js");
 
-const XPCalc = require("../../util/experience.js");
-
 mongoose.connect(process.env.DATABASE, {
     useNewUrlParser: true,
     useUnifiedTopology: true

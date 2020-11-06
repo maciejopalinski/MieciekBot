@@ -8,27 +8,23 @@
     "main": "index.js",
     "scripts": {
         "start": "node index.js",
-        "start:dev": "node -r dotenv/config index.js > logs/mieciekbot-`date +%Y%m%d%H%M%S`.log",
-        "debug": "node -r dotenv/config --nolazy --inspect-brk=9229 index.js > logs/mieciekbot-`date +%Y%m%d%H%M%S`.log",
+        "start:dev": "node -r dotenv/config index.js",
+        "debug": "node -r dotenv/config --nolazy --inspect-brk=9229 index.js",
         "clean": "rm -r logs/*.log"
     },
     "author": "PoProstuMieciek",
     "dependencies": {
-        "@discordjs/opus": "^0.3.2",
-        "bufferutil": "^4.0.1",
+        "@discordjs/opus": "^0.3.3",
         "canvas": "^2.6.1",
-        "discord.js": "12.3.1",
-        "emoji-regex": "^9.0.0",
-        "ffmpeg-static": "^4.2.7",
-        "mongoose": "^5.10.4",
+        "discord.js": "^12.4.1",
+        "emoji-regex": "^9.2.0",
+        "mongoose": "^5.10.12",
         "octonode": "^0.9.5",
         "random-number-csprng": "^1.0.2",
         "random-puppy": "^1.1.0",
         "request": "^2.88.2",
-        "sodium": "^3.0.2",
-        "utf-8-validate": "^5.0.2",
         "youtube-search": "^1.1.4",
-        "ytdl-core": "^3.2.2"
+        "ytdl-core": "^4.0.3"
     },
     "devDependencies": {
         "dotenv": "^8.2.0"

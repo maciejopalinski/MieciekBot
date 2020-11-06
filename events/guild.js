@@ -1,29 +1,7 @@
 const {bot} = require("../index.js");
 
-const mongoose = require("mongoose");
-mongoose.connect(process.env.DATABASE, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-});
-
-const Server = require("../models/server.js");
-const User = require("../models/user.js");
-
 bot.on('guildCreate', (guild, ignore_members) => {
-    const new_server = new Server({
-        serverID: guild.id,
-        prefix: "!",
-        delete_timeout: 3000,
-        roles: {
-            owner: "",
-            admin: "",
-            dj: "",
-            user: "",
-            mute: ""
-        },
-        spam_channels: []
-    });
-    new_server.save().catch(err => console.error(err));
+    bot.db_manager.defaultServer(guild.id).save().catch(err => console.error(err));
 
     if(ignore_members != true)
     {
@@ -33,14 +11,12 @@ bot.on('guildCreate', (guild, ignore_members) => {
             {
                 guild_members.push({
                     serverID: member.guild.id,
-                    userID: member.id,
-                    level: 0,
-                    xp: 0
+                    userID: member.id, level: 0, xp: 0
                 });
             }
         });
 
-        User.insertMany(guild_members, err => {
+        bot.db_manager.User.insertMany(guild_members, err => {
             if(err) console.error(err);
         });
     }
@@ -51,4 +27,8 @@ bot.on('guildCreate', (guild, ignore_members) => {
     owner.send(`Hi! I just configured your '${guild.name}' server. Please, set up all required permissions, roles and other useful properties. Have a good time!`).catch(err => {
         if(err) return console.error(err);
     });
+});
+
+bot.on('guildDelete', guild => {
+    bot.db_manager.deleteServer(guild.id);
 });
