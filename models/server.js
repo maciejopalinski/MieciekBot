@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
 const serverSchema = mongoose.Schema({
 	serverID: String,
@@ -14,4 +14,4 @@ const serverSchema = mongoose.Schema({
 	spam_channels: [String]
 });
 
-module.exports = mongoose.model("Server", serverSchema);
+module.exports = mongoose.model('Server', serverSchema);
