@@ -1,19 +1,19 @@
-const Discord = require("discord.js");
+const {Client, Message, MessageEmbed} = require('../../lib/mieciekbot.js');
 
 /**
- * @param {Discord.Client} bot 
- * @param {Discord.Message} msg 
+ * @param {Client} bot 
+ * @param {Message} msg 
  * @param {Array<String>} args 
  */
 module.exports.run = async (bot, msg, args) => {
     try {
-        const code = args.join(" ");
+        const code = args.join(' ');
         let evaled = eval(code);
    
-        if (typeof evaled !== "string") evaled = require("util").inspect(evaled);
+        if (typeof evaled !== 'string') evaled = require('util').inspect(evaled);
         let clean_out = clean(evaled);
 
-        if(clean_out.length < 1900) msg.channel.send(clean(evaled), { code: "xl" });
+        if(clean_out.length < 1900) msg.channel.send(clean(evaled), { code: 'xl' });
         else throw new Error('Output is longer than 2000 characters.');
     } catch (err) {
         msg.channel.send(`\`ERROR\` \`\`\`xl\n${clean(err)}\n\`\`\``);
@@ -31,9 +31,6 @@ module.exports.help = {
 }
 
 const clean = (text) => {
-    if (typeof(text) === "string")
-    {
-        return text.replace(/`/g, "`" + String.fromCharCode(8203)).replace(/@/g, "@" + String.fromCharCode(8203));
-    }
+    if (typeof(text) === 'string') return text.replace(/`/g, '`' + String.fromCharCode(8203)).replace(/@/g, '@' + String.fromCharCode(8203));
     else return text;
 }

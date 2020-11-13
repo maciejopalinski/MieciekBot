@@ -1,30 +1,30 @@
-const Discord = require("discord.js");
-const RandomPuppy = require("random-puppy");
+const {Client, Message, MessageEmbed} = require('../../lib/mieciekbot.js');
+const RandomPuppy = require('random-puppy');
 
 /**
- * @param {Discord.Client} bot 
- * @param {Discord.Message} msg 
+ * @param {Client} bot 
+ * @param {Message} msg 
  * @param {Array<String>} args 
  */
 module.exports.run = async (bot, msg, args) => {
     let subReddits = [
-        "dankmeme",
-        "meme",
-        "me_irl",
-        "cursedimages",
-        "blessedimages",
-        "blursedimages",
-        "ihadastroke"
+        'dankmeme',
+        'meme',
+        'me_irl',
+        'cursedimages',
+        'blessedimages',
+        'blursedimages',
+        'ihadastroke'
     ];
     
     let random = subReddits[Math.floor(Math.random() * subReddits.length)];
 
     let img = await RandomPuppy(random);
-    let meme_embed = new Discord.MessageEmbed()
+    
+    let meme_embed = new MessageEmbed(bot, undefined, false)
     .setTitle(`MEME: r/${random}`)
     .setImage(img)
-    .setURL(`https://reddit.com/r/${random}`)
-    .setFooter(`Powered by MieciekBot ${bot.settings.version}`, bot.settings.iconURL);
+    .setURL(`https://reddit.com/r/${random}`);
 
     return msg.channel.send(meme_embed);
 }

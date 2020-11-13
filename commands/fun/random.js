@@ -1,29 +1,27 @@
-const Discord = require("discord.js");
-const RandomNumber = require("random-number-csprng");
+const {Client, Message, MessageEmbed} = require('../../lib/mieciekbot.js');
+const RandomNumber = require('random-number-csprng');
 
 /**
- * @param {Discord.Client} bot 
- * @param {Discord.Message} msg 
+ * @param {Client} bot 
+ * @param {Message} msg 
  * @param {Array<String>} args 
  */
 module.exports.run = async (bot, msg, args) => {
     let range = parseInt(args[0]);
-
     if(range > 1 && range <= 65535)
     {
         RandomNumber(1, range).then(random => {
-            let random_embed = new Discord.MessageEmbed()
+            let random_embed = new MessageEmbed(bot, msg.guild)
             .setTitle(`Random: 1 - ${range}`)
-            .addField(`Random number from 1 to ${range}:`, random)
-            .setFooter(`Powered by MieciekBot ${bot.settings.version}`, bot.settings.iconURL);
+            .addField(`Random number from 1 to ${range}:`, random);
 
             msg.channel.send(random_embed);
         });
     }
     else
     {
-        msg.delete({ timeout: bot.delete_timeout });
-        msg.channel.send(this.error.cannot_roll).then(msg => msg.delete({ timeout: bot.delete_timeout }));
+        bot.deleteMsg(msg);
+        bot.sendAndDelete(msg.channel, this.error.cannot_roll);
     }
 }
 

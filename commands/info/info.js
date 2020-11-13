@@ -1,40 +1,34 @@
-const Discord = require("discord.js");
+const {Client, Message, MessageEmbed} = require('../../lib/mieciekbot.js');
 
 /**
- * @param {Discord.Client} bot 
- * @param {Discord.Message} msg 
+ * @param {Client} bot 
+ * @param {Message} msg 
  * @param {Array<String>} args 
  */
 module.exports.run = async (bot, msg, args) => {
-    if(args[0] == "server")
+    if(args[0] == 'server')
     {
-        let message = new Discord.MessageEmbed()
+        let message = new MessageEmbed(bot, msg.guild)
         .setTitle(`INFO: ${msg.guild.name}`)
-        .setThumbnail(msg.guild.iconURL({ size: 64 }))
-        .addField(`Owner:`, `${msg.guild.owner.user.tag}`)
-        .addField(`Created at:`, `${msg.guild.owner.joinedAt.toDateString()}`)
-        .addField(`Members:`, `${msg.guild.memberCount}`)
-        .setFooter(`Powered by MieciekBot ${bot.settings.version}`, bot.settings.iconURL);
+        .addField('Owner:', `${msg.guild.owner.user.tag}`)
+        .addField('Created at:', `${msg.guild.owner.joinedAt.toDateString()}`)
+        .addField('Members:', `${msg.guild.memberCount}`);
 
         msg.channel.send(message);
     }
-    else if(args[0] == "bot")
+    else if(args[0] == 'bot')
     {
-        let message = new Discord.MessageEmbed()
-        .setTitle(`INFO: MieciekBot`)
-        .setThumbnail(bot.settings.iconURL)
-        .addField(`Author:`, `PoProstuMieciek#6099`)
-        .addField(`Version:`, `${bot.settings.version}`)
-        .addField(`GitHub repository:`, `${bot.settings.repository}`)
-        .addField(`Invite me to your server:`, `https://discordapp.com/oauth2/authorize?client_id=${bot.user.id}&scope=bot&permissions=8`)
-        .setFooter(`Powered by MieciekBot ${bot.settings.version}`, bot.settings.iconURL);
+        let message = new MessageEmbed(bot, undefined, false)
+        .setTitle('INFO: MieciekBot')
+        .setThumbnail(bot.user.avatarURL({ format: 'png', size: 4096 }))
+        .addField('Author:', 'PoProstuMieciek#6099')
+        .addField('Version:', bot.version)
+        .addField('GitHub repository:', bot.project_info.repository.url)
+        .addField('Invite me to your server:', `https://discordapp.com/oauth2/authorize?client_id=${bot.user.id}&scope=bot&permissions=8`);
 
         msg.channel.send(message);
     }
-    else
-    {
-        msg.delete({ timeout: bot.delete_timeout });
-    }
+    else bot.deleteMsg(msg);
 }
 
 module.exports.help = {

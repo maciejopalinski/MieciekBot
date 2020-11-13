@@ -1,37 +1,30 @@
-const Discord = require("discord.js");
+const {Client, Message, MessageEmbed} = require('../../lib/mieciekbot.js');
 
 /**
- * @param {Discord.Client} bot 
- * @param {Discord.Message} msg 
+ * @param {Client} bot 
+ * @param {Message} msg 
  * @param {Array<String>} args 
  */
 module.exports.run = async (bot, msg, args) => {
-    if(bot.settings.role.actual == bot.settings.role.nodes.findIndex(r => r.name == "@everyone"))
+    if(bot.roles.user.name == '@everyone')
     {
-        let user_role_id = bot.settings.role.nodes.find(r => r.name == "USER").id;
-        let user_role = msg.guild.roles.cache.find(role => role.id == user_role_id);
+        let user_node = bot.roles.manager.getNode('USER');
+        let user_role = msg.guild.roles.cache.find(role => role.id == user_node.role_id);
         if(!user_role)
         {
-            msg.delete({ timeout: bot.delete_timeout });
-            return msg.channel.send(`User role (${role_ids.user}) was not found on the server. Please, edit your configuration.`)
-            .then(msg => msg.delete({ timeout: bot.delete_timeout }));
+            bot.deleteMsg(msg);
+            return bot.sendAndDelete(msg.channel, `User role (${user_node.role_id}) was not found on the server. Please, edit your configuration.`)
         }
 
         msg.member.roles.add(user_role);
         msg.delete();
             
-        let welcome_embed = new Discord.MessageEmbed()
+        let welcome_embed = new MessageEmbed(bot, msg.guild)
         .setTitle(`Welcome on ${msg.guild.name}!`)
-        .setThumbnail(msg.guild.iconURL)
-        .addField(`Now, you can see all channels on the server.`, `Have fun!`)
-        .setFooter(`Powered by MieciekBot ${bot.settings.version}`, bot.settings.iconURL);
-
+        .addField(`Now, you can see all channels on the server.`, `Have fun!`);
         return msg.author.send(welcome_embed);
     }
-    else
-    {
-        return msg.delete();
-    }
+    else msg.delete();
 }
 
 module.exports.help = {

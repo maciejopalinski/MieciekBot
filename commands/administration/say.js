@@ -1,14 +1,13 @@
-const Discord = require("discord.js");
+const {Client, Message, MessageEmbed} = require('../../lib/mieciekbot.js');
 
 /**
- * @param {Discord.Client} bot 
- * @param {Discord.Message} msg 
+ * @param {Client} bot 
+ * @param {Message} msg 
  * @param {Array<String>} args 
  */
 module.exports.run = async (bot, msg, args) => {
-    args = args.join(" ");
-    msg.delete();
-    msg.channel.send(args);
+    await msg.delete();
+    msg.channel.send(args.join(' '));
 }
 
 module.exports.help = {
