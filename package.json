@@ -15,14 +15,13 @@
     "author": "PoProstuMieciek",
     "dependencies": {
         "@discordjs/opus": "^0.3.3",
+        "axios": "^0.21.0",
         "canvas": "^2.6.1",
         "discord.js": "^12.4.1",
         "emoji-regex": "^9.2.0",
         "mongoose": "^5.10.12",
-        "octonode": "^0.9.5",
         "random-number-csprng": "^1.0.2",
         "random-puppy": "^1.1.0",
-        "request": "^2.88.2",
         "youtube-search": "^1.1.4",
         "ytdl-core": "^4.0.3"
     },
