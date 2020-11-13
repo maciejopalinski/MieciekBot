@@ -18,9 +18,10 @@ module.exports.run = async (bot, msg, args, load) => {
     let song = null;
     if(!load)
     {
-        song = new Song();
+        song = new Song(bot);
         try {
             await song.fetchInfo(args.join(' '));
+            bot.music_queue.cache.set(args.join(' '), song.url);
         } catch (error) {
             console.error(error);
             return msg.channel.send(error.message);
