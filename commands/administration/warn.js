@@ -1,65 +1,55 @@
-const Discord = require("discord.js");
-const mongoose = require("mongoose");
-
-const Warns = require("../../models/warns.js");
-
-mongoose.connect(process.env.DATABASE, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-});
+const {Client, Message, MessageEmbed} = require('../../lib/mieciekbot.js');
 
 /**
- * @param {Discord.Client} bot 
- * @param {Discord.Message} msg 
+ * @param {Client} bot 
+ * @param {Message} msg 
  * @param {Array<String>} args 
  */
 module.exports.run = async (bot, msg, args) => {
     let user = msg.mentions.members.first();
-    let reason = args.slice(1).join(" ");
+    let reason = args.slice(1).join(' ');
 
     if(user)
     {
         if(user.id == msg.author.id || user.user.bot)
         {
-            msg.delete(bot.delete_timeout);
-            return msg.channel.send(this.error.not_warnable).then(msg => msg.delete(bot.delete_timeout));
+            bot.deleteMsg(msg);
+            return bot.sendAndDelete(msg.channel, this.error.not_warnable);
         }
 
-        let warn_embed = new Discord.RichEmbed()
+        let warn_embed = new MessageEmbed(bot, msg.guild)
         .setTitle(`You have been warned on ${msg.guild.name}!`)
-        .setThumbnail(msg.guild.iconURL)
-        .addField(`Warned by:`, msg.author.username)
-        .addField(`Reason:`, reason)
-        .setFooter(`Powered by MieciekBot ${bot.settings.version}`, bot.settings.iconURL);
+        .addField('Warned by:', `<@${msg.author.id}>`)
+        .addField('Reason:', reason);
         
-        let info_warn = new Discord.RichEmbed()
+        let info_warn = new MessageEmbed(bot, msg.guild)
         .setTitle(`${user.user.username} has been warned!`)
-        .setThumbnail(msg.guild.iconURL)
-        .addField(`Warned by:`, `<@${msg.author.id}>`)
-        .addField(`Reason:`, reason)
-        .setFooter(`Powered by MieciekBot ${bot.settings.version}`, bot.settings.iconURL);
+        .addField('Warned by:', `<@${msg.author.id}>`)
+        .addField('Reason:', reason);
 
         let date = new Date();
-        let date_string = `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`
+        let date_string = `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
 
-        const newWarn = new Warns({
+        const newWarn = new bot.db_manager.Warn({
             serverID: msg.guild.id,
             userID: user.id,
             warnedBy: msg.author.id,
             reason: reason,
             timestamp: date_string
         });
-        newWarn.save().catch(err => console.error(err));
+        newWarn.save().catch(err => {
+            console.error(err)
+            bot.sendAndDelete(msg.channel, this.error.unknown);
+        });
 
         msg.delete();
-        
         await user.send(warn_embed);
         msg.channel.send(info_warn);
     }
     else
     {
-        msg.delete(bot.delete_timeout);
-        msg.channel.send(this.error.user_not_found).then(msg => msg.delete(bot.delete_timeout));
+        bot.deleteMsg(msg);
+        bot.sendAndDelete(msg.channel, this.error.user_not_found);
     }
 }
 

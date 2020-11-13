@@ -1,41 +1,28 @@
-const Discord = require("discord.js");
+const {Client, Message, MessageEmbed} = require('../../lib/mieciekbot.js');
 
 /**
- * @param {Discord.Client} bot 
- * @param {Discord.Message} msg 
+ * @param {Client} bot 
+ * @param {Message} msg 
  * @param {Array<String>} args 
  */
 module.exports.run = async (bot, msg, args) => {
-    let help = new Discord.RichEmbed();
+    let help = new MessageEmbed(bot, msg.guild);
+    let allowed = bot.roles.user.allowed_nodes;
 
-    let actual = bot.settings.role.actual;
-    let allowed_roles = bot.settings.role.nodes[actual].allowed_roles;
-    let total_commands = 0;
-
-    if(!args[0] || !bot.categories.includes(args[0]))
+    if(!args[0] || !bot.command_manager.categories.includes(args[0]))
     {
-        help.addField(`Usage: ${bot.prefix}${this.help.name} ${this.help.args}`, '\u200b')
-        .addField(`Available categories:`, bot.categories.join(", "));
-
+        help
+        .addField(`Usage: ${bot.prefix}${this.help.name} ${this.help.args}`, '\u200b')
+        .addField('Available categories:', bot.command_manager.categories.join(', '));
         return msg.channel.send(help);
     }
     
     help.setTitle(`HELP: ${args[0]}`);
 
-    bot.commands.forEach((value, index) => {
-        if(value.help.category == args[0] && allowed_roles.includes(value.help.permission))
-        {
-            help.addField(`${bot.prefix}${value.help.name} ${value.help.args.join(" ")}`, `${value.help.description}`);
-            total_commands++;
-        }
-    });
+    let commands = bot.command_manager.commands.filter(v => v.help.category == args[0] && allowed.includes(v.help.permission));
+    commands.forEach(v => help.addField(`${bot.prefix}${v.help.name} ${v.help.args.join(' ')}`, v.help.description));
 
-    if(total_commands <= 0)
-    {
-        help.addField(`There weren't any available commands for you.`, '\u200b');
-    }
-    
-    help.setFooter(`Powered by MieciekBot ${bot.settings.version}`, bot.settings.iconURL);
+    if(help.fields.length == 0) help.addField('There weren\'t any available commands for you.', '\u200b');
     msg.channel.send(help);
 }
 

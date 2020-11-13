@@ -1,28 +1,23 @@
-const Discord = require("discord.js");
-const Request = require("request");
+const {Client, Message, MessageEmbed} = require('../../lib/mieciekbot.js');
+const axios = require('axios').default;
 
 /**
- * @param {Discord.Client} bot 
- * @param {Discord.Message} msg 
+ * @param {Client} bot 
+ * @param {Message} msg 
  * @param {Array<String>} args 
  */
 module.exports.run = async (bot, msg, args) => {
-    var options = {
-        method: 'GET',
-        url: 'https://api.chucknorris.io/jokes/random/'
-    };
-
-    Request(options, async (err, res, body) => {
-        if(err) return console.error(err);
-        body = JSON.parse(body);
-
-        const joke_embed = new Discord.RichEmbed()
-        .setTitle('Chuck Norris Joke')
-        .setURL(body.url)
-        .addField(body.value, '\u200b')
-        .setFooter(`Powered by MieciekBot ${bot.settings.version}`, bot.settings.iconURL);
-
-        msg.channel.send(joke_embed);
+    
+    let joke_embed = new MessageEmbed(bot, msg.guild).setTitle('Chuck Norris Joke');
+    
+    axios.get('https://api.chucknorris.io/jokes/random/')
+    .then(res => {
+        joke_embed.setURL(res.data.url).addField(res.data.value, '\u200b');
+        return msg.channel.send(joke_embed);
+    })
+    .catch(err => {
+        joke_embed.addField('API Error', err);
+        return msg.channel.send(joke_embed);
     });
 }
 

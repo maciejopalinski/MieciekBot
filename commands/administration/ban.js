@@ -1,51 +1,45 @@
-const Discord = require('discord.js');
+const {Client, Message, MessageEmbed} = require('../../lib/mieciekbot.js');
 
 /**
- * @param {Discord.Client} bot 
- * @param {Discord.Message} msg 
+ * @param {Client} bot 
+ * @param {Message} msg 
  * @param {Array<String>} args 
  */
 module.exports.run = async (bot, msg, args) => {
     let user = msg.mentions.members.first();
-    let reason = args.slice(1).join(" ") || "no reason specified";
+    let reason = args.slice(1).join(' ') || 'no reason specified';
 
     if(user)
     {
         if(!user.bannable || user.id == msg.author.id)
         {
-            msg.delete(bot.delete_timeout);
-            return msg.channel.send(this.error.not_bannable).then(msg => msg.delete(bot.delete_timeout));
+            bot.deleteMsg(msg);
+            return bot.sendAndDelete(msg.channel, this.error.not_bannable);
         }
 
-        let ban_embed = new Discord.RichEmbed()
+        let ban_embed = new MessageEmbed(bot, msg.guild)
         .setTitle(`You have been banned on ${msg.guild.name}!`)
-        .setThumbnail(msg.guild.iconURL)
-        .addField(`Banned by:`, msg.author.username)
-        .addField(`Reason:`, reason)
-        .setFooter(`Powered by MieciekBot ${bot.settings.version}`, bot.settings.iconURL);
+        .addField('Banned by:', `<@${msg.author.id}>`)
+        .addField('Reason:', reason);
         
-        let info_ban = new Discord.RichEmbed()
+        let info_ban = new MessageEmbed(bot, msg.guild)
         .setTitle(`${user.user.username} has been banned!`)
-        .setThumbnail(msg.guild.iconURL)
-        .addField(`Banned by:`, msg.author.username)
-        .addField(`Reason:`, reason)
-        .setFooter(`Powered by MieciekBot ${bot.settings.version}`, bot.settings.iconURL);
+        .addField('Banned by:', `<@${msg.author.id}>`)
+        .addField('Reason:', reason);
 
         msg.delete();
-        
         await user.send(ban_embed);
-        msg.channel.send(info_ban);
-        
+        await msg.channel.send(info_ban);
         user.ban(reason);
     }
     else
     {
-        msg.delete(bot.delete_timeout);
-        msg.channel.send(this.error.user_not_found).then(msg => msg.delete(bot.delete_timeout));
+        bot.deleteMsg(msg);
+        bot.sendAndDelete(msg.channel, this.error.user_not_found);
     }
 }
 
-module.exports.help ={
+module.exports.help = {
     name: "ban",
     aliases: [],
     args: [

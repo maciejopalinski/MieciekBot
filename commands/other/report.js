@@ -1,30 +1,29 @@
-const Discord = require("discord.js");
+const {Client, Message, MessageEmbed} = require('../../lib/mieciekbot.js');
 
 /**
- * @param {Discord.Client} bot 
- * @param {Discord.Message} msg 
+ * @param {Client} bot 
+ * @param {Message} msg 
  * @param {Array<String>} args 
  */
 module.exports.run = async (bot, msg, args) => {
     let user = msg.mentions.members.first();
-    let reason = args.slice(1).join(" ") || undefined;
+    let reason = args.slice(1).join(' ');
 
-    if(reason && user)
+    if(user)
     {
-        let report_embed = new Discord.RichEmbed()
+        let report_embed = new MessageEmbed(bot, msg.guild)
         .setTitle(`REPORT: ${user.user.username}`)
-        .addField(`Reported user:`, `<@${user.id}>`)
-        .addField(`Reported by:`, `<@${msg.author.id}>`)
-        .addField(`Reason:`, `${reason}`)
-        .setFooter(`Powered by MieciekBot ${bot.settings.version}`, bot.settings.iconURL);
+        .addField('Reported user:', `<@${user.id}>`)
+        .addField('Reported by:', `<@${msg.author.id}>`)
+        .addField('Reason:', reason);
 
         msg.delete();
         msg.channel.send(report_embed);
     }
     else
     {
-        msg.delete(bot.delete_timeout);
-        msg.channel.send(this.error.no_arg).then(msg => msg.delete(bot.delete_timeout));
+        bot.deleteMsg(msg);
+        bot.sendAndDelete(msg.channel, this.error.no_arg);
     }
 }
 

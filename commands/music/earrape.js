@@ -1,34 +1,29 @@
-const Discord = require("discord.js");
+const {Client, Message, MessageEmbed} = require('../../lib/mieciekbot.js');
 
 /**
- * @param {Discord.Client} bot 
- * @param {Discord.Message} msg 
+ * @param {Client} bot 
+ * @param {Message} msg 
  * @param {Array<String>} args 
  */
 module.exports.run = async (bot, msg, args) => {
-    let queue = bot.queue;
-    let server_queue = bot.queue.get(msg.guild.id);
-
-    if(server_queue && server_queue.playing)
+    let server_queue = bot.music_queue.get(msg.guild.id);
+    if(server_queue && server_queue.playing.state)
     {
-        if(server_queue.volume != 500)
+        if(server_queue.volume.current != 500)
         {
-            server_queue.last_volume = server_queue.volume;
-            server_queue.volume = 500;
-            server_queue.connection.dispatcher.setVolumeLogarithmic(500 / 100);
+            server_queue.setVolume(500);
             msg.channel.send(this.error.turn_on);
         }
         else
         {
-            server_queue.volume = server_queue.last_volume;
-            server_queue.connection.dispatcher.setVolumeLogarithmic(server_queue.last_volume / 100);
-            msg.channel.send(this.error.turn_off + ` Volume: ${server_queue.volume}.`);
+            server_queue.restoreVolume();
+            msg.channel.send(this.error.turn_off + ` Volume: ${server_queue.volume.current}.`);
         }
     }
     else
     {
-        msg.delete(bot.delete_timeout);
-        return msg.channel.send(this.error.music_play).then(msg => msg.delete(bot.delete_timeout));
+        bot.deleteMsg(msg);
+        return bot.sendAndDelete(msg.channel, this.error.music_play);
     }
 }
 

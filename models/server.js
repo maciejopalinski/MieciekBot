@@ -1,6 +1,6 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
-const serversSchema = mongoose.Schema({
+const serverSchema = mongoose.Schema({
 	serverID: String,
 	prefix: String,
 	delete_timeout: Number,
@@ -14,4 +14,4 @@ const serversSchema = mongoose.Schema({
 	spam_channels: [String]
 });
 
-module.exports = mongoose.model("Servers", serversSchema);
+module.exports = mongoose.model('Server', serverSchema);

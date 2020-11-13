@@ -1,8 +1,8 @@
-const Discord = require("discord.js");
+const {Client, Message, MessageEmbed} = require('../../lib/mieciekbot.js');
 
 /**
- * @param {Discord.Client} bot 
- * @param {Discord.Message} msg 
+ * @param {Client} bot 
+ * @param {Message} msg 
  * @param {Array<String>} args 
  */
 module.exports.run = async (bot, msg, args) => {
@@ -10,43 +10,40 @@ module.exports.run = async (bot, msg, args) => {
 
     if(!user.kickable || user.id == msg.author.id)
     {
-        msg.delete(bot.delete_timeout);
-        return msg.channel.send(this.error.not_mutable).then(msg => msg.delete(bot.delete_timeout));
+        bot.deleteMsg(msg);
+        return bot.sendAndDelete(msg.channel, this.error.not_mutable);
     }
 
-    let index = {
-        mute: bot.settings.role.nodes.findIndex(r => r.name == "MUTE"),
-        user: bot.settings.role.nodes.findIndex(r => r.name == "USER")
-    };
-    let mute_role = msg.guild.roles.find(r => r.id == bot.settings.role.nodes[index.mute].id);
-    let user_role = msg.guild.roles.find(r => r.id == bot.settings.role.nodes[index.user].id);
+    let mute_node = bot.roles.manager.getNode('MUTE');
+    let user_node = bot.roles.manager.getNode('USER');
+    let mute_role = msg.guild.roles.cache.find(r => r.id == mute_node.role_id);
+    let user_role = msg.guild.roles.cache.find(r => r.id == user_node.role_id);
 
     if(!mute_role)
     {
-        msg.delete(bot.delete_timeout);
-        return msg.channel.send(`Muted role (${bot.settings.role[index.mute].id}) was not found on the server. Please, edit your configuration.`)
-        .then(msg => msg.delete(bot.delete_timeout));
+        bot.deleteMsg(msg);
+        return bot.sendAndDelete(msg.channel, `Mute role (${mute_node.role_id}) was not found on the server. Please, edit your configuration.`);
+    }
+    if(!user_role)
+    {
+        bot.deleteMsg(msg);
+        return bot.sendAndDelete(msg.channel, `User role (${user_node.role_id}) was not found on the server. Please, edit your configuration.`);
     }
 
-    let mute_embed = new Discord.RichEmbed()
+    let mute_embed = new MessageEmbed(bot, msg.guild)
     .setTitle(`You have been unmuted on ${msg.guild.name}!`)
-    .setThumbnail(msg.guild.iconURL)
-    .addField(`Unmuted by:`, msg.author.username)
-    .setFooter(`Powered by MieciekBot ${bot.settings.version}`, bot.settings.iconURL);
+    .addField('Unmuted by:', `<@${msg.author.id}>`);
         
-    let info_mute = new Discord.RichEmbed()
+    let info_mute = new MessageEmbed(bot, msg.guild)
     .setTitle(`${user.user.username} has been unmuted!`)
-    .setThumbnail(msg.guild.iconURL)
-    .addField(`Unmuted by:`, `<@${msg.author.username}>`)
-    .setFooter(`Powered by MieciekBot ${bot.settings.version}`, bot.settings.iconURL);
+    .addField('Unmuted by:', `<@${msg.author.id}>`);
 
     msg.delete();
-
     user.send(mute_embed);
     msg.channel.send(info_mute);
 
-    user.addRole(user_role);
-    user.removeRole(mute_role);
+    user.roles.add(user_role);
+    user.roles.remove(mute_role);
 }
 
 module.exports.help = {

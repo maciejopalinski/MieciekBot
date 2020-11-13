@@ -1,28 +1,24 @@
-const Discord = require("discord.js");
+const {Client, Message, MessageEmbed} = require('../../lib/mieciekbot.js');
 
 /**
- * @param {Discord.Client} bot 
- * @param {Discord.Message} msg 
+ * @param {Client} bot 
+ * @param {Message} msg 
  * @param {Array<String>} args 
  */
 module.exports.run = async (bot, msg, args) => {
-    const commandfile = bot.commands.get(args[0]) || bot.aliases.get(args[0]);
+    const commandfile = bot.command_manager.commands.get(args[0]) || bot.command_manager.aliases.get(args[0]);
+    let allowed = bot.roles.user.allowed_nodes;
 
-    let actual = bot.settings.role.actual;
-    let allowed_roles = bot.settings.role.nodes[actual].allowed_roles;
-
-    if(!commandfile || !allowed_roles.includes(commandfile.help.permission) && commandfile.help.name != "help")
+    if(!commandfile || !allowed.includes(commandfile.help.permission) && commandfile.help.name != 'help')
     {
-        msg.delete(bot.delete_timeout);
-        return msg.channel.send(this.error.cmd_not_found).then(msg => msg.delete(bot.delete_timeout));
+        bot.deleteMsg(msg);
+        return bot.sendAndDelete(msg.channel, this.error.cmd_not_found);
     }
 
-    let aliases_embed = new Discord.RichEmbed()
+    let aliases_embed = new MessageEmbed(bot, msg.guild)
     .setTitle(`ALIASES: /command/${commandfile.help.name}`)
-    .addField(`${bot.prefix}${commandfile.help.name} ${commandfile.help.args.join(" ")}`, commandfile.help.description)
-    .addBlankField()
-    .addField(`Aliases:`, commandfile.help.aliases.join(", ") || "-none-")
-    .setFooter(`Powered by MieciekBot ${bot.settings.version}`, bot.settings.iconURL);
+    .addField(`${bot.prefix}${commandfile.help.name} ${commandfile.help.args.join(' ')}`, commandfile.help.description)
+    .addField('Aliases:', commandfile.help.aliases.join(', ') || '-none-');
 
     msg.channel.send(aliases_embed);
 }

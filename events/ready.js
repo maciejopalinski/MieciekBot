@@ -1,43 +1,39 @@
-const {bot} = require("../index.js");
+const {bot} = require('../index.js');
 
-const mongoose = require("mongoose");
-mongoose.connect(process.env.DATABASE, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-});
+bot.on('ready', async () => {
+    console.info(`Running...`);
 
-const Discord = require("discord.js");
-const Servers = require("../models/servers.js");
-const Users = require("../models/users.js");
-
-bot.on('ready', () => {
     let status = [
         {
-            status: "online",
-            game: {
-                type: "LISTENING",
-                name: "Megadeth"
+            status: 'online',
+            activity: {
+                type: 'LISTENING',
+                name: 'Megadeth',
+                url: 'https://github.com/PoProstuMieciek/'
             }
         },
         {
-            status: "online",
-            game: {
-                type: "LISTENING",
-                name: "Slipknot"
+            status: 'online',
+            activity: {
+                type: 'LISTENING',
+                name: 'Slipknot',
+                url: 'https://github.com/PoProstuMieciek/'
             }
         },
         {
-            status: "online",
-            game: {
-                type: "PLAYING",
-                name: "Visual Studio Code"
+            status: 'online',
+            activity: {
+                type: 'PLAYING',
+                name: 'Visual Studio Code',
+                url: 'https://github.com/PoProstuMieciek/'
             }
         },
         {
-            status: "online",
-            game: {
-                type: "PLAYING",
-                name: `on ${bot.guilds.size} ${bot.guilds.size > 1 ? "servers" : "server"}`
+            status: 'online',
+            activity: {
+                type: 'PLAYING',
+                name: `on ${bot.guilds.cache.size} ${bot.guilds.cache.size > 1 ? 'servers' : 'server'}`,
+                url: 'https://github.com/PoProstuMieciek/'
             }
         }
     ];
@@ -47,69 +43,5 @@ bot.on('ready', () => {
         bot.user.setPresence(status[index]);
     }, 5000);
 
-    bot.guilds.forEach(guild => {
-        Servers.findOne({
-            serverID: guild.id
-        }, (err, res) => {
-            if(err) console.error(err);
-
-            if(!res)
-            {
-                let custom_guild = guild;
-                guild.members = new Discord.Collection();
-                bot.emit('guildCreate', custom_guild);
-                console.debug(`Adding new guild to the database... (GID:${guild.id})`);
-            }
-        });
-
-        guild.members.forEach(member => {
-            Users.findOne({
-                serverID: guild.id,
-                userID: member.id
-            }, (err, res) => {
-                if(err) console.error(err);
-
-                if(!res && !member.user.bot)
-                {
-                    bot.emit('guildMemberAdd', member);
-                    console.debug(`Adding new guild member to the database... (GID:${guild.id} UID:${member.id})`);
-                }
-            });
-        });
-
-        Users.find({
-            serverID: guild.id
-        }, (err, res) => {
-            if(err) console.error(err);
-            
-            let guild_users = guild.members.filter(member => !member.user.bot);
-            res.forEach(member => {
-                if(!guild_users.delete(member.userID))
-                {
-                    bot.emit('guildMemberRemove', {
-                        id: member.userID,
-                        guild: {
-                            id: guild.id
-                        }
-                    });
-                    console.debug(`Deleting old guild member from the database... (GID:${guild.id} UID:${member.userID})`);
-                }
-            });
-        });
-    });
-
-    Servers.find({}, (err, res) => {
-        if(err) console.error(err);
-
-        let bot_guilds = bot.guilds;
-        res.forEach(guild => {
-            if(!bot_guilds.delete(guild.serverID))
-            {
-                bot.emit('guildDelete', { id: guild.serverID });
-                console.debug(`Deleting old guild and its members from the database... (GID:${guild.serverID})`);
-            } 
-        });
-    });
-
-    console.info(`Running...`);
+    await bot.db_manager.databaseCleanup(bot);
 });

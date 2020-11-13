@@ -1,32 +1,30 @@
-const Discord = require("discord.js");
+const {Client, Message, MessageEmbed} = require('../../lib/mieciekbot.js');
 
 /**
- * @param {Discord.Client} bot 
- * @param {Discord.Message} msg 
+ * @param {Client} bot 
+ * @param {Message} msg 
  * @param {Array<String>} args 
  */
 module.exports.run = async (bot, msg, args) => {
-    let queue = bot.queue;
-    let server_queue = bot.queue.get(msg.guild.id);
-
-    let new_volume = parseInt(args[0]) || undefined;
-    if(!new_volume || new_volume < 1 || new_volume > 200)
+    let server_queue = bot.music_queue.get(msg.guild.id);
+    if(server_queue && server_queue.playing.state)
     {
-        msg.delete(bot.delete_timeout);
-        return msg.channel.send(this.error.value + ` Volume: ${server_queue.volume}.`).then(msg => msg.delete(bot.delete_timeout));
-    }
+        let new_volume = parseInt(args[0]) || undefined;
+        if(!new_volume || new_volume < 1 || new_volume > 200)
+        {
+            bot.deleteMsg(msg);
+            return bot.sendAndDelete(msg.channel, this.error.value + ` Volume: ${server_queue.volume.current}`);
+        }
 
-    if(server_queue && server_queue.playing)
-    {
-        server_queue.last_volume = server_queue.volume;
-        server_queue.volume = new_volume;
-        server_queue.connection.dispatcher.setVolumeLogarithmic(new_volume / 100);
-        msg.channel.send(this.error.done + new_volume + ".");
+        server_queue.volume.last = server_queue.volume.current;
+        server_queue.volume.current = new_volume;
+        server_queue.updateVolume();
+        msg.channel.send(this.error.done + new_volume + '.');
     }
     else
     {
-        msg.delete(bot.delete_timeout);
-        return msg.channel.send(this.error.music_play).then(msg => msg.delete(bot.delete_timeout));
+        bot.deleteMsg(msg);
+        return bot.sendAndDelete(msg.channel, this.error.music_play);
     }
 }
 

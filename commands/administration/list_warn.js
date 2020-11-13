@@ -1,16 +1,8 @@
-const Discord = require("discord.js");
-const mongoose = require("mongoose");
-
-const Warns = require("../../models/warns.js");
-
-mongoose.connect(process.env.DATABASE, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-});
+const {Client, Message, MessageEmbed} = require('../../lib/mieciekbot.js');
 
 /**
- * @param {Discord.Client} bot 
- * @param {Discord.Message} msg 
+ * @param {Client} bot 
+ * @param {Message} msg 
  * @param {Array<String>} args 
  */
 module.exports.run = async (bot, msg, args) => {
@@ -18,37 +10,29 @@ module.exports.run = async (bot, msg, args) => {
 
     if(user)
     {
-        let warns_embed = new Discord.RichEmbed()
+        let warns_embed = new MessageEmbed(bot, msg.guild)
         .setTitle(`WARNS: ${user.user.username}`)
-        .setDescription(`List of ${user.user.username} warnings:`)
-        .setFooter(`Powered by MieciekBot ${bot.settings.version}`, bot.settings.iconURL);
+        .setDescription(`List of <@${user.user.id}> warnings:`);
 
-        Warns.find({
-            serverID: msg.guild.id,
-            userID: user.id
-        }, (err, res) => {
-            if(!res)
-            {
-                msg.delete(bot.delete_timeout);
-                return msg.channel.send(this.error.unknown).then(msg => msg.delete(bot.delete_timeout));
-            }
-
-            res.forEach(element => {
-                warns_embed.addField(`Reason: ${element.reason}`, `Warned by: <@${element.warnedBy}>\n${element.timestamp}`);
-            });
-
-            if(res.length < 1)
-            {
-                warns_embed.addField(`There are not any warnings for user`, `<@${user.id}>`);
-            }
-
-            msg.channel.send(warns_embed);
+        let warns = await bot.db_manager.getWarns(msg.guild.id, user.id);
+        if(!warns)
+        {
+            bot.deleteMsg(msg);
+            return bot.sendAndDelete(msg.channel, this.error.unknown);
+        }
+        
+        warns.forEach(entry => {
+            warns_embed.addField(`Reason: ${entry.reason}`, `Warned by: <@${entry.warnedBy}>\n${entry.timestamp}`);
         });
+
+        if(warns.length < 1) warns_embed.addField('There are not any warnings for this user.', '\u200b');
+        
+        msg.channel.send(warns_embed);
     }
     else
     {
-        msg.delete(bot.delete_timeout);
-        msg.channel.send(this.error.user_not_found).then(msg => msg.delete(bot.delete_timeout));
+        bot.deleteMsg(msg);
+        bot.sendAndDelete(msg.channel, this.error.user_not_found);
     }
 }
 

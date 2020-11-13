@@ -1,18 +1,16 @@
-const Discord = require("discord.js");
+const {Client, Message, MessageEmbed} = require('../../lib/mieciekbot.js');
 
 /**
- * @param {Discord.Client} bot 
- * @param {Discord.Message} msg 
+ * @param {Client} bot 
+ * @param {Message} msg 
  * @param {Array<String>} args 
  */
 module.exports.run = async (bot, msg, args) => {
     let user = msg.mentions.users.first() || msg.author;
 
-    let avatar_embed = new Discord.RichEmbed()
+    let avatar_embed = new MessageEmbed(bot, msg.guild, false)
     .setTitle(`AVATAR: ${user.username}`)
-    .setImage(user.avatarURL || user.displayAvatarURL)
-    .setFooter(`Powered by MieciekBot ${bot.settings.version}`, bot.settings.iconURL);
-
+    .setImage(user.avatarURL({ format: 'png', size: 4096 }) || user.defaultAvatarURL);
     msg.channel.send(avatar_embed);
 }
 
