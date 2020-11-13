@@ -1,30 +1,28 @@
-const Discord = require("discord.js");
+const {Client, Message, MessageEmbed} = require('../../lib/mieciekbot.js');
 
 /**
- * @param {Discord.Client} bot 
- * @param {Discord.Message} msg 
+ * @param {Client} bot 
+ * @param {Message} msg 
  * @param {Array<String>} args 
  */
 module.exports.run = async (bot, msg, args) => {
-    let queue = bot.queue;
-    let server_queue = bot.queue.get(msg.guild.id);
-
-    args[0] = parseInt(args[0]);
-    if(args[0] <= 0 || args[0] > server_queue.songs.length - 1)
-    {
-        msg.delete({ timeout: bot.delete_timeout });
-        return msg.channel.send(this.error.invalid_num).then(msg => msg.delete({ timeout: bot.delete_timeout }));
-    }
-
+    let server_queue = bot.music_queue.get(msg.guild.id);
     if(server_queue)
     {
-        msg.channel.send(this.error.removed.replace("{{pos}}", args[0]));
-        server_queue.songs.splice(args[0], 1);
+        args[0] = parseInt(args[0]);
+        if(args[0] < 0 || args[0] > server_queue.songs.length - 1)
+        {
+            bot.deleteMsg(msg);
+            return bot.sendAndDelete(msg.channel, this.error.invalid_num);
+        }
+        
+        server_queue.removeSong(args[0]);
+        msg.channel.send(this.error.removed.replace('{{pos}}', args[0]));
     }
     else
     {
-        msg.delete({ timeout: bot.delete_timeout });
-        return msg.channel.send(this.error.must_play).then(msg => msg.delete({ timeout: bot.delete_timeout }));
+        bot.deleteMsg(msg);
+        return bot.sendAndDelete(msg.channel, this.error.must_play);
     }
 }
 

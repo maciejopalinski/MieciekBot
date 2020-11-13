@@ -1,14 +1,12 @@
-const Discord = require("discord.js");
+const {Client, Message, MessageEmbed} = require('../../lib/mieciekbot.js');
 
 /**
- * @param {Discord.Client} bot 
- * @param {Discord.Message} msg 
+ * @param {Client} bot 
+ * @param {Message} msg 
  * @param {Array<String>} args 
  */
 module.exports.run = async (bot, msg, args) => {
-    let queue = bot.queue;
-    let server_queue = bot.queue.get(msg.guild.id);
-
+    let server_queue = bot.music_queue.get(msg.guild.id);
     if(server_queue)
     {
         msg.channel.send(this.error.skipped);
@@ -16,8 +14,8 @@ module.exports.run = async (bot, msg, args) => {
     }
     else
     {
-        msg.delete({ timeout: bot.delete_timeout });
-        return msg.channel.send(this.error.music_play).then(msg => msg.delete({ timeout: bot.delete_timeout }));
+        bot.deleteMsg(msg);
+        return bot.sendAndDelete(msg.channel, this.error.music_play);
     }
 }
 

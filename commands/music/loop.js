@@ -1,44 +1,45 @@
-const Discord = require("discord.js");
+const {Client, Message, MessageEmbed, QueueLoopModes} = require('../../lib/mieciekbot.js');
 
 /**
- * @param {Discord.Client} bot 
- * @param {Discord.Message} msg 
+ * @param {Client} bot 
+ * @param {Message} msg 
  * @param {Array<String>} args 
  */
 module.exports.run = async (bot, msg, args) => {
-    let queue = bot.queue;
-    let server_queue = bot.queue.get(msg.guild.id);
-
-    if(server_queue && server_queue.playing)
+    let server_queue = bot.music_queue.get(msg.guild.id);
+    if(server_queue && server_queue.playing.state)
     {
-        if(server_queue.loop)
-        {
-            server_queue.loop = false;
-            msg.channel.send(this.error.turn_off);
+        if(!args[0]) return msg.channel.send(`Current loop mode: ${server_queue.playing.loop_mode}`);
+        
+        else if(['disabled', 'off'].includes(args[0].toLowerCase())) server_queue.setLoop(QueueLoopModes.DISABLED);
+        else if(['loop_track', 'track', 'song', 'current'].includes(args[0].toLowerCase())) server_queue.setLoop(QueueLoopModes.LOOP_TRACK);
+        else if(['loop_queue', 'queue', 'all'].includes(args[0].toLowerCase())) server_queue.setLoop(QueueLoopModes.LOOP_QUEUE);
+        else if(['shuffle', 'random'].includes(args[0].toLowerCase())) server_queue.setLoop(QueueLoopModes.SHUFFLE);
+        else {
+            bot.deleteMsg(msg);
+            return bot.sendAndDelete(msg.channel, this.error.not_found);
         }
-        else
-        {
-            server_queue.loop = true;
-            msg.channel.send(this.error.turn_on);
-        }
+
+        return msg.channel.send(`Current loop mode: ${server_queue.playing.loop_mode}`);
     }
     else
     {
-        msg.delete({ timeout: bot.delete_timeout });
-        return msg.channel.send(this.error.music_play).then(msg => msg.delete({ timeout: bot.delete_timeout }));
+        bot.deleteMsg(msg);
+        return bot.sendAndDelete(msg.channel, this.error.music_play);
     }
 }
 
 module.exports.help = {
     name: "loop",
     aliases: [],
-    args: [],
+    args: [
+        "[off|track|queue|shuffle]"
+    ],
     permission: "DJ",
     description: "loops played music"
 }
 
 module.exports.error = {
     "music_play": "Music must be playing to loop it.",
-    "turn_on": "Music looping turned on.",
-    "turn_off": "Music looping turned off."
+    "not_found": "That loop mode was not found."
 }

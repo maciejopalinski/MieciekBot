@@ -1,97 +1,65 @@
-const Discord = require("discord.js");
-const YTDL = require("ytdl-core");
-const Search = require("youtube-search");
-const { canModifyQueue, play } = require("../../util/music.js");
+const {Client, Message, MessageEmbed, GuildMember, Song, ServerQueue} = require('../../lib/mieciekbot.js');
+const YTDL = require('ytdl-core');
+const Search = require('youtube-search');
 
 /**
- * @param {Discord.Client} bot 
- * @param {Discord.Message} msg 
- * @param {Array<String>} args 
+ * @param {Client} bot 
+ * @param {Message} msg 
+ * @param {Array<String>} args
+ * @param {ServerQueue} [load]
  */
-module.exports.run = async (bot, msg, args) => {
-    const { channel } = msg.member.voice;
-    // TODO: test this if statement
-    if(!channel || !canModifyQueue(bot, msg))
+module.exports.run = async (bot, msg, args, load) => {
+    if(!msg.member.voice.channel || !canModify(bot, msg.member))
     {
-        msg.delete({ timeout: bot.delete_timeout });
-        return msg.channel.send(this.error.voice_channel).then(msg => msg.delete({ timeout: bot.delete_timeout }));
+        bot.deleteMsg(msg);
+        return bot.sendAndDelete(msg.channel, this.error.voice_channel);
     }
 
-    let validate = YTDL.validateURL(args[0]);
-    if(!validate)
+    let song = null;
+    if(!load)
     {
-        /** @type {Search.YouTubeSearchOptions} */
-        let search_options = { maxResults: 10, key: process.env.GOOGLE_API_KEY };
-        let search_results = await Search(args.join(" "), search_options);
-        if(search_results.results.length > 0)
-        {
-            args[0] = search_results.results.find(val => val.kind == "youtube#video").link;
-            if(!YTDL.validateURL(args[0]))
-            {
-                msg.delete({ timeout: bot.delete_timeout });
-                return msg.channel.send(this.error.not_found).then(msg => msg.delete({ timeout: bot.delete_timeout }));
-            }
-        }
-        else
-        {
-            msg.delete({ timeout: bot.delete_timeout });
-            return msg.channel.send(this.error.not_found).then(msg => msg.delete({ timeout: bot.delete_timeout }));
+        song = new Song();
+        try {
+            await song.fetchInfo(args.join(' '));
+        } catch (error) {
+            console.error(error);
+            return msg.channel.send(error.message);
         }
     }
 
-    let song_info = await YTDL.getInfo(args[0]);
-    let song = {
-        title: song_info.videoDetails.title,
-        url: song_info.videoDetails.video_url,
-        duration: song_info.videoDetails.lengthSeconds
-    };
-
-    let server_queue = bot.queue.get(msg.guild.id);
-    let server_queue_constructor = {
-        text_channel: msg.channel,
-        voice_channel: channel,
-        connection: null,
-        songs: [],
-        volume: 100,
-        last_volume: 100,
-        loop: false,
-        playing: true
-    };
-
-    if(server_queue)
-    {
-        if(server_queue.songs.length >= 20)
-        {
-            msg.delete({ timeout: bot.delete_timeout });
-            return msg.channel.send(this.error.queue_length).then(msg => msg.delete({ timeout: bot.delete_timeout }));
+    let server_queue = bot.music_queue.get(msg.guild.id);
+    if(server_queue) {
+        try {
+            server_queue.addSong(song, true);
+        } catch (error) {
+            msg.channel.send(error.message);
         }
-        server_queue.songs.push(song);
-        return msg.channel.send(`**${song.title}** has been added to the queue.`);
+        return;
     }
 
-    bot.queue.set(msg.guild.id, server_queue_constructor);
-    server_queue_constructor.songs.push(song);
+    server_queue = new ServerQueue(bot, msg.channel, msg.member.voice.channel);
+    if(load) await server_queue.loadQueue(load);
+    else server_queue.addSong(song, false);
+    bot.music_queue.set(server_queue);
 
     try {
-        let connection = await channel.join();
+        let connection = await server_queue.join();
         connection.on('disconnect', (err) => {
             if(err) console.error(err);
 
-            if(server_queue.connection.dispatcher)
-            {
-                server_queue.songs = [];
-                server_queue.connection.dispatcher.end();
-                msg.channel.send(this.error.stopped);
-            }
+            server_queue.songs = [];
+            if(server_queue.connection.dispatcher) server_queue.connection.dispatcher.end();
+            msg.channel.send(this.error.stopped);
+            return bot.music_queue.delete(msg.guild.id);
         });
 
-        server_queue_constructor.connection = connection;
-        await server_queue_constructor.connection.voice.setSelfDeaf(true);
-        play(bot, msg, server_queue_constructor.songs[0]);
+        server_queue.connection = connection;
+        await server_queue.connection.voice.setSelfDeaf(true);
+        server_queue.play();
     } catch (err) {
         console.error(err);
-        bot.queue.delete(msg.guild.id);
-        channel.leave();
+        server_queue.voice_channel.leave();
+        bot.music_queue.delete(msg.guild.id);
         return msg.channel.send(`Could not join the channel: ${err}`);
     }
 }
@@ -111,7 +79,18 @@ module.exports.help = {
 
 module.exports.error = {
     "voice_channel": "You must be in a voice channel to play music.",
-    "not_found": "Video with that name or URL was not found on YouTube.",
-    "stopped": "Disconnected from voice channel. Music stopped.",
-    "queue_length": "Cannot add new tracks to the music queue. Queue can be up to 20 tracks long."
+    "stopped": "Disconnected from voice channel. Music stopped."
+}
+
+/**
+ * @param {Client} bot
+ * @param {GuildMember} member
+ */
+function canModify(bot, member) {
+    const same_channel = (member.voice.channel == member.guild.me.voice.channel);
+    const is_admin = (bot.roles.user.priority >= bot.roles.manager.getNode('ADMIN').priority);
+
+    if(!member.guild.me.voice.channel) return true;
+    if(same_channel || is_admin) return true;
+    return false;
 }
