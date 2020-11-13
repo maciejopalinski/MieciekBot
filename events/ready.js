@@ -1,39 +1,39 @@
-const {bot} = require("../index.js");
+const {bot} = require('../index.js');
 
 bot.on('ready', async () => {
     console.info(`Running...`);
 
     let status = [
         {
-            status: "online",
+            status: 'online',
             activity: {
-                type: "LISTENING",
-                name: "Megadeth",
-                url: "https://github.com/PoProstuMieciek/"
+                type: 'LISTENING',
+                name: 'Megadeth',
+                url: 'https://github.com/PoProstuMieciek/'
             }
         },
         {
-            status: "online",
+            status: 'online',
             activity: {
-                type: "LISTENING",
-                name: "Slipknot",
-                url: "https://github.com/PoProstuMieciek/"
+                type: 'LISTENING',
+                name: 'Slipknot',
+                url: 'https://github.com/PoProstuMieciek/'
             }
         },
         {
-            status: "online",
+            status: 'online',
             activity: {
-                type: "PLAYING",
-                name: "Visual Studio Code",
-                url: "https://github.com/PoProstuMieciek/"
+                type: 'PLAYING',
+                name: 'Visual Studio Code',
+                url: 'https://github.com/PoProstuMieciek/'
             }
         },
         {
-            status: "online",
+            status: 'online',
             activity: {
-                type: "PLAYING",
-                name: `on ${bot.guilds.cache.size} ${bot.guilds.cache.size > 1 ? "servers" : "server"}`,
-                url: "https://github.com/PoProstuMieciek/"
+                type: 'PLAYING',
+                name: `on ${bot.guilds.cache.size} ${bot.guilds.cache.size > 1 ? 'servers' : 'server'}`,
+                url: 'https://github.com/PoProstuMieciek/'
             }
         }
     ];

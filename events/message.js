@@ -1,9 +1,10 @@
-const {bot} = require("../index.js");
-const EmojiRegex = require("emoji-regex");
+const {bot} = require('../index.js');
+const EmojiRegex = require('emoji-regex');
+const MieciekBot = require('../lib/mieciekbot.js');
 
 bot.on('message', async msg => {
     if (msg.author.bot) return;
-    if (msg.channel.type === "dm") return;
+    if (msg.channel.type === 'dm') return;
 
     let guild = await bot.db_manager.getServer(msg.guild.id);
     if (!guild) return msg.channel.send(`Oops! I did not properly configure your server... Please, invite me once again. ${bot.generateBotInvite()}`).then(msg => msg.guild.leave());
@@ -11,123 +12,59 @@ bot.on('message', async msg => {
     bot.delete_timeout = guild.delete_timeout;
     bot.spam_channels = guild.spam_channels;
 
-    let messageArray = msg.content.split(" ");
+    let messageArray = msg.content.split(' ');
     let cmd = messageArray[0].toLowerCase();
     let args = messageArray.slice(1);
 
     let commandfile = bot.command_manager.commands.get(cmd.slice(bot.prefix.length)) || bot.command_manager.aliases.get(cmd.slice(bot.prefix.length));
     if (msg.content.startsWith(bot.prefix) && commandfile)
     {
-        let member = msg.member.roles;
-        let permission = {
-            actual: -1,
-            nodes: [
-                {
-                    name: "@everyone",
-                    id: msg.guild.roles.everyone.id,
-                    allowed_roles: ["@everyone"]
-                },
-                {
-                    name: "MUTE",
-                    id: res.roles.mute,
-                    allowed_roles: ["MUTE"]
-                },
-                {
-                    name: "USER",
-                    id: res.roles.user,
-                    allowed_roles: ["USER"]
-                },
-                {
-                    name: "DJ",
-                    id: res.roles.dj,
-                    allowed_roles: ["USER", "DJ"]
-                },
-                {
-                    name: "ADMIN",
-                    id: res.roles.admin,
-                    allowed_roles: ["USER", "DJ", "ADMIN"]
-                },
-                {
-                    name: "OWNER",
-                    id: res.roles.owner,
-                    allowed_roles: ["USER", "DJ", "ADMIN", "OWNER"]
-                },
-                {
-                    name: "BOT_OWNER",
-                    id: "510925936393322497",
-                    allowed_roles: ["USER", "DJ", "ADMIN", "OWNER", "BOT_OWNER"]
-                }
-            ]
-        };
+        let nodes = new MieciekBot.PermissionNodesManager(msg.guild);
+        nodes.addNode(new MieciekBot.RolePermissionNode('MUTE',  guild.roles.mute,  1));
+        nodes.addNode(new MieciekBot.RolePermissionNode('USER',  guild.roles.user,  2));
+        nodes.addNode(new MieciekBot.RolePermissionNode('DJ',    guild.roles.dj,    3, ['USER', 'DJ']));
+        nodes.addNode(new MieciekBot.RolePermissionNode('ADMIN', guild.roles.admin, 4, ['USER', 'DJ', 'ADMIN']));
+        nodes.addNode(new MieciekBot.RolePermissionNode('OWNER', guild.roles.owner, 5, ['USER', 'DJ', 'ADMIN', 'OWNER']));
 
-        let last_max = -1;
-        permission.nodes.forEach((value, index) => {
-            if (member.cache.some(r => r.id == value.id) && index > last_max) last_max = index;
-        });
-        permission.actual = last_max;
-        
-        if (msg.author.id == msg.guild.ownerID)
-        {
-            permission.actual = permission.nodes.findIndex(n => n.name == "OWNER");
-            last_max = permission.actual;
-        }
-        if (msg.author.id == "510925936393322497")
-        {
-            permission.actual = permission.nodes.findIndex(n => n.name == "BOT_OWNER");
-            last_max = permission.actual;
-        }
+        bot.roles = { user: nodes.getMemberNode(msg.member), manager: nodes };
 
-        let ok = false;
-        permission.nodes.forEach((value, index) => {
-            if (commandfile.help.permission == value.name && last_max >= index) ok = true;
-        });
-
-        if (ok)
+        if (nodes.hasCommandPermission(commandfile, msg.member))
         {
             let required_args = 0, optional_args = 0;
             commandfile.help.args.forEach(value => {
-                if (value.startsWith('<'))
-                {
-                    required_args += 1;
-                }
-                if (value.startsWith('['))
-                {
-                    optional_args += 1;
-                }
+                if (value.startsWith('<')) required_args += 1;
+                if (value.startsWith('[')) optional_args += 1;
             });
 
-            // all ok, run command
-            if (args.length >= required_args)
-            {
-                bot.roles = permission;
-                if (process.env.DEBUG == "true") bot.settings.version += "-dev";
-                commandfile.run(bot, msg, args);
-            }
+            // all required arguments are present, run a command
+            if (args.length >= required_args) commandfile.run(bot, msg, args);
             else
             {
-                let err = `Usage: ${bot.prefix}${commandfile.help.name} ${commandfile.help.args.join(" ")}`;
-                msg.delete({ timeout: bot.delete_timeout });
+                let err = `Usage: ${bot.prefix}${commandfile.help.name} ${commandfile.help.args.join(' ')}`;
+                bot.deleteMsg(msg);
                 bot.sendAndDelete(msg.channel, err)
             }
         }
         // no permissions
-        else msg.delete({ timeout: bot.delete_timeout });
+        else bot.deleteMsg(msg);
     }
     else if(!bot.spam_channels.includes(msg.channel.id))
     {
         let user = await bot.db_manager.getUser(msg.guild.id, msg.member.id);
-        if(!user) bot.emit('guildMemberAdd', { id: msg.member.id, guild: { id: msg.guild.id } });
+        if(!user)
+        {
+            // if user does not exist in database, insert him
+            bot.db_manager.defaultUser(msg.guild.id, msg.member.id).save().catch(err => console.error);
+        }
         else
         {
-            const regex = EmojiRegex();
-
             // remove spaces, @everyone, @here, custom discord emojis and unicode emojis
             msg.content = msg.content
-            .replace(/\s/g, "")
-            .replace(/@everyone/g, "")
-            .replace(/@here/g, "")
-            .replace(/<:[A-Za-z0-9_]+:[0-9]+>/g, "")
-            .replace(regex, "");
+            .replace(/\s/g, '')
+            .replace(/@everyone/g, '')
+            .replace(/@here/g, '')
+            .replace(/<:[A-Za-z0-9_]+:[0-9]+>/g, '')
+            .replace(EmojiRegex(), '');
 
             // REMOVE MENTIONS
             // <#> - channels
@@ -139,7 +76,7 @@ bot.on('message', async msg => {
             length -= msg.mentions.users.size * 22;
 
             let add_exp = length <= 3 ? 0 : parseFloat((length/20).toFixed(2));
-            if(add_exp > 2) add_exp = 2;
+            if(add_exp > 4) add_exp = 4;
             user.xp += add_exp;
 
             if(user.xp >= bot.db_manager.exp_system.getEXP(user.level + 1))
