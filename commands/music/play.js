@@ -44,8 +44,8 @@ module.exports.run = async (bot, msg, args, load) => {
     bot.music_queue.set(server_queue);
 
     try {
-        let connection = await server_queue.join();
-        connection.on('disconnect', (err) => {
+        server_queue.connection = await server_queue.join();
+        server_queue.connection.on('disconnect', (err) => {
             if(err) console.error(err);
 
             server_queue.songs = [];
@@ -54,9 +54,8 @@ module.exports.run = async (bot, msg, args, load) => {
             return bot.music_queue.delete(msg.guild.id);
         });
 
-        server_queue.connection = connection;
-        await server_queue.connection.voice.setSelfDeaf(true);
         server_queue.play();
+        await server_queue.connection.voice.setSelfDeaf(true);
     } catch (err) {
         console.error(err);
         server_queue.voice_channel.leave();
