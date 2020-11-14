@@ -1,6 +1,7 @@
 const {bot} = require('../index.js');
 
 bot.on('ready', async () => {
+    console.info(`Logged in as: ${bot.user.tag}`);
     console.info(`Running...`);
 
     let status = [
