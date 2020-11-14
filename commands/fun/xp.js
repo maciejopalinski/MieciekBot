@@ -18,9 +18,9 @@ module.exports.run = async (bot, msg, args) => {
     }
 
     let user = await bot.db_manager.getUser(msg.guild.id, member.id);
-    if(!res) {
+    if(!user) {
         bot.db_manager.defaultUser(msg.guild.id, member.id).save();
-        var res = {level: 0, xp: 0};
+        user = {level: 0, xp: 0};
     }
     
     let level = user.level;
