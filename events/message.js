@@ -42,7 +42,7 @@ bot.on('message', async msg => {
                 commandfile.run(bot, msg, args).catch(err => {
                     console.error(err);
                     
-                    if(bot.debug) msg.channel.send(`**ERROR:**\`\`\`${err}\`\`\``);
+                    if(bot.debug) msg.channel.send(`**ERROR:** \`\`\`xl\n${err.stack}\n\`\`\``);
                     else msg.channel.send('Unknown error occurred!');
                 });
             }
