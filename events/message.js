@@ -37,7 +37,15 @@ bot.on('message', async msg => {
             });
 
             // all required arguments are present, run a command
-            if (args.length >= required_args) commandfile.run(bot, msg, args);
+            if (args.length >= required_args)
+            {
+                commandfile.run(bot, msg, args).catch(err => {
+                    console.error(err);
+                    
+                    if(bot.debug) msg.channel.send(`**ERROR:** \`\`\`xl\n${err.stack}\n\`\`\``);
+                    else msg.channel.send('Unknown error occurred!');
+                });
+            }
             else
             {
                 let err = `Usage: ${bot.prefix}${commandfile.help.name} ${commandfile.help.args.join(' ')}`;

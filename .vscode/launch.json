@@ -12,7 +12,8 @@
                 "debug"
             ],
             "port": 9229,
-            "stopOnEntry": true
+            "stopOnEntry": true,
+            "envFile": "${workspaceFolder}/.env"
         }
     ]
 }
