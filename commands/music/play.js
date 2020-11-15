@@ -21,6 +21,8 @@ module.exports.run = async (bot, msg, args, load) => {
         song = new Song(bot);
         try {
             await song.fetchInfo(args.join(' '));
+
+            // TODO: prevent this from saving link as key into cache
             bot.music_queue.cache.set(args.join(' '), song.url);
         } catch (error) {
             console.error(error);
@@ -55,7 +57,7 @@ module.exports.run = async (bot, msg, args, load) => {
         });
 
         server_queue.play();
-        await server_queue.connection.voice.setSelfDeaf(true);
+        server_queue.connection.voice.setSelfDeaf(true);
     } catch (err) {
         console.error(err);
         server_queue.voice_channel.leave();
