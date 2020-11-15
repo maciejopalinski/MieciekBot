@@ -9,7 +9,7 @@
     "scripts": {
         "start": "node index.js",
         "start:dev": "node -r dotenv/config index.js",
-        "debug": "node -r dotenv/config --nolazy --inspect-brk=9229 index.js",
+        "debug": "node --inspect index.js",
         "clean": "rm -r logs/*.log"
     },
     "author": "PoProstuMieciek",
