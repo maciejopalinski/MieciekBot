@@ -8,8 +8,8 @@ const RandomPuppy = require('random-puppy');
  */
 module.exports.run = async (bot, msg, args) => {
     let subReddits = [
-        'dankmeme',
-        'meme',
+        'dankmemes',
+        'memes',
         'me_irl',
         'cursedimages',
         'blessedimages',
