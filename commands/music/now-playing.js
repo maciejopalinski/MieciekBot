@@ -57,9 +57,7 @@ module.exports.run = async (bot, msg, args) => {
         else if(server_queue.playing.loop_mode == QueueLoopModes.LOOP_QUEUE) button = Buttons.LOOP.QUEUE;
         else if(server_queue.playing.loop_mode == QueueLoopModes.SHUFFLE) button = Buttons.LOOP.SHUFFLE;
         else button = Buttons.LOOP.DISABLED;
-        pos.x -= 8; pos.y -= 8;
-        ctx.drawImage(button, pos.x-310, pos.y, 64+16, 64+16)
-        pos.x += 8; pos.y += 8;
+        ctx.drawImage(button, pos.x-310-8, pos.y-8, 64+16, 64+16)
 
 
         // VIDEO TITLE
@@ -85,7 +83,9 @@ module.exports.run = async (bot, msg, args) => {
         // ctx.fillRect(margin, pos.y, size.width-(margin*2), bar.height);
         // red-orange bar
         ctx.fillStyle = 'rgb(250, 94, 62)';
-        roundRect(ctx, margin, pos.y, bar.width, bar.height, {tl:20,tr:0,bl:20,br:0}, true, false);
+        let radius_object = {tl:20,tr:0,bl:20,br:0};
+        if(bar.width + 12 + 2*margin >= size.width) radius_object = 20;
+        roundRect(ctx, margin, pos.y, bar.width, bar.height, radius_object, true, false);
         // ctx.fillRect(margin, pos.y, bar.width, bar.height);
 
 
