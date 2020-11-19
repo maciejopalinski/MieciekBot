@@ -8,9 +8,7 @@
     "main": "index.js",
     "scripts": {
         "start": "node index.js",
-        "start:dev": "node -r dotenv/config index.js",
-        "debug": "node --inspect index.js",
-        "clean": "rm -r logs/*.log"
+        "debug": "node --inspect index.js"
     },
     "author": "PoProstuMieciek",
     "dependencies": {
@@ -26,8 +24,5 @@
         "random-puppy": "^1.1.0",
         "youtube-search": "^1.1.4",
         "ytdl-core": "^4.0.3"
-    },
-    "devDependencies": {
-        "dotenv": "^8.2.0"
     }
 }
