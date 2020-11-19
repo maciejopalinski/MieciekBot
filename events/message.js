@@ -15,7 +15,7 @@ bot.on('message', async msg => {
     bot.announce_channel = undefined;
     bot.announce_opts.add_member = guild.announce.add_member;
     bot.announce_opts.remove_member = guild.announce.remove_member;
-    bot.setAnnounceChannel(guild.announce_channel);
+    bot.setAnnounceChannel(guild.announce.channel);
 
     let messageArray = msg.content.split(' ');
     let cmd = messageArray[0].toLowerCase();

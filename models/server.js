@@ -11,8 +11,8 @@ const serverSchema = mongoose.Schema({
 		user: String,
 		mute: String
 	},
-	announce_channel: String,
 	announce: {
+		channel: String,
 		add_member: Boolean,
 		remove_member: Boolean
 	},

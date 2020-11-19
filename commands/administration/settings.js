@@ -21,7 +21,7 @@ module.exports.run = async (bot, msg, args) => {
             if(node.name != '@everyone' && node.name != 'BOT_OWNER') help.addField(`role:${node.name.toLowerCase()}`, `<@&${node.role_id}> (${node.role_id})`);
         });
 
-        help.addField('anc:channel', bot.announce_channel_id, true);
+        help.addField('anc:channel', `<#${bot.announce_channel_id}> (${bot.announce_channel_id})`);
         for (let key in bot.announce_opts) {
             help.addField(`anc:${key}`, bot.announce_opts[key], true);
         }
@@ -52,7 +52,7 @@ module.exports.run = async (bot, msg, args) => {
         }
         else if(key.startsWith('role:'))
         {
-            let new_role = msg.mentions.roles.first() || msg.guild.roles.find(role => role.id == value) || undefined;
+            let new_role = msg.mentions.roles.first() || msg.guild.roles.cache.find(role => role.id == value) || undefined;
             
             if(!new_role)
             {
@@ -76,18 +76,18 @@ module.exports.run = async (bot, msg, args) => {
                 let new_channel = msg.mentions.channels.first();
                 if(new_channel)
                 {
-                    settings.announce_channel = new_channel.id;
+                    settings.announce.channel = new_channel.id;
                     info = `<#${new_channel.id}> (${new_channel.id})`;
                 }
                 else if(value = 'clear')
                 {
-                    settings.announce_channel = undefined;
+                    settings.announce.channel = undefined;
                     info = `<#0> (undefined)`;
                 }
                 else
                 {
                     bot.deleteMsg(msg);
-                    return bot.sendAndDelete(`This channel cannot be found on the server. If you want to remove announce_channel property, run: \`\`\`\n${bot.prefix}settings announce_channel clear\n\`\`\``);
+                    return bot.sendAndDelete(`This channel cannot be found on the server. If you want to remove anc:channel property, run: \`\`\`\n${bot.prefix}settings anc:channel clear\n\`\`\``);
                 }
             }
             else {
