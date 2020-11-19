@@ -21,6 +21,11 @@ module.exports.run = async (bot, msg, args) => {
             if(node.name != '@everyone' && node.name != 'BOT_OWNER') help.addField(`role:${node.name.toLowerCase()}`, `<@&${node.role_id}> (${node.role_id})`);
         });
 
+        help.addField('anc:channel', bot.announce_channel_id, true);
+        for (let key in bot.announce_opts) {
+            help.addField(`anc:${key}`, bot.announce_opts[key], true);
+        }
+
         msg.channel.send(help);
     }
     else if(args[1])
@@ -63,6 +68,41 @@ module.exports.run = async (bot, msg, args) => {
                     info = `<@&${new_role.id}> (${new_role.id})`;
                 }
             });
+        }
+        else if(key.startsWith('anc:'))
+        {
+            if(key == 'anc:channel')
+            {
+                let new_channel = msg.mentions.channels.first();
+                if(new_channel)
+                {
+                    settings.announce_channel = new_channel.id;
+                    info = `<#${new_channel.id}> (${new_channel.id})`;
+                }
+                else if(value = 'clear')
+                {
+                    settings.announce_channel = undefined;
+                    info = `<#0> (undefined)`;
+                }
+                else
+                {
+                    bot.deleteMsg(msg);
+                    return bot.sendAndDelete(`This channel cannot be found on the server. If you want to remove announce_channel property, run: \`\`\`\n${bot.prefix}settings announce_channel clear\n\`\`\``);
+                }
+            }
+            else {
+                for (let anc_key in bot.announce_opts) {
+                    if(key == `anc:${anc_key}`) {
+                        if(value == 'true') settings.announce[anc_key] = true
+                        else if(value == 'false') settings.announce[anc_key] = false
+                        else {
+                            bot.deleteMsg(msg);
+                            return bot.sendAndDelete(msg.channel, 'Acceptable values are: `true`, `false`');
+                        }
+                        info = `${settings.announce[anc_key]}`;
+                    }
+                }
+            }
         }
         else if(key == 'spam_channels')
         {

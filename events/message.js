@@ -11,6 +11,11 @@ bot.on('message', async msg => {
     bot.prefix = guild.prefix;
     bot.delete_timeout = guild.delete_timeout;
     bot.spam_channels = guild.spam_channels;
+    
+    bot.announce_channel = undefined;
+    bot.announce_opts.add_member = guild.announce.add_member;
+    bot.announce_opts.remove_member = guild.announce.remove_member;
+    bot.setAnnounceChannel(guild.announce_channel);
 
     let messageArray = msg.content.split(' ');
     let cmd = messageArray[0].toLowerCase();
@@ -90,7 +95,7 @@ bot.on('message', async msg => {
             if(user.xp >= bot.db_manager.exp_system.getEXP(user.level + 1))
             {
                 user.level += 1;
-                msg.channel.send(`<@${msg.member.id}> advanced to level ${user.level}!`);
+                bot.announce(msg.channel, `<@${msg.member.id}> advanced to level ${user.level}!`);
             }
             user.save();
         }
