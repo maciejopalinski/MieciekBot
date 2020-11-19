@@ -81,8 +81,8 @@ module.exports.run = async (bot, msg, args) => {
                 }
                 else if(value = 'clear')
                 {
-                    settings.announce.channel = undefined;
-                    info = `<#0> (undefined)`;
+                    settings.announce.channel = '000000000';
+                    info = `<#000000000> (000000000)`;
                 }
                 else
                 {
