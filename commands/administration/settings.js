@@ -84,7 +84,7 @@ module.exports.run = async (bot, msg, args) => {
                     settings.announce.channel = '000000000';
                     info = `<#000000000> (000000000)`;
                 }
-                else return msg.channel.send(`This channel cannot be found on the server. If you want to remove anc:channel property, run: \`\`\`\n${bot.prefix}settings anc:channel clear\n\`\`\``);
+                else return msg.channel.send(`This channel cannot be found on the server.\nIf you want to remove \`anc:channel\` property, run: \`${bot.prefix}settings anc:channel clear\``);
             }
             else {
                 for (let anc_key in bot.announce_opts) {
