@@ -1,11 +1,10 @@
 const mongoose = require('mongoose');
 const Music = require('../lib/music.js');
 
-const savedQueueSchema = mongoose.Schema({
+const SavedQueueSchema = mongoose.Schema({
     serverID: String,
     name: String,
-    urls: [String],
-    timestamp: String
+    urls: [String]
 });
 
-module.exports = mongoose.model('SavedQueue', savedQueueSchema);
+module.exports = mongoose.model('SavedQueue', SavedQueueSchema);
