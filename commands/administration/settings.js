@@ -107,13 +107,19 @@ Settings.execute = async (bot, msg, args) => {
         }
         else if(key == 'spam_channels')
         {
-            let channel_id = msg.mentions.channels.first().id;
+            let channel = msg.mentions.channels.first();
+            if(!channel)
+            {
+                bot.deleteMsg(msg);
+                return bot.sendAndDelete(msg.channel, error.no_value(bot));
+            }
+
             if(value == 'add')
             {
-                let exists = settings.spam_channels.some(v => v == channel_id);
-                if(!exists) settings.spam_channels.push(channel_id);
+                let exists = settings.spam_channels.some(v => v == channel.id);
+                if(!exists) settings.spam_channels.push(channel.id);
             }
-            else if(value == 'remove') settings.spam_channels = settings.spam_channels.filter(e => e != channel_id);
+            else if(value == 'remove') settings.spam_channels = settings.spam_channels.filter(e => e != channel.id);
 
             info = '[]';
             if(settings.spam_channels.length >= 1) info = `[<#${settings.spam_channels.join('>, <#')}>]`;
@@ -136,7 +142,7 @@ Settings.execute = async (bot, msg, args) => {
 
 Settings.setHelp({
     name: 'settings',
-    args: '[key] [value | @role]',
+    args: '[key] [value | @role | #channel]',
     aliases: ['alias1', 'alias2'],
     description: 'edits the server settings',
     permission: 'OWNER'
