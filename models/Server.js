@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const serverSchema = mongoose.Schema({
+const ServerSchema = mongoose.Schema({
 	serverID: String,
 	prefix: String,
 	delete_timeout: Number,
@@ -12,11 +12,13 @@ const serverSchema = mongoose.Schema({
 		mute: String
 	},
 	announce: {
-		channel: String,
-		add_member: Boolean,
-		remove_member: Boolean
+		channel_id: String,
+		toggles: {
+			add_member: Boolean,
+			remove_member: Boolean
+		}
 	},
 	spam_channels: [String]
 });
 
-module.exports = mongoose.model('Server', serverSchema);
+module.exports = mongoose.model('Server', ServerSchema);
