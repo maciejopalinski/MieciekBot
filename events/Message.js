@@ -1,6 +1,8 @@
 const {bot} = require('../index.js');
 const EmojiRegex = require('emoji-regex');
-const MieciekBot = require('../lib/mieciekbot.js');
+
+const PermissionNodesManager = require('../lib/permission/PermissionNodesManager');
+const RolePermissionNode = require('../lib/permission/node/RolePermissionNode');
 
 bot.on('message', async msg => {
     if (msg.author.bot) return;
@@ -8,35 +10,34 @@ bot.on('message', async msg => {
 
     let guild = await bot.db_manager.getServer(msg.guild.id);
     if (!guild) return msg.channel.send(`Oops! I did not properly configure your server... Please, invite me once again. ${bot.generateBotInvite()}`).then(msg => msg.guild.leave());
+    
     bot.prefix = guild.prefix;
     bot.delete_timeout = guild.delete_timeout;
     bot.spam_channels = guild.spam_channels;
     
-    bot.announce_channel = undefined;
-    bot.announce_opts.add_member = guild.announce.add_member;
-    bot.announce_opts.remove_member = guild.announce.remove_member;
-    bot.setAnnounceChannel(guild.announce.channel);
+    bot.setAnnounceChannel(guild.announce.channel_id);
+    bot.setAnnounceOptions(guild);
 
     let messageArray = msg.content.split(' ');
     let cmd = messageArray[0].toLowerCase();
     let args = messageArray.slice(1);
 
-    let commandfile = bot.command_manager.commands.get(cmd.slice(bot.prefix.length)) || bot.command_manager.aliases.get(cmd.slice(bot.prefix.length));
-    if (msg.content.startsWith(bot.prefix) && commandfile)
+    let command = bot.command_manager.getCommand(cmd.slice(bot.prefix.length));
+    if (msg.content.startsWith(bot.prefix) && command)
     {
-        let nodes = new MieciekBot.PermissionNodesManager(msg.guild);
-        nodes.addNode(new MieciekBot.RolePermissionNode('MUTE',  guild.roles.mute,  1));
-        nodes.addNode(new MieciekBot.RolePermissionNode('USER',  guild.roles.user,  2));
-        nodes.addNode(new MieciekBot.RolePermissionNode('DJ',    guild.roles.dj,    3, ['USER', 'DJ']));
-        nodes.addNode(new MieciekBot.RolePermissionNode('ADMIN', guild.roles.admin, 4, ['USER', 'DJ', 'ADMIN']));
-        nodes.addNode(new MieciekBot.RolePermissionNode('OWNER', guild.roles.owner, 5, ['USER', 'DJ', 'ADMIN', 'OWNER']));
+        let nodes = new PermissionNodesManager(msg.guild);
+        nodes.addNode(new RolePermissionNode('MUTE',  guild.roles.mute,  1));
+        nodes.addNode(new RolePermissionNode('USER',  guild.roles.user,  2));
+        nodes.addNode(new RolePermissionNode('DJ',    guild.roles.dj,    3, ['USER', 'DJ']));
+        nodes.addNode(new RolePermissionNode('ADMIN', guild.roles.admin, 4, ['USER', 'DJ', 'ADMIN']));
+        nodes.addNode(new RolePermissionNode('OWNER', guild.roles.owner, 5, ['USER', 'DJ', 'ADMIN', 'OWNER']));
 
         bot.roles = { user: nodes.getMemberNode(msg.member), manager: nodes };
 
-        if (nodes.hasCommandPermission(commandfile, msg.member))
+        if (nodes.hasCommandPermission(command, msg.member))
         {
             let required_args = 0, optional_args = 0;
-            commandfile.help.args.forEach(value => {
+            command.args_array.forEach(value => {
                 if (value.startsWith('<')) required_args += 1;
                 if (value.startsWith('[')) optional_args += 1;
             });
@@ -44,7 +45,7 @@ bot.on('message', async msg => {
             // all required arguments are present, run a command
             if (args.length >= required_args)
             {
-                commandfile.run(bot, msg, args).catch(err => {
+                command.execute(bot, msg, args).catch(err => {
                     console.error(err);
                     
                     if(bot.debug) msg.channel.send(`**ERROR:** \`\`\`xl\n${err.stack}\n\`\`\``);
@@ -53,7 +54,7 @@ bot.on('message', async msg => {
             }
             else
             {
-                let err = `Usage: ${bot.prefix}${commandfile.help.name} ${commandfile.help.args.join(' ')}`;
+                let err = `Usage: ${bot.prefix}${command.help.name} ${command.help.args}`;
                 bot.deleteMsg(msg);
                 bot.sendAndDelete(msg.channel, err)
             }
@@ -92,7 +93,7 @@ bot.on('message', async msg => {
             if(add_exp > 4) add_exp = 4;
             user.xp += add_exp;
 
-            if(user.xp >= bot.db_manager.exp_system.getEXP(user.level + 1))
+            if(user.xp >= bot.db_manager.exp_system.getExperience(user.level + 1))
             {
                 user.level += 1;
                 bot.announce(msg.channel, `<@${msg.member.id}> advanced to level ${user.level}!`);

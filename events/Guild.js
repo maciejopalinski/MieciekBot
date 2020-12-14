@@ -1,5 +1,5 @@
 const {bot} = require('../index.js');
-const {MessageEmbed} = require('../lib/mieciekbot.js');
+const MessageEmbed = require('../lib/message/MessageEmbed');
 
 bot.on('guildCreate', async guild => {
     await bot.db_manager.defaultServer(guild.id).save().catch(err => console.error(err));
