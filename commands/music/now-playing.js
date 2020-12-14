@@ -28,7 +28,11 @@ NowPlaying.execute = async (bot, msg, args) => {
             PAUSE: await Canvas.loadImage('assets/icons/pause.png'),
             PLAY: await Canvas.loadImage('assets/icons/play.png'),
             SKIP_BACK: await Canvas.loadImage('assets/icons/skip.back.png'),
-            SKIP_FORWARD: await Canvas.loadImage('assets/icons/skip.forward.png')
+            SKIP_FORWARD: await Canvas.loadImage('assets/icons/skip.forward.png'),
+            VOLUME: {
+                FULL: await Canvas.loadImage('assets/icons/volume_full.png'),
+                OFF: await Canvas.loadImage('assets/icons/volume_off.png')
+            }
         };
 
         let size = { width: 1200, height: 500 };
@@ -62,7 +66,15 @@ NowPlaying.execute = async (bot, msg, args) => {
         else if(server_queue.playing.loop_mode == QueueLoopModes.LOOP_QUEUE) button = Buttons.LOOP.QUEUE;
         else if(server_queue.playing.loop_mode == QueueLoopModes.SHUFFLE) button = Buttons.LOOP.SHUFFLE;
         else button = Buttons.LOOP.DISABLED;
-        ctx.drawImage(button, pos.x-310-8, pos.y-8, 64+16, 64+16)
+        
+        ctx.drawImage(button, pos.x-310-8, pos.y-8, 64+16, 64+16);
+
+        // volume
+        let volume = null;
+        if(server_queue.volume.current > 10) volume = Buttons.VOLUME.FULL;
+        else volume = Buttons.VOLUME.OFF;
+
+        ctx.drawImage(volume, pos.x+310-8, pos.y-8, 64+16, 64+16);
 
 
         // VIDEO TITLE
