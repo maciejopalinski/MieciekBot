@@ -1,11 +1,16 @@
-const {Client, Message, MessageEmbed} = require('../../lib/mieciekbot.js');
+const Discord = require('discord.js');
+const Client = require('../../lib/client/Client');
+const MessageEmbed = require('../../lib/message/MessageEmbed');
+const Command = require('../../lib/command/Command');
+
+const Info = new Command();
 
 /**
  * @param {Client} bot 
- * @param {Message} msg 
+ * @param {Discord.Message} msg 
  * @param {Array<String>} args 
  */
-module.exports.run = async (bot, msg, args) => {
+Info.execute = async (bot, msg, args) => {
     if(args[0] == 'server')
     {
         let message = new MessageEmbed(bot, msg.guild)
@@ -31,15 +36,12 @@ module.exports.run = async (bot, msg, args) => {
     else bot.deleteMsg(msg);
 }
 
-module.exports.help = {
-    name: "info",
-    aliases: [
-        "i",
-        "informations"
-    ],
-    args: [
-        "<server/bot>"
-    ],
-    permission: "USER",
-    description: "prints info about server or bot"
-}
+Info.setHelp({
+    name: 'info',
+    args: '<server/bot>',
+    aliases: ['i', 'informations'],
+    description: 'prints info about server or bot',
+    permission: 'USER'
+});
+
+module.exports = Info;

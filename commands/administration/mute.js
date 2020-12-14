@@ -1,18 +1,23 @@
-const {Client, Message, MessageEmbed} = require('../../lib/mieciekbot.js');
+const Discord = require('discord.js');
+const Client = require('../../lib/client/Client');
+const MessageEmbed = require('../../lib/message/MessageEmbed');
+const Command = require('../../lib/command/Command');
+
+const Mute = new Command();
 
 /**
  * @param {Client} bot 
- * @param {Message} msg 
+ * @param {Discord.Message} msg 
  * @param {Array<String>} args 
  */
-module.exports.run = async (bot, msg, args) => {
+Mute.execute = async (bot, msg, args) => {
     let user = msg.mentions.members.first();
     let reason = args.slice(1).join(' ') || 'no reason specified';
 
     if(!user.kickable || user.id == msg.author.id)
     {
         bot.deleteMsg(msg);
-        return bot.sendAndDelete(msg.channel, this.error.not_mutable);
+        return bot.sendAndDelete(msg.channel, error.not_mutable);
     }
 
     let mute_node = bot.roles.manager.getNode('MUTE');
@@ -45,24 +50,20 @@ module.exports.run = async (bot, msg, args) => {
     user.send(mute_embed);
     msg.channel.send(info_mute);
 
-    user.roles.add(mute_role);
+    await user.roles.add(mute_role);
     user.roles.remove(user_role);
 }
 
-module.exports.help = {
-    name: "mute",
-    aliases: [
-        "shutup",
-        "stfu"
-    ],
-    args: [
-        "<@user>",
-        "[reason]"
-    ],
-    permission: "ADMIN",
-    description: "mutes <@user>"
-}
+Mute.setHelp({
+    name: 'mute',
+    args: '<@user> [reason]',
+    aliases: ['shutup', 'stfu'],
+    description: 'mutes <@user>',
+    permission: 'ADMIN'
+});
 
-module.exports.error = {
-    "not_mutable": "I cannot mute this user."
-}
+const error = Mute.error = {
+    not_mutable: "I cannot mute this user."
+};
+
+module.exports = Mute;

@@ -1,13 +1,17 @@
-const {Client, Message, MessageEmbed} = require('../../lib/mieciekbot.js');
+const Discord = require('discord.js');
+const Client = require('../../lib/client/Client');
+const MessageEmbed = require('../../lib/message/MessageEmbed');
+const Command = require('../../lib/command/Command');
 const axios = require('axios').default;
+
+const ChuckNorris = new Command();
 
 /**
  * @param {Client} bot 
- * @param {Message} msg 
+ * @param {Discord.Message} msg 
  * @param {Array<String>} args 
  */
-module.exports.run = async (bot, msg, args) => {
-    
+ChuckNorris.execute = async (bot, msg, args) => {
     let joke_embed = new MessageEmbed(bot, msg.guild).setTitle('Chuck Norris Joke');
     
     axios.get('https://api.chucknorris.io/jokes/random/')
@@ -21,14 +25,12 @@ module.exports.run = async (bot, msg, args) => {
     });
 }
 
-module.exports.help = {
-    name: "chuck-norris",
-    aliases: [
-        "chuck",
-        "norris",
-        "cnjoke"
-    ],
-    args: [],
-    permission: "USER",
-    description: "displays random Chuck Norris joke"
-}
+ChuckNorris.setHelp({
+    name: 'chuck-norris',
+    args: '',
+    aliases: ['chuck', 'norris', 'cnjoke'],
+    description: 'displays random Chuck Norris joke',
+    permission: 'USER'
+});
+
+module.exports = ChuckNorris;

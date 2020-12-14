@@ -1,11 +1,16 @@
-const {Client, Message, MessageEmbed} = require('../../lib/mieciekbot.js');
+const Discord = require('discord.js');
+const Client = require('../../lib/client/Client');
+const MessageEmbed = require('../../lib/message/MessageEmbed');
+const Command = require('../../lib/command/Command');
+
+const Warn = new Command();
 
 /**
  * @param {Client} bot 
- * @param {Message} msg 
+ * @param {Discord.Message} msg 
  * @param {Array<String>} args 
  */
-module.exports.run = async (bot, msg, args) => {
+Warn.execute = async (bot, msg, args) => {
     let user = msg.mentions.members.first();
     let reason = args.slice(1).join(' ');
 
@@ -14,7 +19,7 @@ module.exports.run = async (bot, msg, args) => {
         if(user.id == msg.author.id || user.user.bot)
         {
             bot.deleteMsg(msg);
-            return bot.sendAndDelete(msg.channel, this.error.not_warnable);
+            return bot.sendAndDelete(msg.channel, error.not_warnable);
         }
 
         let warn_embed = new MessageEmbed(bot, msg.guild)
@@ -30,7 +35,7 @@ module.exports.run = async (bot, msg, args) => {
         let date = new Date();
         let date_string = `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
 
-        const newWarn = new bot.db_manager.Warn({
+        const newWarn = new bot.db_manager.models.Warn({
             serverID: msg.guild.id,
             userID: user.id,
             warnedBy: msg.author.id,
@@ -39,7 +44,7 @@ module.exports.run = async (bot, msg, args) => {
         });
         newWarn.save().catch(err => {
             console.error(err)
-            bot.sendAndDelete(msg.channel, this.error.unknown);
+            bot.sendAndDelete(msg.channel, error.unknown);
         });
 
         msg.delete();
@@ -49,23 +54,22 @@ module.exports.run = async (bot, msg, args) => {
     else
     {
         bot.deleteMsg(msg);
-        bot.sendAndDelete(msg.channel, this.error.user_not_found);
+        bot.sendAndDelete(msg.channel, error.user_not_found);
     }
 }
 
-module.exports.help = {
-    name: "warn",
+Warn.setHelp({
+    name: 'warn',
+    args: '<@user> <reason>',
     aliases: [],
-    args: [
-        "<@user>",
-        "<reason>"
-    ],
-    permission: "ADMIN",
-    description: "warns <@user> with <reason>"
-}
+    description: 'warns <@user> with <reason>',
+    permission: 'ADMIN'
+});
 
-module.exports.error = {
-    "user_not_found": "User was not found on the server. Please, try again.",
-    "not_warnable": "I cannot warn that user.",
-    "unknown": "Unknown error occurred. Please, try again later."
-}
+const error = Warn.error = {
+    user_not_found: "User was not found on the server. Please, try again.",
+    not_warnable: "I cannot warn that user.",
+    unknown: "Unknown error occurred. Please, try again later."
+};
+
+module.exports = Warn;

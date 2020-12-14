@@ -1,41 +1,43 @@
-const {Client, Message, MessageEmbed} = require('../../lib/mieciekbot.js');
+const Discord = require('discord.js');
+const Client = require('../../lib/client/Client');
+const MessageEmbed = require('../../lib/message/MessageEmbed');
+const Command = require('../../lib/command/Command');
+
+const Aliases = new Command();
 
 /**
  * @param {Client} bot 
- * @param {Message} msg 
+ * @param {Discord.Message} msg 
  * @param {Array<String>} args 
  */
-module.exports.run = async (bot, msg, args) => {
+Aliases.execute = async (bot, msg, args) => {
     const commandfile = bot.command_manager.commands.get(args[0]) || bot.command_manager.aliases.get(args[0]);
     let allowed = bot.roles.user.allowed_nodes;
 
     if(!commandfile || !allowed.includes(commandfile.help.permission) && commandfile.help.name != 'help')
     {
         bot.deleteMsg(msg);
-        return bot.sendAndDelete(msg.channel, this.error.cmd_not_found);
+        return bot.sendAndDelete(msg.channel, error.cmd_not_found);
     }
 
     let aliases_embed = new MessageEmbed(bot, msg.guild)
     .setTitle(`ALIASES: /command/${commandfile.help.name}`)
-    .addField(`${bot.prefix}${commandfile.help.name} ${commandfile.help.args.join(' ')}`, commandfile.help.description)
+    .addField(`${bot.prefix}${commandfile.help.name} ${commandfile.help.args}`, commandfile.help.description)
     .addField('Aliases:', commandfile.help.aliases.join(', ') || '-none-');
 
     msg.channel.send(aliases_embed);
 }
 
-module.exports.help = {
-    name: "aliases",
-    aliases: [
-        "more",
-        "moar"
-    ],
-    args: [
-        "<command>"
-    ],
-    permission: "USER",
-    description: "displays all aliases of <command>"
+Aliases.setHelp({
+    name: 'aliases',
+    args: '<command>',
+    aliases: ['more', 'moar'],
+    description: 'displays all aliases of <command>',
+    permission: 'USER'
+});
+
+const error = Aliases.error = {
+    cmd_not_found: "Command was not found! Please, try again."
 }
 
-module.exports.error = {
-    "cmd_not_found": "Command was not found! Please, try again."
-}
+module.exports = Aliases;

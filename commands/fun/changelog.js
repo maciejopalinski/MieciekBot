@@ -1,13 +1,18 @@
-const {Client, Message, MessageEmbed} = require('../../lib/mieciekbot.js');
+const Discord = require('discord.js');
+const Client = require('../../lib/client/Client');
+const MessageEmbed = require('../../lib/message/MessageEmbed');
+const Command = require('../../lib/command/Command');
 const GitHub = require('octonode');
 const GitHubClient = GitHub.client(process.env.GITHUB_API_TOKEN);
 
+const Changelog = new Command();
+
 /**
  * @param {Client} bot 
- * @param {Message} msg 
+ * @param {Discord.Message} msg 
  * @param {Array<String>} args 
  */
-module.exports.run = async (bot, msg, args) => {
+Changelog.execute = async (bot, msg, args) => {
     let repository = GitHubClient.repo('PoProstuMieciek/MieciekBot');
     repository.releases((err, res) => {
         if(err) console.error(err);
@@ -23,14 +28,12 @@ module.exports.run = async (bot, msg, args) => {
     });
 }
 
-module.exports.help = {
-    name: "changelog",
-    aliases: [
-        "changes",
-        "github",
-        "updates",
-    ],
-    args: [],
-    permission: "USER",
-    description: "displays changelog of the latest MieciekBot release"
-}
+Changelog.setHelp({
+    name: 'changelog',
+    args: '',
+    aliases: ['changes', 'github', 'updates'],
+    description: 'displays changelog of the latest MieciekBot release',
+    permission: 'USER'
+});
+
+module.exports = Changelog;

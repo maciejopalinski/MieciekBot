@@ -1,16 +1,21 @@
-const {Client, Message, MessageAttachment, QueueLoopModes} = require('../../lib/mieciekbot.js');
-const Canvas = require('canvas');
+const Discord = require('discord.js');
+const Client = require('../../lib/client/Client');
+const QueueLoopModes = require('../../lib/music/QueueLoopModes');
+const Command = require('../../lib/command/Command');
 
+const Canvas = require('canvas');
 Canvas.registerFont('assets/fonts/Bebas-Regular.ttf', {family: 'Bebas-Regular'});
 Canvas.registerFont('assets/fonts/AldotheApache.ttf', {family: 'AldoTheApache'});
 
+const NowPlaying = new Command();
+
 /**
  * @param {Client} bot 
- * @param {Message} msg 
+ * @param {Discord.Message} msg 
  * @param {Array<String>} args 
  */
-module.exports.run = async (bot, msg, args) => {
-    let server_queue = bot.music_queue.get(msg.guild.id);
+NowPlaying.execute = async (bot, msg, args) => {
+    let server_queue = bot.music_manager.get(msg.guild.id);
     if(server_queue && server_queue.connection.dispatcher)
     {
         const Buttons = {
@@ -95,41 +100,37 @@ module.exports.run = async (bot, msg, args) => {
         ctx.fillStyle = 'rgb(255, 255, 255)'; 
 
         // current time
-        text = bot.music_queue.secondsToDuration(start);
+        text = bot.music_manager.secondsToDuration(start);
         ctx.textAlign = 'left';
         ctx.fillText(text, margin, pos.y);
 
         // remaining time
-        text = bot.music_queue.secondsToDuration(dest);
+        text = bot.music_manager.secondsToDuration(dest);
         ctx.textAlign = 'right';
         ctx.fillText(text, size.width-margin, pos.y);
 
 
         // finally send attachment
-        msg.channel.send(new MessageAttachment(song_graphics.toBuffer()));
+        msg.channel.send(new Discord.MessageAttachment(song_graphics.toBuffer()));
     }
     else
     {
         bot.deleteMsg(msg);
-        return bot.sendAndDelete(msg.channel, this.error.music_play);
+        return bot.sendAndDelete(msg.channel, error.music_play);
     }
 }
 
-module.exports.help = {
-    name: "now-playing",
-    aliases: [
-        "np",
-        "now",
-        "music"
-    ],
-    args: [],
-    permission: "USER",
-    description: "displays current playing song"
-}
+NowPlaying.setHelp({
+    name: 'now-playing',
+    args: '',
+    aliases: ['np', 'now', 'music'],
+    description: 'displays current playing song',
+    permission: 'USER'
+});
 
-module.exports.error = {
-    "music_play": "Queue is empty."
-}
+const error = NowPlaying.error = {
+    music_play: "Queue is empty."
+};
 
 /**
  * Draws a rounded rectangle using the current state of the canvas.
@@ -139,18 +140,18 @@ module.exports.error = {
  * Source: https://stackoverflow.com/a/3368118/12126676
  * 
  * @param {CanvasRenderingContext2D} ctx
- * @param {Number} x The top left x coordinate
- * @param {Number} y The top left y coordinate
- * @param {Number} width The width of the rectangle
- * @param {Number} height The height of the rectangle
- * @param {Number} [radius = 5] The corner radius; It can also be an object 
+ * @param {number} x The top left x coordinate
+ * @param {number} y The top left y coordinate
+ * @param {number} width The width of the rectangle
+ * @param {number} height The height of the rectangle
+ * @param {number} [radius = 5] The corner radius; It can also be an object 
  *                 to specify different radii for corners
- * @param {Number} [radius.tl = 0] Top left
- * @param {Number} [radius.tr = 0] Top right
- * @param {Number} [radius.br = 0] Bottom right
- * @param {Number} [radius.bl = 0] Bottom left
- * @param {Boolean} [fill = false] Whether to fill the rectangle.
- * @param {Boolean} [stroke = true] Whether to stroke the rectangle.
+ * @param {number} [radius.tl = 0] Top left
+ * @param {number} [radius.tr = 0] Top right
+ * @param {number} [radius.br = 0] Bottom right
+ * @param {number} [radius.bl = 0] Bottom left
+ * @param {boolean} [fill = false] Whether to fill the rectangle.
+ * @param {boolean} [stroke = true] Whether to stroke the rectangle.
  */
 function roundRect(ctx, x, y, width, height, radius, fill, stroke) {
     if(typeof stroke === 'undefined') stroke = true;
@@ -180,3 +181,5 @@ function roundRect(ctx, x, y, width, height, radius, fill, stroke) {
     if(fill) ctx.fill();
     if(stroke) ctx.stroke();
 }
+
+module.exports = NowPlaying;

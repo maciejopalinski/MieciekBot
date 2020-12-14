@@ -1,18 +1,21 @@
-const {Client, Message, MessageEmbed, GuildMember, Song, ServerQueue} = require('../../lib/mieciekbot.js');
-const YTDL = require('ytdl-core');
-const Search = require('youtube-search');
+const Discord = require('discord.js');
+const Client = require('../../lib/client/Client');
+const Command = require('../../lib/command/Command');
+const Song = require('../../lib/music/Song');
+const ServerQueue = require('../../lib/music/ServerQueue');
+
+const Play = new Command();
 
 /**
  * @param {Client} bot 
- * @param {Message} msg 
- * @param {Array<String>} args
- * @param {ServerQueue} [load]
+ * @param {Discord.Message} msg 
+ * @param {Array<String>} args 
  */
-module.exports.run = async (bot, msg, args, load) => {
+Play.execute = async (bot, msg, args, load) => {
     if(!msg.member.voice.channel || !canModify(bot, msg.member))
     {
         bot.deleteMsg(msg);
-        return bot.sendAndDelete(msg.channel, this.error.voice_channel);
+        return bot.sendAndDelete(msg.channel, error.voice_channel);
     }
 
     let song = null;
@@ -23,14 +26,14 @@ module.exports.run = async (bot, msg, args, load) => {
             await song.fetchInfo(args.join(' '));
 
             // TODO: prevent this from saving link as key into cache
-            bot.music_queue.cache.set(args.join(' '), song.url);
+            bot.music_manager.search_cache.set(args.join(' '), song.url);
         } catch (error) {
             console.error(error);
             return msg.channel.send(error.message);
         }
     }
 
-    let server_queue = bot.music_queue.get(msg.guild.id);
+    let server_queue = bot.music_manager.get(msg.guild.id);
     if(server_queue) {
         try {
             server_queue.addSong(song, true);
@@ -41,9 +44,11 @@ module.exports.run = async (bot, msg, args, load) => {
     }
 
     server_queue = new ServerQueue(bot, msg.channel, msg.member.voice.channel);
+
     if(load) await server_queue.loadQueue(load);
     else server_queue.addSong(song, false);
-    bot.music_queue.set(server_queue);
+    
+    bot.music_manager.set(server_queue);
 
     try {
         server_queue.connection = await server_queue.join();
@@ -52,8 +57,8 @@ module.exports.run = async (bot, msg, args, load) => {
 
             server_queue.songs = [];
             if(server_queue.connection.dispatcher) server_queue.connection.dispatcher.end();
-            msg.channel.send(this.error.stopped);
-            return bot.music_queue.delete(msg.guild.id);
+            msg.channel.send(error.stopped);
+            return bot.music_manager.delete(msg.guild.id);
         });
 
         server_queue.play();
@@ -61,32 +66,27 @@ module.exports.run = async (bot, msg, args, load) => {
     } catch (err) {
         console.error(err);
         server_queue.voice_channel.leave();
-        bot.music_queue.delete(msg.guild.id);
+        bot.music_manager.delete(msg.guild.id);
         return msg.channel.send(`Could not join the channel: ${err}`);
     }
 }
 
-module.exports.help = {
-    name: "play",
-    aliases: [
-        "music",
-        "p"
-    ],
-    args: [
-        "<url|search>"
-    ],
-    permission: "DJ",
-    description: "plays music in voice channel"
-}
+Play.setHelp({
+    name: 'play',
+    args: '<url|search>',
+    aliases: ['p'],
+    description: 'plays music in voice channel',
+    permission: 'DJ'
+});
 
-module.exports.error = {
-    "voice_channel": "You must be in a voice channel to play music.",
-    "stopped": "Disconnected from voice channel. Music stopped."
-}
+const error = Play.error = {
+    voice_channel: "You must be in a voice channel to play music.",
+    stopped: "Disconnected from voice channel. Music stopped."
+};
 
 /**
  * @param {Client} bot
- * @param {GuildMember} member
+ * @param {Discord.GuildMember} member
  */
 function canModify(bot, member) {
     const same_channel = (member.voice.channel == member.guild.me.voice.channel);
@@ -96,3 +96,5 @@ function canModify(bot, member) {
     if(same_channel || is_admin) return true;
     return false;
 }
+
+module.exports = Play;

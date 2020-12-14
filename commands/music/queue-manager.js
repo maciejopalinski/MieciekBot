@@ -1,12 +1,16 @@
-const {Client, Message, MessageEmbed, ServerQueue} = require('../../lib/mieciekbot.js');
-const YTDL = require('ytdl-core');
+const Discord = require('discord.js');
+const Client = require('../../lib/client/Client');
+const MessageEmbed = require('../../lib/message/MessageEmbed');
+const Command = require('../../lib/command/Command');
+
+const QueueManager = new Command();
 
 /**
  * @param {Client} bot 
- * @param {Message} msg 
+ * @param {Discord.Message} msg 
  * @param {Array<String>} args 
  */
-module.exports.run = async (bot, msg, args) => {
+QueueManager.execute = async (bot, msg, args) => {
     let alias = msg.content.split(' ')[0].slice(bot.prefix.length);
     let subcommand = args[0];
     let subcommand_args = args.slice(1);
@@ -55,7 +59,7 @@ module.exports.run = async (bot, msg, args) => {
             for (let i = 0; i < Math.min(found_queue.urls.length, 10); i++)
             {
                 const url = found_queue.urls[i];
-                let song = await YTDL.getBasicInfo(url);
+                let song = await bot.music_manager.getBasicInfo(url);
                 found_embed.addField(song.videoDetails.title, url);
                 length--;
             }
@@ -66,7 +70,7 @@ module.exports.run = async (bot, msg, args) => {
     }
     else if(subcommand == 'save')
     {
-        let server_queue = bot.music_queue.get(msg.guild.id);
+        let server_queue = bot.music_manager.get(msg.guild.id);
         if(!server_queue) {
             bot.deleteMsg(msg);
             return bot.sendAndDelete(msg.channel, 'There must be something in queue to save it for later!');
@@ -80,7 +84,7 @@ module.exports.run = async (bot, msg, args) => {
     }
     else if(subcommand == 'load')
     {
-        let server_queue = bot.music_queue.get(msg.guild.id);
+        let server_queue = bot.music_manager.get(msg.guild.id);
         if(server_queue) {
             bot.deleteMsg(msg);
             return bot.sendAndDelete(msg.channel, 'There is a current queue playing at the moment. Please stop it.');
@@ -89,7 +93,7 @@ module.exports.run = async (bot, msg, args) => {
         let found_queue = await bot.db_manager.getSavedQueue(msg.guild.id, queue_name);
         if(!found_queue) msg.channel.send(new MessageEmbed(bot, msg.guild).addField(`Queue with name *'${queue_name}'* was not found in the database.`, '\u200b'));
         else {
-            bot.command_manager.commands.get('play').run(bot, msg, undefined, found_queue);
+            bot.command_manager.getCommand('play').execute(bot, msg, undefined, found_queue);
         }
     }
     else if(subcommand == 'delete')
@@ -99,25 +103,21 @@ module.exports.run = async (bot, msg, args) => {
     }
     else {
         bot.deleteMsg(msg);
-        bot.sendAndDelete(msg.channel, this.error.subcmd_notfound);
+        bot.sendAndDelete(msg.channel, error.subcmd_notfound);
     }
 }
 
-module.exports.help = {
-    name: "queue-manager",
-    aliases: [
-        "qman",
-        "qmanager",
-        "queueman"
-    ],
-    args: [
-        "[subcommand]"
-    ],
-    permission: "ADMIN",
-    description: "manages saved queues, run with no args to show subcommands"
-}
+QueueManager.setHelp({
+    name: 'queue-manager',
+    args: '[subcommand]',
+    aliases: ['qman', 'qmanager', 'queueman'],
+    description: 'manages saved queues, run with no args to show subcommands',
+    permission: 'ADMIN'
+});
 
-module.exports.error = {
-    "music_play": "Queue is empty.",
-    "subcmd_notfound": "That subcommand was not found. Run commands with no args to show subcommands."
-}
+const error = QueueManager.error = {
+    music_play: "Queue is empty.",
+    subcmd_notfound: "That subcommand was not found. Run commands with no args to show subcommands."
+};
+
+module.exports = QueueManager;

@@ -1,12 +1,17 @@
-const {Client, Message, MessageEmbed, QueueLoopModes} = require('../../lib/mieciekbot.js');
+const Discord = require('discord.js');
+const Client = require('../../lib/client/Client');
+const QueueLoopModes = require('../../lib/music/QueueLoopModes');
+const Command = require('../../lib/command/Command');
+
+const Loop = new Command();
 
 /**
  * @param {Client} bot 
- * @param {Message} msg 
+ * @param {Discord.Message} msg 
  * @param {Array<String>} args 
  */
-module.exports.run = async (bot, msg, args) => {
-    let server_queue = bot.music_queue.get(msg.guild.id);
+Loop.execute = async (bot, msg, args) => {
+    let server_queue = bot.music_manager.get(msg.guild.id);
     if(server_queue && server_queue.playing.state)
     {
         if(!args[0]) return msg.channel.send(`Current loop mode: ${server_queue.playing.loop_mode}`);
@@ -17,7 +22,7 @@ module.exports.run = async (bot, msg, args) => {
         else if(['shuffle', 'random'].includes(args[0].toLowerCase())) server_queue.setLoop(QueueLoopModes.SHUFFLE);
         else {
             bot.deleteMsg(msg);
-            return bot.sendAndDelete(msg.channel, this.error.not_found);
+            return bot.sendAndDelete(msg.channel, error.not_found);
         }
 
         return msg.channel.send(`Current loop mode: ${server_queue.playing.loop_mode}`);
@@ -25,21 +30,21 @@ module.exports.run = async (bot, msg, args) => {
     else
     {
         bot.deleteMsg(msg);
-        return bot.sendAndDelete(msg.channel, this.error.music_play);
+        return bot.sendAndDelete(msg.channel, error.music_play);
     }
 }
 
-module.exports.help = {
-    name: "loop",
+Loop.setHelp({
+    name: 'loop',
+    args: '[off|track|queue|shuffle]',
     aliases: [],
-    args: [
-        "[off|track|queue|shuffle]"
-    ],
-    permission: "DJ",
-    description: "loops played music"
-}
+    description: 'loops played music',
+    permission: 'DJ'
+});
 
-module.exports.error = {
-    "music_play": "Music must be playing to loop it.",
-    "not_found": "That loop mode was not found."
-}
+const error = Loop.error = {
+    music_play: "Music must be playing to loop it.",
+    not_found: "That loop mode was not found."
+};
+
+module.exports = Loop;

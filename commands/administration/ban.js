@@ -1,11 +1,16 @@
-const {Client, Message, MessageEmbed} = require('../../lib/mieciekbot.js');
+const Discord = require('discord.js');
+const Client = require('../../lib/client/Client');
+const MessageEmbed = require('../../lib/message/MessageEmbed');
+const Command = require('../../lib/command/Command');
+
+const Ban = new Command();
 
 /**
  * @param {Client} bot 
- * @param {Message} msg 
+ * @param {Discord.Message} msg 
  * @param {Array<String>} args 
  */
-module.exports.run = async (bot, msg, args) => {
+Ban.execute = async (bot, msg, args) => {
     let user = msg.mentions.members.first();
     let reason = args.slice(1).join(' ') || 'no reason specified';
 
@@ -14,7 +19,7 @@ module.exports.run = async (bot, msg, args) => {
         if(!user.bannable || user.id == msg.author.id)
         {
             bot.deleteMsg(msg);
-            return bot.sendAndDelete(msg.channel, this.error.not_bannable);
+            return bot.sendAndDelete(msg.channel, error.not_bannable);
         }
 
         let ban_embed = new MessageEmbed(bot, msg.guild)
@@ -35,22 +40,21 @@ module.exports.run = async (bot, msg, args) => {
     else
     {
         bot.deleteMsg(msg);
-        bot.sendAndDelete(msg.channel, this.error.user_not_found);
+        bot.sendAndDelete(msg.channel, error.user_not_found);
     }
-}
+};
 
-module.exports.help = {
-    name: "ban",
+Ban.setHelp({
+    name: 'ban',
+    args: '<@user> [reason]',
     aliases: [],
-    args: [
-        "<@user>",
-        "[reason]"
-    ],
-    permission: "ADMIN",
-    description: "bans <@user>"
-}
+    description: 'bans <@user>',
+    permission: 'ADMIN'
+});
 
-module.exports.error = {
-    "user_not_found": "User was not found on the server. Please, try again.",
-    "not_bannable": "I cannot ban that user."
-}
+const error = Ban.error = {
+    user_not_found: "User was not found on the server. Please, try again.",
+    not_bannable: "I cannot ban that user."
+};
+
+module.exports = Ban;

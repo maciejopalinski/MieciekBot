@@ -1,12 +1,17 @@
-const {Client, Message, MessageEmbed} = require('../../lib/mieciekbot.js');
+const Discord = require('discord.js');
+const Client = require('../../lib/client/Client');
+const MessageEmbed = require('../../lib/message/MessageEmbed');
+const Command = require('../../lib/command/Command');
+
+const Accept = new Command();
 
 /**
  * @param {Client} bot 
- * @param {Message} msg 
+ * @param {Discord.Message} msg 
  * @param {Array<String>} args 
  */
-module.exports.run = async (bot, msg, args) => {
-    if(bot.roles.user.name == '@everyone')
+Accept.execute = async (bot, msg, args) => {
+    if(bot.roles.user.allowed_nodes.includes('@everyone'))
     {
         let user_node = bot.roles.manager.getNode('USER');
         let user_role = msg.guild.roles.cache.find(role => role.id == user_node.role_id);
@@ -27,10 +32,12 @@ module.exports.run = async (bot, msg, args) => {
     else msg.delete();
 }
 
-module.exports.help = {
-    name: "accept",
+Accept.setHelp({
+    name: 'accept',
+    args: '',
     aliases: [],
-    args: [],
-    permission: "@everyone",
-    description: "adds the user role"
-}
+    description: 'adds the user role',
+    permission: '@everyone'
+});
+
+module.exports = Accept;

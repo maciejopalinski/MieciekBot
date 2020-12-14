@@ -1,11 +1,16 @@
-const {Client, Message, MessageEmbed, Guild} = require('../../lib/mieciekbot.js');
+const Discord = require('discord.js');
+const Client = require('../../lib/client/Client');
+const MessageEmbed = require('../../lib/message/MessageEmbed');
+const Command = require('../../lib/command/Command');
+
+const Leaderboard = new Command();
 
 /**
  * @param {Client} bot 
- * @param {Message} msg 
+ * @param {Discord.Message} msg 
  * @param {Array<String>} args 
  */
-module.exports.run = async (bot, msg, args) => {
+Leaderboard.execute = async (bot, msg, args) => {
     await msg.guild.members.fetch();
     
     let server_users = await bot.db_manager.getServerUsers(msg.guild.id);
@@ -32,12 +37,12 @@ module.exports.run = async (bot, msg, args) => {
     msg.channel.send(rank_embed);
 }
 
-module.exports.help = {
-    name: "leaderboard",
-    aliases: [
-        "rank"
-    ],
-    args: [],
-    permission: "USER",
-    description: "displays server activity leaderboard"
-}
+Leaderboard.setHelp({
+    name: 'leaderboard',
+    args: '',
+    aliases: ['rank'],
+    description: 'displays server activity leaderboard',
+    permission: 'USER'
+});
+
+module.exports = Leaderboard;

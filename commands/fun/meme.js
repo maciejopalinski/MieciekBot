@@ -1,12 +1,17 @@
-const {Client, Message, MessageEmbed} = require('../../lib/mieciekbot.js');
+const Discord = require('discord.js');
+const Client = require('../../lib/client/Client');
+const MessageEmbed = require('../../lib/message/MessageEmbed');
+const Command = require('../../lib/command/Command');
 const RandomPuppy = require('random-puppy');
+
+const Meme = new Command();
 
 /**
  * @param {Client} bot 
- * @param {Message} msg 
+ * @param {Discord.Message} msg 
  * @param {Array<String>} args 
  */
-module.exports.run = async (bot, msg, args) => {
+Meme.execute = async (bot, msg, args) => {
     let subReddits = [
         'dankmemes',
         'memes',
@@ -29,13 +34,12 @@ module.exports.run = async (bot, msg, args) => {
     return msg.channel.send(meme_embed);
 }
 
-module.exports.help = {
-    name: "meme",
-    aliases: [
-        "funny",
-        "memee"
-    ],
-    args: [],
-    permission: "USER",
-    description: "sends random meme from reddit"
-}
+Meme.setHelp({
+    name: 'meme',
+    args: '',
+    aliases: ['funny', 'memee'],
+    description: 'sends random meme from reddit',
+    permission: 'USER'
+});
+
+module.exports = Meme;

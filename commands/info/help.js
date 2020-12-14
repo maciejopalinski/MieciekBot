@@ -1,41 +1,42 @@
-const {Client, Message, MessageEmbed} = require('../../lib/mieciekbot.js');
+const Discord = require('discord.js');
+const Client = require('../../lib/client/Client');
+const MessageEmbed = require('../../lib/message/MessageEmbed');
+const Command = require('../../lib/command/Command');
+
+const Help = new Command();
 
 /**
  * @param {Client} bot 
- * @param {Message} msg 
+ * @param {Discord.Message} msg 
  * @param {Array<String>} args 
  */
-module.exports.run = async (bot, msg, args) => {
+Help.execute = async (bot, msg, args) => {
     let help = new MessageEmbed(bot, msg.guild);
     let allowed = bot.roles.user.allowed_nodes;
 
     if(!args[0] || !bot.command_manager.categories.includes(args[0]))
     {
         help
-        .addField(`Usage: ${bot.prefix}${this.help.name} ${this.help.args}`, '\u200b')
+        .addField(`Usage: ${bot.prefix}${Help.help.name} ${Help.help.args}`, '\u200b')
         .addField('Available categories:', bot.command_manager.categories.join(', '));
         return msg.channel.send(help);
     }
     
     help.setTitle(`HELP: ${args[0]}`);
 
-    let commands = bot.command_manager.commands.filter(v => v.help.category == args[0] && allowed.includes(v.help.permission));
-    commands.forEach(v => help.addField(`${bot.prefix}${v.help.name} ${v.help.args.join(' ')}`, v.help.description));
+    let commands = bot.command_manager.commands.filter(v => v.category == args[0] && allowed.includes(v.help.permission));
+    commands.forEach(v => help.addField(`${bot.prefix}${v.help.name} ${v.help.args}`, v.help.description));
 
     if(help.fields.length == 0) help.addField('There weren\'t any available commands for you.', '\u200b');
     msg.channel.send(help);
 }
 
-module.exports.help = {
-    name: "help",
-    aliases: [
-        "hepl",
-        "hlep",
-        "?"
-    ],
-    args: [
-        "[category]"
-    ],
-    permission: "@everyone",
-    description: "shows all commands"
-}
+Help.setHelp({
+    name: 'help',
+    args: '[category]',
+    aliases: ['hepl', 'hlep', '?'],
+    description: 'shows all commands',
+    permission: '@everyone'
+});
+
+module.exports = Help;

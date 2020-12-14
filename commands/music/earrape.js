@@ -1,44 +1,48 @@
-const {Client, Message, MessageEmbed} = require('../../lib/mieciekbot.js');
+const Discord = require('discord.js');
+const Client = require('../../lib/client/Client');
+const Command = require('../../lib/command/Command');
+
+const Earrape = new Command();
 
 /**
  * @param {Client} bot 
- * @param {Message} msg 
+ * @param {Discord.Message} msg 
  * @param {Array<String>} args 
  */
-module.exports.run = async (bot, msg, args) => {
-    let server_queue = bot.music_queue.get(msg.guild.id);
+Earrape.execute = async (bot, msg, args) => {
+    let server_queue = bot.music_manager.get(msg.guild.id);
     if(server_queue && server_queue.playing.state)
     {
         if(server_queue.volume.current != 500)
         {
             server_queue.setVolume(500);
-            msg.channel.send(this.error.turn_on);
+            msg.channel.send(error.turn_on);
         }
         else
         {
             server_queue.restoreVolume();
-            msg.channel.send(this.error.turn_off + ` Volume: ${server_queue.volume.current}.`);
+            msg.channel.send(error.turn_off + ` Volume: ${server_queue.volume.current}.`);
         }
     }
     else
     {
         bot.deleteMsg(msg);
-        return bot.sendAndDelete(msg.channel, this.error.music_play);
+        return bot.sendAndDelete(msg.channel, error.music_play);
     }
 }
 
-module.exports.help = {
-    name: "earrape",
-    aliases: [
-        "music-hehe"
-    ],
-    args: [],
-    permission: "DJ",
-    description: "plays music 5x louder"
-}
+Earrape.setHelp({
+    name: 'earrape',
+    args: '',
+    aliases: ['music-hehe'],
+    description: 'plays music 5x louder',
+    permission: 'DJ'
+});
 
-module.exports.error = {
-    "music_play": "There must be a song in queue.",
-    "turn_on": "Earrape turned on.",
-    "turn_off": "Earrape turned off."
-}
+const error = Earrape.error = {
+    music_play: "There must be a song in queue.",
+    turn_on: "Earrape turned on.",
+    turn_off: "Earrape turned off."
+};
+
+module.exports = Earrape;
