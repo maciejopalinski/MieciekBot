@@ -1,34 +1,40 @@
-const {Client, Message, MessageEmbed} = require('../../lib/mieciekbot.js');
+const Discord = require('discord.js');
+const Client = require('../../lib/client/Client');
+const Command = require('../../lib/command/Command');
+
+const Stop = new Command();
 
 /**
  * @param {Client} bot 
- * @param {Message} msg 
+ * @param {Discord.Message} msg 
  * @param {Array<String>} args 
  */
-module.exports.run = async (bot, msg, args) => {
-    let server_queue = bot.music_queue.get(msg.guild.id);
+Stop.execute = async (bot, msg, args) => {
+    let server_queue = bot.music_manager.get(msg.guild.id);
     if(server_queue && server_queue.playing.state)
     {
         server_queue.songs = [];
         server_queue.connection.dispatcher.end();
-        msg.channel.send(this.error.stopped);
+        msg.channel.send(error.stopped);
     }
     else
     {
         bot.deleteMsg(msg);
-        return bot.sendAndDelete(msg.channel,this.error.music_play);
+        return bot.sendAndDelete(msg.channel,error.music_play);
     }
 }
 
-module.exports.help = {
-    name: "stop",
+Stop.setHelp({
+    name: 'stop',
+    args: '',
     aliases: [],
-    args: [],
-    permission: "DJ",
-    description: "stops played music"
-}
+    description: 'stops played music',
+    permission: 'DJ'
+});
 
-module.exports.error = {
-    "music_play": "There must be a song in queue to stop it.",
-    "stopped": "Music stopped."
-}
+const error = Stop.error = {
+    music_play: "There must be a song in queue to stop it.",
+    stopped: "Music stopped."
+};
+
+module.exports = Stop;

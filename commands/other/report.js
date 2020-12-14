@@ -1,11 +1,16 @@
-const {Client, Message, MessageEmbed} = require('../../lib/mieciekbot.js');
+const Discord = require('discord.js');
+const Client = require('../../lib/client/Client');
+const MessageEmbed = require('../../lib/message/MessageEmbed');
+const Command = require('../../lib/command/Command');
+
+const Report = new Command();
 
 /**
  * @param {Client} bot 
- * @param {Message} msg 
+ * @param {Discord.Message} msg 
  * @param {Array<String>} args 
  */
-module.exports.run = async (bot, msg, args) => {
+Report.execute = async (bot, msg, args) => {
     let user = msg.mentions.members.first();
     let reason = args.slice(1).join(' ');
 
@@ -23,21 +28,20 @@ module.exports.run = async (bot, msg, args) => {
     else
     {
         bot.deleteMsg(msg);
-        bot.sendAndDelete(msg.channel, this.error.no_arg);
+        bot.sendAndDelete(msg.channel, error.no_arg);
     }
 }
 
-module.exports.help = {
-    name: "report",
+Report.setHelp({
+    name: 'report',
+    args: '<@user> <reason>',
     aliases: [],
-    args: [
-        "<@user>",
-        "<reason>"
-    ],
-    permission: "USER",
-    description: "reports user with a reason"
-}
+    description: 'reports user with a reason',
+    permission: 'USER'
+});
 
-module.exports.error = {
-    "no_arg": "No user or reason specified!"
-}
+const error = Report.error = {
+    no_arg: "No user or reason specified!"
+};
+
+module.exports = Report;

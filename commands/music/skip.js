@@ -1,33 +1,39 @@
-const {Client, Message, MessageEmbed} = require('../../lib/mieciekbot.js');
+const Discord = require('discord.js');
+const Client = require('../../lib/client/Client');
+const Command = require('../../lib/command/Command');
+
+const Skip = new Command();
 
 /**
  * @param {Client} bot 
- * @param {Message} msg 
+ * @param {Discord.Message} msg 
  * @param {Array<String>} args 
  */
-module.exports.run = async (bot, msg, args) => {
-    let server_queue = bot.music_queue.get(msg.guild.id);
+Skip.execute = async (bot, msg, args) => {
+    let server_queue = bot.music_manager.get(msg.guild.id);
     if(server_queue)
     {
-        msg.channel.send(this.error.skipped);
+        msg.channel.send(error.skipped);
         server_queue.connection.dispatcher.end();
     }
     else
     {
         bot.deleteMsg(msg);
-        return bot.sendAndDelete(msg.channel, this.error.music_play);
+        return bot.sendAndDelete(msg.channel, error.music_play);
     }
 }
 
-module.exports.help = {
-    name: "skip",
+Skip.setHelp({
+    name: 'skip',
+    args: '',
     aliases: [],
-    args: [],
-    permission: "DJ",
-    description: "skips current track"
-}
+    description: 'skips current track',
+    permission: 'DJ'
+});
 
-module.exports.error = {
-    "music_play": "There must be something in queue to skip it.",
-    "skipped": "Music skipped."
-}
+const error = Skip.error = {
+    music_play: "There must be something in queue to skip it.",
+    skipped: "Music skipped."
+};
+
+module.exports = Skip;

@@ -1,11 +1,16 @@
-const {Client, Message, MessageEmbed} = require('../../lib/mieciekbot.js');
+const Discord = require('discord.js');
+const Client = require('../../lib/client/Client');
+const MessageEmbed = require('../../lib/message/MessageEmbed');
+const Command = require('../../lib/command/Command');
+
+const Avatar = new Command();
 
 /**
  * @param {Client} bot 
- * @param {Message} msg 
+ * @param {Discord.Message} msg 
  * @param {Array<String>} args 
  */
-module.exports.run = async (bot, msg, args) => {
+Avatar.execute = async (bot, msg, args) => {
     let user = msg.mentions.users.first() || msg.author;
 
     let avatar_embed = new MessageEmbed(bot, msg.guild, false)
@@ -14,15 +19,12 @@ module.exports.run = async (bot, msg, args) => {
     msg.channel.send(avatar_embed);
 }
 
-module.exports.help = {
-    name: "avatar",
-    aliases: [
-        "userimg",
-        "userpic"
-    ],
-    args: [
-        "[@user]"
-    ],
-    permission: "USER",
-    description: "shows user avatar"
-}
+Avatar.setHelp({
+    name: 'avatar',
+    args: '[@user]',
+    aliases: ['userimg', 'userpic'],
+    description: 'shows user avatar',
+    permission: 'USER'
+});
+
+module.exports = Avatar;

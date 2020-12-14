@@ -1,17 +1,22 @@
-const {Client, Message, MessageEmbed} = require('../../lib/mieciekbot.js');
+const Discord = require('discord.js');
+const Client = require('../../lib/client/Client');
+const MessageEmbed = require('../../lib/message/MessageEmbed');
+const Command = require('../../lib/command/Command');
+
+const Unmute = new Command();
 
 /**
  * @param {Client} bot 
- * @param {Message} msg 
+ * @param {Discord.Message} msg 
  * @param {Array<String>} args 
  */
-module.exports.run = async (bot, msg, args) => {
+Unmute.execute = async (bot, msg, args) => {
     let user = msg.mentions.members.first();
 
     if(!user.kickable || user.id == msg.author.id)
     {
         bot.deleteMsg(msg);
-        return bot.sendAndDelete(msg.channel, this.error.not_mutable);
+        return bot.sendAndDelete(msg.channel, error.not_mutable);
     }
 
     let mute_node = bot.roles.manager.getNode('MUTE');
@@ -46,16 +51,16 @@ module.exports.run = async (bot, msg, args) => {
     user.roles.remove(mute_role);
 }
 
-module.exports.help = {
-    name: "unmute",
+Unmute.setHelp({
+    name: 'unmute',
+    args: '<@user>',
     aliases: [],
-    args: [
-        "<@user>"
-    ],
-    permission: "ADMIN",
-    description: "unmutes <@user>"
-}
+    description: 'unmutes <@user>',
+    permission: 'ADMIN'
+});
 
-module.exports.error = {
-    "not_mutable": "I cannot unmute this user."
-}
+const error = Unmute.error = {
+    not_mutable: "I cannot unmute this user."
+};
+
+module.exports = Unmute;

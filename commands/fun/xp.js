@@ -1,20 +1,24 @@
-const {Client, Message, MessageAttachment} = require('../../lib/mieciekbot.js');
+const Discord = require('discord.js');
+const Client = require('../../lib/client/Client');
+const Command = require('../../lib/command/Command');
 const Canvas = require('canvas');
 
 Canvas.registerFont('assets/fonts/Bebas-Regular.ttf', {family: 'Bebas-Regular'});
 Canvas.registerFont('assets/fonts/AldotheApache.ttf', {family: 'AldoTheApache'});
 
+const XP = new Command();
+
 /**
  * @param {Client} bot 
- * @param {Message} msg 
+ * @param {Discord.Message} msg 
  * @param {Array<String>} args 
  */
-module.exports.run = async (bot, msg, args) => {
+XP.execute = async (bot, msg, args) => {
     let member = msg.mentions.members.first() || msg.member;
     
     if(member.user.bot) {
         bot.deleteMsg(msg);
-        return bot.sendAndDelete(msg.channel, this.error.bot);
+        return bot.sendAndDelete(msg.channel, error.bot);
     }
 
     let user = await bot.db_manager.getUser(msg.guild.id, member.id);
@@ -40,8 +44,8 @@ module.exports.run = async (bot, msg, args) => {
     ctx.fillText(member.user.tag, 320, 110, 540);
 
     // progress bar
-    let start = bot.db_manager.exp_system.getEXP(level);
-    let dest = bot.db_manager.exp_system.getEXP(level + 1);
+    let start = bot.db_manager.exp_system.getExperience(level);
+    let dest = bot.db_manager.exp_system.getExperience(level + 1);
     let percent = (xp - start) / (dest - start) * 100;
 
     ctx.fillStyle = 'rgb(255, 255, 255)';
@@ -78,19 +82,19 @@ module.exports.run = async (bot, msg, args) => {
     ctx.drawImage(avatar, 30, 22, 256, 256);
 
     // send attachment
-    msg.channel.send(new MessageAttachment(level_graphics.toBuffer()));
+    msg.channel.send(new Discord.MessageAttachment(level_graphics.toBuffer()));
 }
 
-module.exports.help = {
-    name: "xp",
+XP.setHelp({
+    name: 'xp',
+    args: '[@user]',
     aliases: [],
-    args: [
-        "[@user]"
-    ],
-    permission: "USER",
-    description: "displays user experience points"
-}
+    description: 'displays user experience points',
+    permission: 'USER'
+});
 
-module.exports.error = {
-    "bot": "This user is a bot. It cannot collect XP points."
+const error = XP.error = {
+    bot: "This user is a bot. It cannot collect XP points."
 };
+
+module.exports = XP;

@@ -1,12 +1,17 @@
-const {Client, Message, MessageEmbed} = require('../../lib/mieciekbot.js');
+const Discord = require('discord.js');
+const Client = require('../../lib/client/Client');
+const MessageEmbed = require('../../lib/message/MessageEmbed');
+const Command = require('../../lib/command/Command');
 const axios = require('axios');
+
+const Coronavirus = new Command();
 
 /**
  * @param {Client} bot 
- * @param {Message} msg 
+ * @param {Discord.Message} msg 
  * @param {Array<String>} args 
  */
-module.exports.run = async (bot, msg, args) => {
+Coronavirus.execute = async (bot, msg, args) => {
     let country = '';
     if(!args[0] || args[0] == 'world' || args[0] == 'global') country = 'all';
     else country = args.join(' ');
@@ -42,25 +47,12 @@ module.exports.run = async (bot, msg, args) => {
     }
 }
 
-module.exports.help = {
-    name: "coronavirus",
-    aliases: [
-        "cvirus",
-        "cvstats"
-    ],
-    args: [
-        "[country|world|global|all]"
-    ],
-    permission: "USER",
-    description: "displays current coronavirus statistics"
-}
-
 /**
  * @param {Client} bot
- * @param {Message} msg
+ * @param {Discord.Message} msg
  * @param {object} body
  * @param {String} header
- * @returns {Discord.MessageEmbed}
+ * @returns {MessageEmbed}
  */
 function create_embed(bot, msg, body, header) {
     let time = new Date(Date.parse(body.response[0].time));
@@ -74,3 +66,13 @@ function create_embed(bot, msg, body, header) {
 
     return cv_embed;
 }
+
+Coronavirus.setHelp({
+    name: 'coronavirus',
+    args: '[country|world|global|all]',
+    aliases: ['cvirus', 'cvstats'],
+    description: 'displays current coronavirus statistics',
+    permission: 'USER'
+});
+
+module.exports = Coronavirus;

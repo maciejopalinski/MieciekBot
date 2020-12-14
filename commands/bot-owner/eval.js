@@ -1,11 +1,15 @@
-const {Client, Message, MessageEmbed} = require('../../lib/mieciekbot.js');
+const Discord = require('discord.js');
+const Client = require('../../lib/client/Client');
+const Command = require('../../lib/command/Command');
+
+const Eval = new Command();
 
 /**
  * @param {Client} bot 
- * @param {Message} msg 
+ * @param {Discord.Message} msg 
  * @param {Array<String>} args 
  */
-module.exports.run = async (bot, msg, args) => {
+Eval.execute = async (bot, msg, args) => {
     try {
         const code = args.join(' ');
         let evaled = eval(code);
@@ -20,17 +24,17 @@ module.exports.run = async (bot, msg, args) => {
     }
 }
 
-module.exports.help = {
-    name: "eval",
-    aliases: [],
-    args: [
-        "<expression>"
-    ],
-    permission: "BOT_OWNER",
-    description: "evaluates given expression"
-}
-
 const clean = (text) => {
     if (typeof(text) === 'string') return text.replace(/`/g, '`' + String.fromCharCode(8203)).replace(/@/g, '@' + String.fromCharCode(8203));
     else return text;
 }
+
+Eval.setHelp({
+    name: 'eval',
+    args: '<expression>',
+    aliases: [],
+    description: 'evaluates given expression',
+    permission: 'BOT_OWNER'
+});
+
+module.exports = Eval;

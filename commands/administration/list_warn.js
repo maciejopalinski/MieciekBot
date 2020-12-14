@@ -1,11 +1,16 @@
-const {Client, Message, MessageEmbed} = require('../../lib/mieciekbot.js');
+const Discord = require('discord.js');
+const Client = require('../../lib/client/Client');
+const MessageEmbed = require('../../lib/message/MessageEmbed');
+const Command = require('../../lib/command/Command');
+
+const ListWarn = new Command();
 
 /**
  * @param {Client} bot 
- * @param {Message} msg 
+ * @param {Discord.Message} msg 
  * @param {Array<String>} args 
  */
-module.exports.run = async (bot, msg, args) => {
+ListWarn.execute = async (bot, msg, args) => {
     let user = msg.mentions.members.first();
 
     if(user)
@@ -18,7 +23,7 @@ module.exports.run = async (bot, msg, args) => {
         if(!warns)
         {
             bot.deleteMsg(msg);
-            return bot.sendAndDelete(msg.channel, this.error.unknown);
+            return bot.sendAndDelete(msg.channel, error.unknown);
         }
         
         warns.forEach(entry => {
@@ -32,28 +37,21 @@ module.exports.run = async (bot, msg, args) => {
     else
     {
         bot.deleteMsg(msg);
-        bot.sendAndDelete(msg.channel, this.error.user_not_found);
+        bot.sendAndDelete(msg.channel, error.user_not_found);
     }
-}
+};
 
-module.exports.help = {
-    name: "list-warn",
-    aliases: [
-        "list_warn",
-        "warn-list",
-        "warn_list",
-        "warnlist",
-        "listwarn",
-        "warns"
-    ],
-    args: [
-        "<@user>"
-    ],
-    permission: "ADMIN",
-    description: "displays all <@user> warnings"
-}
+ListWarn.setHelp({
+    name: 'list-warn',
+    args: '<@user>',
+    aliases: ['warnlist', 'listwarn', 'warns'],
+    description: 'displays all <@user> warnings',
+    permission: 'ADMIN'
+});
 
-module.exports.error = {
-    "user_not_found": "User was not found on the server. Please, try again.",
-    "unknown": "Unknown error occurred. Please, try again later."
-}
+const error = ListWarn.error = {
+    user_not_found: "User was not found on the server. Please, try again.",
+    unknown: "Unknown error occurred. Please, try again later."
+};
+
+module.exports = ListWarn;
