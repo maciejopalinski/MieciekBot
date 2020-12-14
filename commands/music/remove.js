@@ -1,6 +1,5 @@
 const Discord = require('discord.js');
 const Client = require('../../lib/client/Client');
-const MessageEmbed = require('../../lib/message/MessageEmbed');
 const Command = require('../../lib/command/Command');
 
 const Remove = new Command();
