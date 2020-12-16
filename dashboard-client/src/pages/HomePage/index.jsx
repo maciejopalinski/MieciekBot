@@ -1,7 +1,11 @@
 import React from 'react';
+import { Button } from '@chakra-ui/react';
 
 export function HomePage(props) {
     return (
-        <h1>Home Page</h1>
+        <div>
+            <h1>Home Page</h1>
+            <Button colorScheme='blue'>Login</Button>
+        </div>
     );
 }
