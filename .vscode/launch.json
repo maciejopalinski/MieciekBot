@@ -12,8 +12,7 @@
                 "dev"
             ],
             "port": 9229,
-            "stopOnEntry": true,
-            "envFile": "${workspaceFolder}/discord-bot/.env"
+            "stopOnEntry": true
         },
         {
             "name": "Attach to MieciekBot Dashboard API",
