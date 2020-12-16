@@ -2,18 +2,27 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Launch via NPM",
+            "name": "Launch MieciekBot via NPM",
             "type": "node",
             "request": "launch",
-            "cwd": "${workspaceFolder}",
+            "cwd": "${workspaceFolder}/discord-bot",
             "runtimeExecutable": "npm",
             "runtimeArgs": [
-                "run-script",
-                "debug"
+                "run",
+                "dev"
             ],
             "port": 9229,
             "stopOnEntry": true,
-            "envFile": "${workspaceFolder}/.env"
+            "envFile": "${workspaceFolder}/discord-bot/.env"
+        },
+        {
+            "name": "Attach to MieciekBot Dashboard API",
+            "port": 9230,
+            "request": "attach",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "pwa-node"
         }
     ]
 }
