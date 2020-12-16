@@ -1,16 +1,13 @@
 {
     "name": "mieciekbot-discord-bot",
     "version": "4.0.0",
+    "private": true,
     "main": "index.js",
     "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
         "start": "node index.js",
-        "dev": "nodemon --inspect=9229 index.js"
+        "dev": "nodemon --require dotenv/config --inspect=9229 index.js"
     },
-    "author": "Maciej Opaliński <poprostumieciek@gmail.com>",
-    "repository": {
-        "url": "https://github.com/PoProstuMieciek/MieciekBot.git"
-    },
-    "license": "MIT",
     "dependencies": {
         "@discordjs/opus": "^0.3.3",
         "axios": "^0.21.0",
@@ -23,5 +20,13 @@
         "random-puppy": "^1.1.0",
         "youtube-search": "^1.1.4",
         "ytdl-core": "^4.1.5"
-    }
+    },
+    "devDependencies": {
+        "dotenv": "^8.2.0"
+    },
+    "author": "Maciej Opaliński <poprostumieciek@gmail.com>",
+    "repository": {
+        "url": "https://github.com/PoProstuMieciek/MieciekBot.git"
+    },
+    "license": "MIT"
 }
