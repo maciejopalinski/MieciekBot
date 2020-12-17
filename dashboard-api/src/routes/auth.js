@@ -12,7 +12,7 @@ router.get('/discord', passport.authenticate('discord'));
 
 // /api/auth/discord/redirect
 router.get('/discord/redirect', passport.authenticate('discord'), (req, res) => {
-    res.redirect('/api/auth');
+    res.redirect(process.env.DASHBOARD_CLIENT_URL + '/menu');
 });
 
 module.exports = router;
