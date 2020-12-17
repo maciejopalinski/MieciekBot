@@ -10,7 +10,12 @@ const app = express();
 const routes = require('./routes');
 
 const DATABASE = process.env.DASHBOARD_API_DATABASE || process.env.DATABASE;
-mongoose.connect(DATABASE, { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect(DATABASE, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useFindAndModify: false,
+    useCreateIndex: true
+});
 
 app.use(session({
     secret: 'secret',
