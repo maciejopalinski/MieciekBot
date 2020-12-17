@@ -21,7 +21,8 @@
             "skipFiles": [
                 "<node_internals>/**"
             ],
-            "type": "pwa-node"
+            "type": "pwa-node",
+            "restart": { "delay": 0, "maxAttempts": 3 }
         }
     ]
 }
