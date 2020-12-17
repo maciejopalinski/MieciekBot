@@ -9,7 +9,7 @@ require('./strategies/discord');
 
 const app = express();
 const routes = require('./routes');
-const error = require('./handlers/error');
+const ErrorPages = require('./templates/ErrorPages');
 
 const DATABASE = process.env.DASHBOARD_API_DATABASE || process.env.DATABASE;
 mongoose.connect(DATABASE, {
@@ -39,7 +39,7 @@ app.use(passport.session());
 app.get('/', (req, res) => res.redirect('/api'));
 app.use('/api', routes);
 
-app.get('*', (req, res) => error.not_found(res));
+app.get('*', (req, res) => ErrorPages.not_found(res));
 
 const PORT = process.env.DASHBOARD_API_PORT || 8080;
 app.listen(PORT, () => console.log(`MieciekBot Dashboard API running on port ${PORT}`));
