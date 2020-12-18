@@ -1,7 +1,9 @@
 import React from 'react';
 import { Switch, Route } from 'react-router-dom';
-import './App.css';
+import { API } from './util/api';
 
+import './App.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import { HomePage, MenuPage, DashboardPage, NotFound } from './pages';
 
 function App() {
@@ -9,7 +11,12 @@ function App() {
 		<Switch>
 			<Route path='/' exact={true} component={HomePage} />
 			<Route path='/menu' exact={true} component={MenuPage} />
-			<Route path='/dashboard' exact={true} component={DashboardPage} />
+			<Route path='/dashboard/:id' exact={true} component={DashboardPage} />
+			
+			<Route path='/@me' exact={true} component={() => {
+				window.location.href = API('/discord/@me');
+			}} />
+			
 			<Route component={NotFound} />
 		</Switch>
 	);
