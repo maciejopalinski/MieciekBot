@@ -31,7 +31,7 @@ app.use(session({
     },
     resave: false,
     saveUninitialized: false,
-    store: new Store({ mongooseConnection: mongoose.connection })
+    store: new Store({ mongooseConnection: mongoose.connection, collection: 'dashboard_sessions' })
 }));
 app.use(passport.initialize());
 app.use(passport.session());
