@@ -2,38 +2,45 @@
 import React from 'react';
 import { getUserDetails, getMutualGuilds } from '../../util/api';
 
-import '../styles.css';
-import { Navbar } from '../../components';
-// import Formik from 'formik';
+import { Navbar, GuildDashboard } from '../../components';
 
-export function DashboardPage(props) {
+export function DashboardPage({
+    history, match
+}) {
     
-    const [ user, setUser ] = React.useState({});
-    const [ guilds, setGuilds ] = React.useState([]);
+    const [ user, setUser ] = React.useState(null);
+    const [ guilds, setGuilds ] = React.useState(null);
+    const [ currentGuild, setCurrentGuild ] = React.useState(null);
 
     React.useEffect(() => {
+        
         getUserDetails()
+        .then(res => setUser(res.data))
+        .catch(err => {
+            setUser({});
+            history.push('/');
+        });
+        
+        getMutualGuilds()
         .then(res => {
-            // console.log(res.data);
-            setUser(res.data);
-            
-            return getMutualGuilds();
-        })
-        .then(res => {
-            // console.log(res.data);
-            setGuilds(res.data);            
+            setGuilds(res.data);
+
+            setCurrentGuild(res.data.find(v => v.id === match.params.id));
         })
         .catch(err => {
-            props.history.push('/');
+            setGuilds([]);
         });
+
     }, []);
 
     return (
         <div>
             <Navbar user={user} guilds={guilds} />
             
-            <div className='app-header'>
+            <div className='app'>
                 <h1>Dashboard Page</h1>
+
+                <GuildDashboard guild={currentGuild} />
             </div>
         </div>
     );
