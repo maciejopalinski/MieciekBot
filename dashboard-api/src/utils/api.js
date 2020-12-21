@@ -1,6 +1,6 @@
 const fetch = require('node-fetch');
 
-const BOT_TOKEN = process.env.DASHBOARD_CLIENT_TOKEN || process.env.BOT_TOKEN;
+const BOT_TOKEN = process.env.DASHBOARD_API_CLIENT_TOKEN || process.env.BOT_TOKEN;
 
 async function getBotGuilds() {
     const response = await fetch('http://discord.com/api/v6/users/@me/guilds', {
