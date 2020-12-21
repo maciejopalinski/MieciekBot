@@ -2,37 +2,38 @@
 import React from 'react';
 import { getUserDetails, getMutualGuilds } from '../../util/api';
 
-import '../styles.css';
-import { Navbar } from '../../components';
+import { Navbar, GuildsWrapper } from '../../components';
 
 export function MenuPage(props) {
-    
+
     const [ user, setUser ] = React.useState(null);
-    const [ guilds, setGuilds ] = React.useState([]);
+    const [ guilds, setGuilds ] = React.useState(null);
 
     React.useEffect(() => {
+        
         getUserDetails()
-        .then(res => {
-            // console.log(res.data);
-            setUser(res.data);
-            
-            return getMutualGuilds();
-        })
-        .then(res => {
-            // console.log(res.data);
-            setGuilds(res.data);
-        })
+        .then(res => setUser(res.data))
         .catch(err => {
+            setUser({});
             props.history.push('/');
         });
+        
+        getMutualGuilds()
+        .then(res => setGuilds(res.data))
+        .catch(err => {
+            setGuilds([]);
+        });
+
     }, []);
 
     return (
         <div>
             <Navbar user={user} guilds={guilds} />
             
-            <div className='app-header'>
-                <h1>Menu Page</h1>
+            <div className='app'>
+                <h1>Select a server</h1>
+
+                <GuildsWrapper guilds={guilds} />
             </div>
         </div>
     );
