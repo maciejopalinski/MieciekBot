@@ -23,6 +23,14 @@
             ],
             "type": "pwa-node",
             "restart": { "delay": 0, "maxAttempts": 3 }
+        },
+        {
+            "name": "Attach to Chrome",
+            "request": "attach",
+            "type": "pwa-chrome",
+            "urlFilter": "http://localhost:8080/*",
+            "webRoot": "${workspaceFolder}/dashboard-client",
+            "port": 9222
         }
     ]
 }
