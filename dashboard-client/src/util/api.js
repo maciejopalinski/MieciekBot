@@ -17,6 +17,10 @@ export function getMutualGuilds() {
     return axios.get(API('/discord/guilds/mutual'), { withCredentials: true });
 }
 
-export function getUserAvatar(id, avatar) {
-    return CDN(`/avatars/${id}/${avatar}.png`);
+export function getUserAvatar(id, avatar, size = 256) {
+    return CDN(`/avatars/${id}/${avatar}.jpg?size=${size}`);
+}
+
+export function getGuildIcon(id, icon, size = 256) {
+    return CDN(`/icons/${id}/${icon}.jpg?size=${size}`);
 }
