@@ -10,11 +10,15 @@ function App() {
 	return (
 		<Switch>
 			<Route path='/' exact={true} component={HomePage} />
-			<Route path='/menu' exact={true} component={MenuPage} />
+			<Route path='/dashboard' exact={true} component={MenuPage} />
 			<Route path='/dashboard/:id' exact={true} component={DashboardPage} />
 			
 			<Route path='/@me' exact={true} component={() => {
 				window.location.href = API('/discord/@me');
+			}} />
+
+			<Route path='/logout' exact={true} component={() => {
+				window.location.href = API('/auth/logout');
 			}} />
 			
 			<Route component={NotFound} />
