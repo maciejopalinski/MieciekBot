@@ -10,14 +10,14 @@
 		"eject": "react-scripts eject"
 	},
 	"dependencies": {
-		"@chakra-ui/react": "^1.0.3",
-		"@emotion/react": "^11.1.2",
-		"@emotion/styled": "^11.0.0",
 		"@testing-library/jest-dom": "^5.11.4",
 		"@testing-library/react": "^11.1.0",
 		"@testing-library/user-event": "^12.1.10",
-		"framer-motion": "^3.0.0",
+		"axios": "^0.21.0",
+		"bootstrap": "^4.5.3",
+		"formik": "^2.2.6",
 		"react": "^17.0.1",
+		"react-bootstrap": "^1.4.0",
 		"react-dom": "^17.0.1",
 		"react-router-dom": "^5.2.0",
 		"react-scripts": "4.0.1",
@@ -32,18 +32,18 @@
 	"browserslist": {
 		"production": [
 			">0.2%",
-		    "not dead",
+			"not dead",
 			"not op_mini all"
 		],
 		"development": [
 			"last 1 chrome version",
-		    "last 1 firefox version",
+			"last 1 firefox version",
 			"last 1 safari version"
 		]
 	},
 	"author": "Maciej Opaliński <poprostumieciek@gmail.com>",
-    "repository": {
-        "url": "https://github.com/PoProstuMieciek/MieciekBot.git"
-    },
-    "license": "MIT"
+	"repository": {
+		"url": "https://github.com/PoProstuMieciek/MieciekBot.git"
+	},
+	"license": "MIT"
 }
