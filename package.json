@@ -6,9 +6,9 @@
 	"main": "index.js",
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1",
-		"start:discord-bot": "cd discord-bot/ && npm start",
-		"start:dashboard-api": "cd dashboard-api/ && npm start",
-		"start:dashboard-client": "cd dashboard-client/ && yarn start",
+		"start:discord-bot": "cd discord-bot/ && npm i && npm start",
+		"start:dashboard-api": "cd dashboard-api/ && npm i && npm start",
+		"start:dashboard-client": "cd dashboard-client/ && yarn install && yarn start",
 		"dev:discord-bot": "cd discord-bot/ && npm run dev",
 		"dev:dashboard-api": "cd dashboard-api/ && npm run dev",
 		"dev:dashboard-client": "cd dashboard-client/ && yarn start"
