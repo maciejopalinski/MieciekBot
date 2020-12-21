@@ -1,21 +1,32 @@
 {
-	"name": "mieciekbot",
-	"version": "4.0.0",
-	"description": "An open source Node.js Discord bot.",
-	"private": true,
-	"main": "index.js",
-	"scripts": {
-		"test": "echo \"Error: no test specified\" && exit 1",
-		"start:discord-bot": "cd discord-bot/ && npm i && npm start",
-		"start:dashboard-api": "cd dashboard-api/ && npm i && npm start",
-		"start:dashboard-client": "cd dashboard-client/ && yarn install && yarn start",
-		"dev:discord-bot": "cd discord-bot/ && npm run dev",
-		"dev:dashboard-api": "cd dashboard-api/ && npm run dev",
-		"dev:dashboard-client": "cd dashboard-client/ && yarn start"
-	},
-	"author": "Maciej Opaliński <poprostumieciek@gmail.com>",
-	"repository": {
-		"url": "https://github.com/PoProstuMieciek/MieciekBot.git"
-	},
-	"license": "MIT"
+    "name": "mieciekbot-discord-bot",
+    "version": "4.0.0",
+    "private": true,
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "start": "node index.js",
+        "dev": "nodemon --require dotenv/config --inspect=9229 index.js"
+    },
+    "dependencies": {
+        "@discordjs/opus": "^0.3.3",
+        "axios": "^0.21.0",
+        "canvas": "^2.6.1",
+        "discord.js": "^12.5.1",
+        "emoji-regex": "^9.2.0",
+        "mongoose": "^5.11.7",
+        "octonode": "^0.9.5",
+        "random-number-csprng": "^1.0.2",
+        "random-puppy": "^1.1.0",
+        "youtube-search": "^1.1.4",
+        "ytdl-core": "^4.1.5"
+    },
+    "devDependencies": {
+        "dotenv": "^8.2.0"
+    },
+    "author": "Maciej Opaliński <poprostumieciek@gmail.com>",
+    "repository": {
+        "url": "https://github.com/PoProstuMieciek/MieciekBot.git"
+    },
+    "license": "MIT"
 }
