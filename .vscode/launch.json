@@ -13,24 +13,6 @@
             ],
             "port": 9229,
             "stopOnEntry": true
-        },
-        {
-            "name": "Attach to MieciekBot Dashboard API",
-            "port": 9230,
-            "request": "attach",
-            "skipFiles": [
-                "<node_internals>/**"
-            ],
-            "type": "pwa-node",
-            "restart": { "delay": 0, "maxAttempts": 3 }
-        },
-        {
-            "name": "Attach to Chrome",
-            "request": "attach",
-            "type": "pwa-chrome",
-            "urlFilter": "http://localhost:8080/*",
-            "webRoot": "${workspaceFolder}/dashboard-client",
-            "port": 9222
         }
     ]
 }
