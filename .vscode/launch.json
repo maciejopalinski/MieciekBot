@@ -5,7 +5,7 @@
             "name": "Launch MieciekBot via NPM",
             "type": "node",
             "request": "launch",
-            "cwd": "${workspaceFolder}/discord-bot",
+            "cwd": "${workspaceFolder}",
             "runtimeExecutable": "npm",
             "runtimeArgs": [
                 "run",
