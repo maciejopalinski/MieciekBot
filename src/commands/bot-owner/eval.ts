@@ -1,4 +1,5 @@
 import { Command } from '../../lib';
+import { inspect } from 'util';
 
 const Eval = new Command();
 
@@ -7,7 +8,7 @@ Eval.execute = async (bot, msg, args) => {
         const code = args.join(' ');
         let evaled = eval(code);
    
-        if (typeof evaled !== 'string') evaled = require('util').inspect(evaled);
+        if (typeof evaled !== 'string') evaled = inspect(evaled);
         let clean_out = clean(evaled);
 
         if(clean_out.length < 1900) msg.channel.send(clean(evaled), { code: 'xl' });

@@ -1,5 +1,5 @@
 import { MessageEmbed, Command } from '../../lib';
-const axios = require('axios');
+import axios, { AxiosRequestConfig } from 'axios';
 
 const Coronavirus = new Command();
 
@@ -9,8 +9,7 @@ Coronavirus.execute = async (bot, msg, args) => {
     else country = args.join(' ');
     
     let url = 'https://covid-193.p.rapidapi.com/';
-    /** @type {axios.AxiosRequestConfig} */
-    let options = {
+    let options: AxiosRequestConfig = {
         headers: {
             'x-rapidapi-host': 'covid-193.p.rapidapi.com',
             'x-rapidapi-key': process.env.RAPID_API_KEY
@@ -20,13 +19,13 @@ Coronavirus.execute = async (bot, msg, args) => {
     if(country == 'all')
     {
         options.params = { country: country };
-        let stats = await axios.default.get(url + 'statistics', options);
+        let stats = await axios.get(url + 'statistics', options);
         msg.channel.send(create_embed(bot, msg, stats.data, "Global"));
     }
     else
     {
         options.params = { search: country };
-        let search = await axios.default.get(url + 'countries', options);
+        let search = await axios.get(url + 'countries', options);
         if(search.data.results == 0) {
             bot.deleteMsg(msg);
             return bot.sendAndDelete(msg.channel, 'That country was not found in the database.');
@@ -34,7 +33,7 @@ Coronavirus.execute = async (bot, msg, args) => {
         
         let verified_country = search.data.response[0];
         options.params = { country: verified_country };
-        let stats = await axios.default.get(url + 'statistics', options);
+        let stats = await axios.get(url + 'statistics', options);
         msg.channel.send(create_embed(bot, msg, stats.data, verified_country));
     }
 }
