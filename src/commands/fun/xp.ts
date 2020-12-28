@@ -3,8 +3,8 @@ import { Command } from '../../lib';
 import Canvas from 'canvas';
 import { IUser } from '../../models';
 
-Canvas.registerFont('assets/fonts/Bebas-Regular.ttf', {family: 'Bebas-Regular'});
-Canvas.registerFont('assets/fonts/AldotheApache.ttf', {family: 'AldoTheApache'});
+Canvas.registerFont('src/assets/fonts/Bebas-Regular.ttf', {family: 'Bebas-Regular'});
+Canvas.registerFont('src/assets/fonts/AldotheApache.ttf', {family: 'AldoTheApache'});
 
 const XP = new Command();
 

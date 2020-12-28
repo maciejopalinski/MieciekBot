@@ -2,8 +2,8 @@ import { MessageAttachment } from 'discord.js';
 import { Command, QueueLoopModes } from '../../lib';
 
 import Canvas from 'canvas';
-Canvas.registerFont('assets/fonts/Bebas-Regular.ttf', {family: 'Bebas-Regular'});
-Canvas.registerFont('assets/fonts/AldotheApache.ttf', {family: 'AldoTheApache'});
+Canvas.registerFont('src/assets/fonts/Bebas-Regular.ttf', {family: 'Bebas-Regular'});
+Canvas.registerFont('src/assets/fonts/AldotheApache.ttf', {family: 'AldoTheApache'});
 
 const NowPlaying = new Command();
 
@@ -13,18 +13,18 @@ NowPlaying.execute = async (bot, msg, args) => {
     {
         const Buttons = {
             LOOP: {
-                DISABLED: await Canvas.loadImage('assets/icons/loop_disabled.png'),
-                QUEUE: await Canvas.loadImage('assets/icons/loop_queue.png'),
-                SHUFFLE: await Canvas.loadImage('assets/icons/loop_shuffle.png'),
-                TRACK: await Canvas.loadImage('assets/icons/loop_track.png')
+                DISABLED: await Canvas.loadImage('src/assets/icons/loop_disabled.png'),
+                QUEUE: await Canvas.loadImage('src/assets/icons/loop_queue.png'),
+                SHUFFLE: await Canvas.loadImage('src/assets/icons/loop_shuffle.png'),
+                TRACK: await Canvas.loadImage('src/assets/icons/loop_track.png')
             },
-            PAUSE: await Canvas.loadImage('assets/icons/pause.png'),
-            PLAY: await Canvas.loadImage('assets/icons/play.png'),
-            SKIP_BACK: await Canvas.loadImage('assets/icons/skip.back.png'),
-            SKIP_FORWARD: await Canvas.loadImage('assets/icons/skip.forward.png'),
+            PAUSE: await Canvas.loadImage('src/assets/icons/pause.png'),
+            PLAY: await Canvas.loadImage('src/assets/icons/play.png'),
+            SKIP_BACK: await Canvas.loadImage('src/assets/icons/skip.back.png'),
+            SKIP_FORWARD: await Canvas.loadImage('src/assets/icons/skip.forward.png'),
             VOLUME: {
-                FULL: await Canvas.loadImage('assets/icons/volume_full.png'),
-                OFF: await Canvas.loadImage('assets/icons/volume_off.png')
+                FULL: await Canvas.loadImage('src/assets/icons/volume_full.png'),
+                OFF: await Canvas.loadImage('src/assets/icons/volume_off.png')
             }
         };
 
