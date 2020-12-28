@@ -7,7 +7,7 @@ Info.execute = async (bot, msg, args) => {
     {
         let message = new MessageEmbed(bot, msg.guild)
         .setTitle(`INFO: ${msg.guild.name}`)
-        .addField('Owner:', `${msg.guild.owner.user.tag}`)
+        .addField('Owner:', `<@${msg.guild.owner.id}>`)
         .addField('Created at:', `${msg.guild.owner.joinedAt.toDateString()}`)
         .addField('Members:', `${msg.guild.memberCount}`);
 
