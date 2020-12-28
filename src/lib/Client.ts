@@ -3,7 +3,7 @@ import * as Discord from 'discord.js';
 import { IGuild } from '../models';
 import { CommandManager, EventLoader, DatabaseManager, RolePermissionNode, UserPermissionNode, AnyPermissionNode, PermissionNodesManager, MusicManager } from './';
 
-import * as project_info from '../package.json';
+import * as project_info from '../../package.json';
 
 interface ServerAnnounceToggles {
     add_member: boolean;

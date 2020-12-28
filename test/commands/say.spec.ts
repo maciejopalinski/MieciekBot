@@ -1,9 +1,9 @@
-import Say from '../../commands/administration/say';
+import Say from '../../src/commands/administration/say';
 
 import * as Discord from 'discord.js';
 jest.mock('discord.js');
-import * as MieciekBot from '../../lib';
-jest.mock('../../lib');
+import * as MieciekBot from '../../src/lib';
+jest.mock('../../src/lib');
 
 const client = new MieciekBot.Client('', '', {});
 const guild = new Discord.Guild(client, {});
