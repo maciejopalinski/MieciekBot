@@ -7,6 +7,7 @@ Stop.execute = async (bot, msg, args) => {
     if(server_queue && server_queue.playing.state)
     {
         server_queue.songs = [];
+        server_queue.playing.current = null;
         server_queue.connection.dispatcher.end();
         msg.channel.send(error.stopped);
     }
