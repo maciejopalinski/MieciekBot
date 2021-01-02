@@ -1,4 +1,4 @@
-import { Collection, Message } from 'discord.js';
+import { Message } from 'discord.js';
 import fs from 'fs';
 import { Client } from './';
 
@@ -21,24 +21,15 @@ export class Command {
     path: string = "";
 
     error = {};
-
-    setHelp(help: CommandOptions) {
-        this.help = help;
-        this.args_array = this.help.args.split(' ');
-    }
 }
 
 export class CommandManager {
 
     categories: string[] = [];
 
-    commands: Collection<string, Command> = new Collection();
+    commands: Command[] = [];
 
-    constructor() {
-        this.loadCommands();
-    }
-
-    private loadCommands() {
+    loadCommands() {
         console.info('Starting commands loading...');
 
         let commands_dir = `${__dirname}/../commands`;
@@ -69,8 +60,8 @@ export class CommandManager {
             });
         });
 
-        if(this.commands.size > 0) {
-            console.info(`${this.commands.size} commands loaded`);
+        if(this.commands.length > 0) {
+            console.info(`${this.commands.length} commands loaded`);
             console.info(`${this.categories.length} categories loaded\n`);
         }
         else console.warn(`Commands not found!\n`);
@@ -79,18 +70,19 @@ export class CommandManager {
     registerCommand(command: Command) {
 
         // check for name duplications
-        if(this.commands.find(v => v.help.name == command.help.name)) {
+        if(this.getCommandByName(command.help.name)) {
             throw new Error(`Command with name '${command.help.name}' has been already registered!`);
         }
 
         // check for alias duplications
         command.help.aliases.forEach(alias => {
-            if(this.commands.find(v => v.help.aliases.includes(alias))) {
+            if(this.getCommandByAlias(alias)) {
                 throw new Error(`Command with alias '${alias}' has been already registered! (${command.path})`);
             }
         });
 
-        let v = this.commands.set(command.help.name, command);
+        command.args_array = command.help.args.split(' ');
+        let v = this.commands.push(command);
         
         if(!this.categories.includes(command.category)) this.categories.push(command.category);
         
@@ -98,12 +90,15 @@ export class CommandManager {
         return v;
     }
 
-    getCommand(query: string) : Command | null {
-        let by_name = this.commands.find(v => v.help.name == query);
-        let by_alias = this.commands.find(v => v.help.aliases.includes(query));
+    getCommand(query: string) : Command {
+        return this.getCommandByName(query) || this.getCommandByAlias(query) || null;
+    }
 
-        if(by_name) return by_name;
-        else if(by_alias) return by_alias;
-        else return null;
+    getCommandByName(name: string) : Command {
+        return this.commands.find(v => v.help.name == name) || null;
+    }
+
+    getCommandByAlias(alias: string) : Command {
+        return this.commands.find(v => v.help.aliases.includes(alias)) || null;
     }
 }
