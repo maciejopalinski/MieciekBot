@@ -57,14 +57,9 @@ export class Client extends Discord.Client {
 
     constructor(discord_token: string, database_uri: string, client_options?: Discord.ClientOptions) {
         super(client_options);
-        this.db_uri = database_uri;
-        this.token = discord_token;
-        this.music_manager = new MusicManager();
-    }
-
-    async init() {
-        require('./ConsoleLogger');
         
+        require('./ConsoleLogger');
+
         this.version = this.project_info.version;
         if (process.env.DEBUG == 'true') {
             this.version += '-dev';
@@ -72,9 +67,19 @@ export class Client extends Discord.Client {
         }
 
         console.info(`Initializing MieciekBot ${this.version}...\n`);
+        
+        this.db_uri = database_uri;
+        this.token = discord_token;
 
-        this.event_loader = new EventLoader();
+        this.event_loader = new EventLoader(this);
         this.command_manager = new CommandManager();
+        this.music_manager = new MusicManager();
+
+        this.event_loader.loadEvents();
+        this.command_manager.loadCommands();
+    }
+
+    async init() {
         this.db_manager = new DatabaseManager(this.db_uri);
         await this.login(this.token);
     }
