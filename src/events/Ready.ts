@@ -1,8 +1,9 @@
 import { PresenceData } from 'discord.js';
-import { bot } from '../';
+import { Client } from '../lib';
 
-bot.on('ready', async () => {
-    console.info(`Logged in as: ${bot.user.tag}`);
+export const onReady = async (client: Client) => {
+    
+    console.info(`Logged in as: ${client.user.tag}`);
     console.info(`Running...`);
 
     let status: PresenceData[] = [
@@ -34,7 +35,7 @@ bot.on('ready', async () => {
             status: 'online',
             activity: {
                 type: 'PLAYING',
-                name: `on ${bot.guilds.cache.size} ${bot.guilds.cache.size > 1 ? 'servers' : 'server'}`,
+                name: `on ${client.guilds.cache.size} ${client.guilds.cache.size > 1 ? 'servers' : 'server'}`,
                 url: 'https://github.com/PoProstuMieciek/'
             }
         }
@@ -42,8 +43,12 @@ bot.on('ready', async () => {
 
     setInterval(function () {
         let index = Math.floor(Math.random() * status.length);
-        bot.user.setPresence(status[index]);
+        client.user.setPresence(status[index]);
     }, 5000);
 
-    await bot.db_manager.databaseCleanup(bot);
-});
+    await client.db_manager.databaseCleanup(client);
+}
+
+export default (client: Client) => {
+    client.on('ready', async () => onReady(client));
+}

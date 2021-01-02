@@ -1,12 +1,15 @@
 import fs from 'fs';
+import { Client } from './';
 
 export class EventLoader {
 
-    constructor() {
-        this.loadEvents();
+    client: Client;
+
+    constructor(client: Client) {
+        this.client = client;
     }
 
-    private loadEvents() {
+    loadEvents() {
         console.info('Starting events loading...');
 
         let events_dir = `${__dirname}/../events`;
@@ -18,9 +21,11 @@ export class EventLoader {
         });
         let total_events = jsfiles.length;
 
-        jsfiles.forEach(event => {
-            require(`${events_dir}/${event}`);
-            console.info(`events/${event} loaded`);
+        jsfiles.forEach(event_file => {
+            let event = require(`${events_dir}/${event_file}`).default;
+            event(this.client);
+
+            console.info(`events/${event_file} loaded`);
         });
 
         if(total_events > 0) console.info(`${total_events} events loaded\n`);

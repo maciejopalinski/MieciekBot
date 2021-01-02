@@ -1,29 +1,28 @@
-import { bot } from '../';
-import { PermissionNodesManager, RolePermissionNode } from '../lib';
-
+import { Message } from 'discord.js';
+import { Client, PermissionNodesManager, RolePermissionNode } from '../lib';
 import EmojiRegex from 'emoji-regex';
-import { IUser } from '../models';
 
-bot.on('message', async msg => {
+export const onMessage = async (client: Client, msg: Message) => {
+    
     if (msg.author.bot) return;
     if (msg.channel.type === 'dm') return;
 
-    let guild = await bot.db_manager.getGuild(msg.guild.id);
-    if (!guild) return msg.channel.send(`Oops! I did not properly configure your server... Please, invite me once again. ${bot.generateBotInvite()}`).then(msg => msg.guild.leave());
+    let guild = await client.db_manager.getGuild(msg.guild.id);
+    if (!guild) return msg.channel.send(`Oops! I did not properly configure your server... Please, invite me once again. ${client.generateBotInvite()}`).then(msg => msg.guild.leave());
     
-    bot.prefix = guild.prefix;
-    bot.delete_timeout = guild.delete_timeout;
-    bot.spam_channels = guild.spam_channels;
+    client.prefix = guild.prefix;
+    client.delete_timeout = guild.delete_timeout;
+    client.spam_channels = guild.spam_channels;
     
-    bot.setAnnounceChannel(guild.announce.channel_id);
-    bot.setAnnounceOptions(guild);
+    client.setAnnounceChannel(guild.announce.channel_id);
+    client.setAnnounceOptions(guild);
 
     let messageArray = msg.content.split(' ');
     let cmd = messageArray[0].toLowerCase();
     let args = messageArray.slice(1);
 
-    let command = bot.command_manager.getCommand(cmd.slice(bot.prefix.length));
-    if (msg.content.startsWith(bot.prefix) && command)
+    let command = client.command_manager.getCommand(cmd.slice(client.prefix.length));
+    if (msg.content.startsWith(client.prefix) && command)
     {
         let nodes = new PermissionNodesManager(msg.guild);
         nodes.addNode(new RolePermissionNode('MUTE',  guild.roles.mute,  1));
@@ -32,7 +31,7 @@ bot.on('message', async msg => {
         nodes.addNode(new RolePermissionNode('ADMIN', guild.roles.admin, 4, ['USER', 'DJ', 'ADMIN']));
         nodes.addNode(new RolePermissionNode('OWNER', guild.roles.owner, 5, ['USER', 'DJ', 'ADMIN', 'OWNER']));
 
-        bot.roles = { user: nodes.getMemberNode(msg.member), manager: nodes };
+        client.roles = { user: nodes.getMemberNode(msg.member), manager: nodes };
 
         if (nodes.hasCommandPermission(command, msg.member))
         {
@@ -45,30 +44,30 @@ bot.on('message', async msg => {
             // all required arguments are present, run a command
             if (args.length >= required_args)
             {
-                command.execute(bot, msg, args).catch(err => {
+                command.execute(client, msg, args).catch(err => {
                     console.error(err);
                     
-                    if(bot.debug) msg.channel.send(`**ERROR:** \`\`\`xl\n${err.stack}\n\`\`\``);
+                    if(client.debug) msg.channel.send(`**ERROR:** \`\`\`xl\n${err.stack}\n\`\`\``);
                     else msg.channel.send('Unknown error occurred!');
                 });
             }
             else
             {
-                let err = `Usage: ${bot.prefix}${command.help.name} ${command.help.args}`;
-                bot.deleteMsg(msg);
-                bot.sendAndDelete(msg.channel, err)
+                let err = `Usage: ${client.prefix}${command.help.name} ${command.help.args}`;
+                client.deleteMsg(msg);
+                client.sendAndDelete(msg.channel, err)
             }
         }
         // no permissions
-        else bot.deleteMsg(msg);
+        else client.deleteMsg(msg);
     }
-    else if(!bot.spam_channels.includes(msg.channel.id))
+    else if(!client.spam_channels.includes(msg.channel.id))
     {
-        let user = await bot.db_manager.getUser(msg.guild.id, msg.member.id);
+        let user = await client.db_manager.getUser(msg.guild.id, msg.member.id);
         if(!user)
         {
             // if user does not exist in database, insert him
-            await bot.db_manager.models.User.create({
+            await client.db_manager.models.User.create({
                 guildID: msg.guild.id,
                 userID: msg.member.id
             }).catch(err => console.error);
@@ -96,12 +95,16 @@ bot.on('message', async msg => {
             if(add_exp > 4) add_exp = 4;
             user.xp += add_exp;
 
-            if(user.xp >= bot.db_manager.exp_system.getExperience(user.level + 1))
+            if(user.xp >= client.db_manager.exp_system.getExperience(user.level + 1))
             {
                 user.level += 1;
-                bot.announce(msg.channel, `<@${msg.member.id}> advanced to level ${user.level}!`);
+                client.announce(msg.channel, `<@${msg.member.id}> advanced to level ${user.level}!`);
             }
             user.save();
         }
     }
-});
+}
+
+export default (client: Client) => {
+    client.on('message', async msg => onMessage(client, msg));
+}
