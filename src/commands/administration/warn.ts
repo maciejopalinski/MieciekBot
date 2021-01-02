@@ -1,5 +1,4 @@
 import { MessageEmbed, Command } from '../../lib';
-import { IWarn } from '../../models';
 
 const Warn = new Command();
 

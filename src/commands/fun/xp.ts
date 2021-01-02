@@ -1,7 +1,6 @@
 import { MessageAttachment } from 'discord.js';
 import { Command } from '../../lib';
 import Canvas from 'canvas';
-import { IUser } from '../../models';
 
 Canvas.registerFont('src/assets/fonts/Bebas-Regular.ttf', {family: 'Bebas-Regular'});
 Canvas.registerFont('src/assets/fonts/AldotheApache.ttf', {family: 'AldoTheApache'});

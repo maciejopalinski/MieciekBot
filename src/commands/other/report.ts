@@ -1,5 +1,4 @@
-import * as Discord from 'discord.js';
-import { Client, MessageEmbed, Command, RolePermissionNode } from '../../lib';
+import { MessageEmbed, Command, RolePermissionNode } from '../../lib';
 
 const Report = new Command();
 
