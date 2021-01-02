@@ -1,26 +1,6 @@
 import * as Discord from 'discord.js';
-
-import { IGuild } from '../models';
-import { CommandManager, EventLoader, DatabaseManager, RolePermissionNode, UserPermissionNode, AnyPermissionNode, PermissionNodesManager, MusicManager } from './';
-
 import * as project_info from '../../package.json';
-
-interface ServerAnnounceToggles {
-    add_member: boolean;
-    remove_member: boolean;
-}
-
-interface ServerAnnounceOptions {
-    
-    channel_id: string;
-    channel: Discord.TextChannel | Discord.NewsChannel;
-	toggles: ServerAnnounceToggles;
-}
-
-interface ClientRoles {
-    user: AnyPermissionNode;
-    manager: PermissionNodesManager;
-}
+import { CommandManager, EventLoader, DatabaseManager, MusicManager, GuildManager } from './';
 
 export type Channel = Discord.TextChannel | Discord.DMChannel | Discord.NewsChannel;
 
@@ -30,30 +10,13 @@ export class Client extends Discord.Client {
     version: string;
     debug = false;
 
-    prefix = '!';
-    delete_timeout = 3000;
-
-    roles: ClientRoles = {
-        user: undefined,
-        manager: undefined
-    };
-
-    announce_options: ServerAnnounceOptions = {
-        channel_id: '',
-        channel: null,
-        toggles: {
-            add_member: false,
-            remove_member: false
-        }
-    };
-
-    spam_channels: string[] = [];
+    guild: GuildManager;
+    music_manager: MusicManager;
 
     event_loader: EventLoader;
     command_manager: CommandManager;
     db_manager: DatabaseManager;
     db_uri: string;
-    music_manager: MusicManager;
 
     constructor(discord_token: string, database_uri: string, client_options?: Discord.ClientOptions) {
         super(client_options);
@@ -65,54 +28,47 @@ export class Client extends Discord.Client {
             this.version += '-dev';
             this.debug = true;
         }
-
-        console.info(`Initializing MieciekBot ${this.version}...\n`);
         
         this.db_uri = database_uri;
         this.token = discord_token;
 
         this.event_loader = new EventLoader(this);
         this.command_manager = new CommandManager();
-        this.music_manager = new MusicManager();
 
-        this.event_loader.loadEvents();
-        this.command_manager.loadCommands();
+        this.guild = new GuildManager(this);
+        this.music_manager = new MusicManager();
     }
 
     async init() {
+
+        console.info(`Initializing MieciekBot ${this.version}...\n`);
+        this.event_loader.loadEvents();
+        this.command_manager.loadCommands();
         this.db_manager = new DatabaseManager(this.db_uri);
+        
         await this.login(this.token);
+        await this.guild.fetchAll();
     }
 
-    async sendAndDelete(channel: Channel, msg: string, timeout = this.delete_timeout) {        
+    async sendAndDelete(
+        channel: Channel,
+        msg: string,
+        timeout = this.guild.get((channel as Discord.TextChannel).guild.id).delete_timeout
+    ) {
         await channel.send(msg).then(msg => msg.delete({ timeout }));
     }
 
-    deleteMsg(msg: Discord.Message, timeout = this.delete_timeout) {
+    async deleteMsg(
+        msg: Discord.Message,
+        timeout = this.guild.get(msg.guild.id).delete_timeout
+    ) {
         msg.delete({ timeout });
     }
 
-    setAnnounceOptions(options: IGuild) {
-        this.announce_options.toggles.add_member = options.announce.toggles.add_member;
-        this.announce_options.toggles.remove_member = options.announce.toggles.remove_member;
-    }
+    announce(dscguild: Discord.Guild, channel: Channel, text: string) {
+        let guild = this.guild.get(dscguild.id);
 
-    async setAnnounceChannel(channel_id: string) {
-        this.announce_options.channel_id = channel_id;
-        
-        try {
-            let channel: any = await this.channels.fetch(channel_id);
-            this.announce_options.channel = channel;
-
-        } catch(err) {
-            return false;
-        }
-
-        return true;
-    }
-
-    announce(channel: Channel, text: string) {
-        if(this.announce_options.channel) return this.announce_options.channel.send(text);
+        if(guild.announce.channel) return guild.announce.channel.send(text);
         else if(channel) return channel.send(text);
     }
 

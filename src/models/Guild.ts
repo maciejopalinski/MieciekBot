@@ -1,23 +1,31 @@
+import { TextChannel, NewsChannel } from 'discord.js';
 import mongoose from 'mongoose';
+
+export interface ServerPermissionRoles {
+	owner: string,
+	admin: string,
+	dj: string,
+	user: string,
+	mute: string
+}
+
+export interface ServerAnnounceToggles {
+    add_member: boolean;
+    remove_member: boolean;
+}
+
+export interface ServerAnnounceOptions {
+    channel_id: string;
+    channel?: TextChannel | NewsChannel;
+	toggles: ServerAnnounceToggles;
+}
 
 export interface IGuild extends mongoose.Document {
 	guildID: string;
 	prefix?: string;
 	delete_timeout?: number;
-	roles?: {
-		owner: string,
-		admin: string,
-		dj: string,
-		user: string,
-		mute: string
-	},
-	announce?: {
-		channel_id: string,
-		toggles: {
-			add_member: boolean,
-			remove_member: boolean
-		}
-	},
+	roles?: ServerPermissionRoles,
+	announce?: ServerAnnounceOptions,
 	spam_channels?: string[]
 }
 
