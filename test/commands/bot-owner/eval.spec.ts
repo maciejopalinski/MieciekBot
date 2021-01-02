@@ -1,11 +1,11 @@
+import Eval from '../../../src/commands/bot-owner/eval';
+
 import MockDiscord from '../../../mocks';
 jest.mock('discord.js');
 let mock = new MockDiscord();
 const client = mock.getClient();
 const message = mock.getMessage();
 const channel = mock.getTextChannel();
-
-const Eval = client.command_manager.getCommand('eval');
 
 describe('Eval Command', () => {
 
