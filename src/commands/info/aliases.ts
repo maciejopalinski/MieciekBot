@@ -5,7 +5,9 @@ const Aliases = new Command();
 Aliases.execute = async (bot, msg, args) => {
     
     const commandfile = bot.command_manager.getCommand(args[0]);
-    let allowed = bot.roles.user.allowed_nodes;
+
+    let { roles, prefix } = bot.guild.get(msg.guild.id);
+    let allowed = roles.user.allowed_nodes;
 
     if(!commandfile || !allowed.includes(commandfile.help.permission) && commandfile.help.name != 'help')
     {
@@ -15,7 +17,7 @@ Aliases.execute = async (bot, msg, args) => {
 
     let aliases_embed = new MessageEmbed(bot, msg.guild)
     .setTitle(`ALIASES: /command/${commandfile.help.name}`)
-    .addField(`${bot.prefix}${commandfile.help.name} ${commandfile.help.args}`, commandfile.help.description)
+    .addField(`${prefix}${commandfile.help.name} ${commandfile.help.args}`, commandfile.help.description)
     .addField('Aliases:', commandfile.help.aliases.join(', ') || '-none-');
 
     msg.channel.send(aliases_embed);

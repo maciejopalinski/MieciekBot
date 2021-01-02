@@ -1,30 +1,32 @@
-import { Role } from 'discord.js';
 import { MessageEmbed, Command, RolePermissionNode } from '../../lib';
 
 const Settings = new Command();
 
 Settings.execute = async (bot, msg, args) => {
+
+    let guild_config = bot.guild.get(msg.guild.id);
+    let { prefix, delete_timeout, roles, spam_channels, announce } = guild_config;
+
     if(!args[0])
     {
         let spam_channels_info = '[]';
-        if(bot.spam_channels.length >= 1) spam_channels_info = `[<#${bot.spam_channels.join('>, <#')}>]`;
+        if(spam_channels.length >= 1) spam_channels_info = `[<#${spam_channels.join('>, <#')}>]`;
 
         let help = new MessageEmbed(bot, msg.guild)
         .setTitle('Settings:')
-        .addField('prefix', bot.prefix)
-        .addField('delete_timeout', bot.delete_timeout)
+        .addField('prefix', prefix)
+        .addField('delete_timeout', delete_timeout)
         .addField('spam_channels', spam_channels_info);
 
-        bot.roles.manager.permission_nodes.forEach(node => {
+        roles.manager.permission_nodes.forEach(node => {
             if(node instanceof RolePermissionNode && node.name != '@everyone') {
                 help.addField(`role:${node.name.toLowerCase()}`, `<@&${node.role_id}> (${node.role_id})`);
             }
         });
 
-        help.addField('anc:channel', `<#${bot.announce_options.channel_id}> (${bot.announce_options.channel_id})`);
-        for (let key in bot.announce_options.toggles) {
-            help.addField(`anc:${key}`, bot.announce_options.toggles[key], true);
-        }
+        help.addField('anc:channel', `<#${announce.channel_id}> (${announce.channel_id})`);
+        help.addField(`anc:add_member`, announce.toggles.add_member, true);
+        help.addField(`anc:remove_member`, announce.toggles.remove_member, true);
 
         msg.channel.send(help);
     }
@@ -60,7 +62,7 @@ Settings.execute = async (bot, msg, args) => {
                 return bot.sendAndDelete(msg.channel, error.not_found);
             }
             
-            bot.roles.manager.permission_nodes.forEach(node => {
+            roles.manager.permission_nodes.forEach(node => {
                 if(node instanceof RolePermissionNode && node.name != '@everyone' && key == `role:${node.name.toLowerCase()}`)
                 {
                     settings.roles[node.name.toLowerCase()] = new_role.id;
@@ -83,10 +85,10 @@ Settings.execute = async (bot, msg, args) => {
                     settings.announce.channel_id = '000000000';
                     info = `<#000000000> (000000000)`;
                 }
-                else return msg.channel.send(`This channel cannot be found on the server.\nIf you want to remove \`anc:channel\` property, run: \`${bot.prefix}settings anc:channel clear\``);
+                else return msg.channel.send(`This channel cannot be found on the server.\nIf you want to remove \`anc:channel\` property, run: \`${prefix}settings anc:channel clear\``);
             }
             else {
-                for (let anc_key in bot.announce_options.toggles) {
+                for (let anc_key in announce.toggles) {
                     if(key == `anc:${anc_key}`) {
                         if(value == 'true') settings.announce.toggles[anc_key] = true
                         else if(value == 'false') settings.announce.toggles[anc_key] = false
@@ -105,7 +107,7 @@ Settings.execute = async (bot, msg, args) => {
             if(!channel)
             {
                 bot.deleteMsg(msg);
-                return bot.sendAndDelete(msg.channel, error.no_value(bot));
+                return bot.sendAndDelete(msg.channel, error.no_value(prefix));
             }
 
             if(value == 'add')
@@ -119,7 +121,8 @@ Settings.execute = async (bot, msg, args) => {
             if(settings.spam_channels.length >= 1) info = `[<#${settings.spam_channels.join('>, <#')}>]`;
         }
 
-        settings.save();
+        await bot.guild.fetchOne(await settings.save());
+
         if(info) msg.channel.send(`Successfully changed '${key}' value to ${info}.`);
         else
         {
@@ -130,7 +133,7 @@ Settings.execute = async (bot, msg, args) => {
     else
     {
         bot.deleteMsg(msg);
-        bot.sendAndDelete(msg.channel, error.no_value(bot));
+        bot.sendAndDelete(msg.channel, error.no_value(prefix));
     }
 }
 
@@ -143,8 +146,7 @@ Settings.help = {
 };
 
 const error = Settings.error = {
-    /** @param {Client} bot */
-    no_value: (bot) => `No value specified.\nUsage: \`${bot.prefix}settings ${Settings.help.args}\``,
+    no_value: (prefix: string) => `No value specified.\nUsage: \`${prefix}settings ${Settings.help.args}\``,
 
     not_found: "Role with that ID was not found on the server.",
     setting_not_found: "That settings was not found in the database.",

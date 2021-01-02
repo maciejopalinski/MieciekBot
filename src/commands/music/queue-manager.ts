@@ -3,7 +3,9 @@ import { Command, MessageEmbed } from "../../lib";
 const QueueManager = new Command();
 
 QueueManager.execute = async (bot, msg, args) => {
-    let alias = msg.content.split(' ')[0].slice(bot.prefix.length);
+    let { prefix } = bot.guild.get(msg.guild.id);
+
+    let alias = msg.content.split(' ')[0].slice(prefix.length);
     let subcommand = args[0];
     let subcommand_args = args.slice(1);
 
@@ -11,11 +13,11 @@ QueueManager.execute = async (bot, msg, args) => {
     {
         let subcommands_embed = new MessageEmbed(bot, msg.guild, false)
         .setTitle('Queue Manager: Subcommands')
-        .addField(`${bot.prefix}${alias} list`, 'lists all saved queues')
-        .addField(`${bot.prefix}${alias} view <name>`, 'views content of saved queue')
-        .addField(`${bot.prefix}${alias} save <name>`, 'saves current queue')
-        .addField(`${bot.prefix}${alias} load <name>`, 'loads saved queue')
-        .addField(`${bot.prefix}${alias} delete <name>`, 'deletes saved queue');
+        .addField(`${prefix}${alias} list`, 'lists all saved queues')
+        .addField(`${prefix}${alias} view <name>`, 'views content of saved queue')
+        .addField(`${prefix}${alias} save <name>`, 'saves current queue')
+        .addField(`${prefix}${alias} load <name>`, 'loads saved queue')
+        .addField(`${prefix}${alias} delete <name>`, 'deletes saved queue');
 
         return msg.channel.send(subcommands_embed);
     }
@@ -25,7 +27,7 @@ QueueManager.execute = async (bot, msg, args) => {
     {
         let qm_list_embed = new MessageEmbed(bot, msg.guild)
         .setTitle('Server Saved Playlists')
-        .setDescription(`Run \`${bot.prefix}${alias} view <name>\` to view content of the queue.`);
+        .setDescription(`Run \`${prefix}${alias} view <name>\` to view content of the queue.`);
 
         let all_queues = await bot.db_manager.getAllSavedQueues(msg.guild.id);
 
@@ -35,7 +37,7 @@ QueueManager.execute = async (bot, msg, args) => {
         all_queues.forEach(queue => {
             qm_list_embed.addField(queue.name, `Total tracks: ${queue.urls.length}`);
         });
-        if(all_queues.length < 1) qm_list_embed.addField('There are no saved playlists for this server.', `Save some more using \`${bot.prefix}${alias} save <name>\` command!`);
+        if(all_queues.length < 1) qm_list_embed.addField('There are no saved playlists for this server.', `Save some more using \`${prefix}${alias} save <name>\` command!`);
 
         return msg.channel.send(qm_list_embed);
     }

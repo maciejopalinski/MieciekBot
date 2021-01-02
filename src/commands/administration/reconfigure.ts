@@ -9,7 +9,7 @@ Reconfigure.execute = async (bot, msg, args) => {
         bot.emit('guildDelete', msg.guild);
         bot.emit('guildCreate', msg.guild);
     }
-    else msg.channel.send(`Are you sure you want to reset all bot properties in database?\nYou will loose all settings, xp values and warns.\nIf you want to proceed, run following command:\`\`\`${bot.prefix}reconfigure confirm${msg.guild.id}\`\`\``);
+    else msg.channel.send(`Are you sure you want to reset all bot properties in database?\nYou will loose all settings, xp values and warns.\nIf you want to proceed, run following command:\`\`\`${bot.guild.get(msg.guild.id).prefix}reconfigure confirm${msg.guild.id}\`\`\``);
 }
 
 Reconfigure.help = {

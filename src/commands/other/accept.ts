@@ -1,12 +1,14 @@
-import * as Discord from 'discord.js';
-import { Client, MessageEmbed, Command, RolePermissionNode } from '../../lib';
+import { MessageEmbed, Command, RolePermissionNode } from '../../lib';
 
 const Accept = new Command();
 
 Accept.execute = async (bot, msg, args) => {
-    if(bot.roles.user.allowed_nodes.includes('@everyone'))
+
+    let { roles } = bot.guild.get(msg.guild.id);
+
+    if(roles.user.allowed_nodes.includes('@everyone'))
     {
-        let user_node = <RolePermissionNode> bot.roles.manager.getNode('USER');
+        let user_node = <RolePermissionNode> roles.manager.getNode('USER');
         let user_role = msg.guild.roles.cache.find(role => role.id == user_node.role_id);
         if(!user_role)
         {
