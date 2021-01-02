@@ -55,21 +55,21 @@ export class DatabaseManager {
         await this.models.SavedQueue.deleteMany( <ISavedQueue> { guildID });
     }
 
-    async databaseCleanup(bot: Client) {
+    async databaseCleanup(client: Client) {
         
         // add new guilds
-        bot.guilds.cache.forEach(async guild => {            
+        client.guilds.cache.forEach(async guild => {            
             let db_guild = await this.getGuild(guild.id);
             
-            if(!db_guild) bot.emit('guildCreate', guild);
+            if(!db_guild) client.emit('guildCreate', guild);
         });
         
         // delete old guilds
         let db_guilds = await this.models.Guild.find({}).exec();
         db_guilds.forEach(guild => {
-            if(!bot.guilds.cache.has(guild.guildID))
+            if(!client.guilds.cache.has(guild.guildID))
             {
-                bot.emit('guildDelete', <Discord.Guild>{ id: guild.guildID });
+                client.emit('guildDelete', <Discord.Guild>{ id: guild.guildID });
                 console.debug(`Deleting old guild and its members from the database... (GID:${guild.guildID})`);
             }
         });
