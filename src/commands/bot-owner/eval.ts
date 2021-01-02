@@ -1,5 +1,6 @@
 import { Command } from '../../lib';
 import { inspect } from 'util';
+import { MessageAttachment } from 'discord.js';
 
 const Eval = new Command();
 
@@ -11,8 +12,16 @@ Eval.execute = async (bot, msg, args) => {
         if (typeof evaled !== 'string') evaled = inspect(evaled);
         let clean_out = clean(evaled);
 
-        if(clean_out.length < 1900) msg.channel.send(clean(evaled), { code: 'xl' });
-        else throw new Error('Output is longer than 2000 characters.');
+        if(clean_out.length < 1900) {
+            msg.channel.send(clean(evaled), { code: 'xl' });
+        }
+        else if(!bot.debug) {
+            throw new Error('Output is longer than 2000 characters.');
+        }
+        else {
+            msg.channel.send(new MessageAttachment(Buffer.from(clean(evaled)), 'output.txt'));
+        }
+
     } catch (err) {
         msg.channel.send(`${clean(err)}`, { code: 'xl' });
     }
