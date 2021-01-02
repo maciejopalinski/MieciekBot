@@ -37,13 +37,13 @@ Kick.execute = async (bot, msg, args) => {
     }
 };
 
-Kick.setHelp({
+Kick.help = {
     name: 'kick',
     args: '<@user> [reason]',
     aliases: [],
     description: 'kicks <@user> from the server',
     permission: 'ADMIN'
-});
+};
 
 const error = Kick.error = {
     user_not_found: "User was not found on the server. Please, try again.",

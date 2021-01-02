@@ -17,12 +17,12 @@ ChuckNorris.execute = async (bot, msg, args) => {
     });
 }
 
-ChuckNorris.setHelp({
+ChuckNorris.help = {
     name: 'chuck-norris',
     args: '',
     aliases: ['chuck', 'norris', 'cnjoke'],
     description: 'displays random Chuck Norris joke',
     permission: 'USER'
-});
+};
 
 export default ChuckNorris;

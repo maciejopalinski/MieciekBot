@@ -87,13 +87,13 @@ XP.execute = async (bot, msg, args) => {
     msg.channel.send(new MessageAttachment(level_graphics.toBuffer()));
 }
 
-XP.setHelp({
+XP.help = {
     name: 'xp',
     args: '[@user]',
     aliases: [],
     description: 'displays user experience points',
     permission: 'USER'
-});
+};
 
 const error = XP.error = {
     bot: "This user is a bot. It cannot collect XP points."

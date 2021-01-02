@@ -24,13 +24,13 @@ Queue.execute = async (bot, msg, args) => {
     }
 }
 
-Queue.setHelp({
+Queue.help = {
     name: 'queue',
     args: '',
     aliases: ['q', 'list', 'playlist'],
     description: 'displays music queue',
     permission: 'USER',
-});
+};
 
 const error = Queue.error = {
     music_play: "Queue is empty."

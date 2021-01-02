@@ -46,13 +46,13 @@ Mute.execute = async (bot, msg, args) => {
     user.roles.remove(user_role);
 }
 
-Mute.setHelp({
+Mute.help = {
     name: 'mute',
     args: '<@user> [reason]',
     aliases: ['shutup', 'stfu'],
     description: 'mutes <@user>',
     permission: 'ADMIN'
-});
+};
 
 const error = Mute.error = {
     not_mutable: "I cannot mute this user."

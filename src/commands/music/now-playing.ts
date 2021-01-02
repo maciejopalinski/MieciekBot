@@ -125,13 +125,13 @@ NowPlaying.execute = async (bot, msg, args) => {
     }
 }
 
-NowPlaying.setHelp({
+NowPlaying.help = {
     name: 'now-playing',
     args: '',
     aliases: ['np', 'now', 'music'],
     description: 'displays current playing song',
     permission: 'USER'
-});
+};
 
 const error = NowPlaying.error = {
     music_play: "Queue is empty."

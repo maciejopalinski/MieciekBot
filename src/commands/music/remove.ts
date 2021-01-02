@@ -23,13 +23,13 @@ Remove.execute = async (bot, msg, args) => {
     }
 }
 
-Remove.setHelp({
+Remove.help = {
     name: 'remove',
     args: '<position>',
     aliases: [],
     description: 'removes track from queue',
     permission: 'DJ'
-});
+};
 
 const error = Remove.error = {
     must_play: "There must be something in queue to remove it.",

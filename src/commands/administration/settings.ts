@@ -134,13 +134,13 @@ Settings.execute = async (bot, msg, args) => {
     }
 }
 
-Settings.setHelp({
+Settings.help = {
     name: 'settings',
     args: '[key] [value | @role | #channel]',
     aliases: ['options', 'config'],
     description: 'edits the server settings',
     permission: 'OWNER'
-});
+};
 
 const error = Settings.error = {
     /** @param {Client} bot */

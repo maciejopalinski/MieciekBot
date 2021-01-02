@@ -21,12 +21,12 @@ Changelog.execute = async (bot, msg, args) => {
     });
 }
 
-Changelog.setHelp({
+Changelog.help = {
     name: 'changelog',
     args: '',
     aliases: ['changes', 'github', 'updates'],
     description: 'displays changelog of the latest MieciekBot release',
     permission: 'USER'
-});
+};
 
 export default Changelog;

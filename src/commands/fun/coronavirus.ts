@@ -58,12 +58,12 @@ function create_embed(bot, msg, body, header) {
     return cv_embed;
 }
 
-Coronavirus.setHelp({
+Coronavirus.help = {
     name: 'coronavirus',
     args: '[country|world|global|all]',
     aliases: ['cvirus', 'cvstats'],
     description: 'displays current coronavirus statistics',
     permission: 'USER'
-});
+};
 
 export default Coronavirus;

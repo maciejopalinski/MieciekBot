@@ -18,13 +18,13 @@ Clear.execute = async (bot, msg, args) => {
     }
 };
 
-Clear.setHelp({
+Clear.help = {
     name: 'clear',
     args: '[number]',
     aliases: ['cls', 'clr', 'cl'],
     description: 'deletes last 100 or [number] messages from channel',
     permission: 'ADMIN'
-});
+};
 
 const error = Clear.error = {
     wrong_amount: "You can delete 2-100 messages at once."

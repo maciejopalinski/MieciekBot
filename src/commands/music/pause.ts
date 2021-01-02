@@ -26,13 +26,13 @@ Pause.execute = async (bot, msg, args) => {
     }
 }
 
-Pause.setHelp({
+Pause.help = {
     name: 'pause',
     args: '',
     aliases: ['resume'],
     description: 'pauses/resumes played music',
     permission: 'DJ'
-});
+};
 
 const error = Pause.error = {
     music_play: "There must be a song in queue to pause/resume it.",

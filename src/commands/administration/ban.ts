@@ -37,13 +37,13 @@ Ban.execute = async (bot, msg, args) => {
     }
 };
 
-Ban.setHelp({
+Ban.help = {
     name: 'ban',
     args: '<@user> [reason]',
     aliases: [],
     description: 'bans <@user>',
     permission: 'ADMIN'
-});
+};
 
 const error = Ban.error = {
     user_not_found: "User was not found on the server. Please, try again.",

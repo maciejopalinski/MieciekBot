@@ -52,13 +52,13 @@ Warn.execute = async (bot, msg, args) => {
     }
 }
 
-Warn.setHelp({
+Warn.help = {
     name: 'warn',
     args: '<@user> <reason>',
     aliases: [],
     description: 'warns <@user> with <reason>',
     permission: 'ADMIN'
-});
+};
 
 const error = Warn.error = {
     user_not_found: "User was not found on the server. Please, try again.",

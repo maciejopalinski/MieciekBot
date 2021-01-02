@@ -28,12 +28,12 @@ Info.execute = async (bot, msg, args) => {
     else bot.deleteMsg(msg);
 }
 
-Info.setHelp({
+Info.help = {
     name: 'info',
     args: '<server/bot>',
     aliases: ['i', 'informations'],
     description: 'prints info about server or bot',
     permission: 'USER'
-});
+};
 
 export default Info;

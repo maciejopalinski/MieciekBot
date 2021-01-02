@@ -14,7 +14,7 @@ Eval.execute = async (bot, msg, args) => {
         if(clean_out.length < 1900) msg.channel.send(clean(evaled), { code: 'xl' });
         else throw new Error('Output is longer than 2000 characters.');
     } catch (err) {
-        msg.channel.send(`\`ERROR\` \`\`\`xl\n${clean(err)}\n\`\`\``);
+        msg.channel.send(`${clean(err)}`, { code: 'xl' });
     }
 }
 
@@ -23,12 +23,12 @@ const clean = (text) => {
     else return text;
 }
 
-Eval.setHelp({
+Eval.help = {
     name: 'eval',
     args: '<expression>',
     aliases: [],
     description: 'evaluates given expression',
     permission: 'BOT_OWNER'
-});
+};
 
 export default Eval;

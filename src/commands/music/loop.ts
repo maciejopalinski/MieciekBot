@@ -26,13 +26,13 @@ Loop.execute = async (bot, msg, args) => {
     }
 }
 
-Loop.setHelp({
+Loop.help = {
     name: 'loop',
     args: '[off|track|queue|shuffle]',
     aliases: [],
     description: 'loops played music',
     permission: 'DJ'
-});
+};
 
 const error = Loop.error = {
     music_play: "Music must be playing to loop it.",

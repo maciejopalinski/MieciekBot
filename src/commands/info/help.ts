@@ -23,12 +23,12 @@ Help.execute = async (bot, msg, args) => {
     msg.channel.send(help);
 }
 
-Help.setHelp({
+Help.help = {
     name: 'help',
     args: '[category]',
     aliases: ['hepl', 'hlep', '?'],
     description: 'shows all commands',
     permission: '@everyone'
-});
+};
 
 export default Help;

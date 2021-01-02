@@ -25,13 +25,13 @@ Report.execute = async (bot, msg, args) => {
     }
 }
 
-Report.setHelp({
+Report.help = {
     name: 'report',
     args: '<@user> <reason>',
     aliases: [],
     description: 'reports user with a reason',
     permission: 'USER'
-});
+};
 
 const error = Report.error = {
     no_arg: "No user or reason specified!"

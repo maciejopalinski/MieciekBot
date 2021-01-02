@@ -7,12 +7,12 @@ Say.execute = async (bot, msg, args) => {
     msg.channel.send(args.join(' '));
 }
 
-Say.setHelp({
+Say.help = {
     name: 'say',
     args: '<text>',
     aliases: ['print', 'send', 'announce'],
     description: 'sends a message containing <text>',
     permission: 'ADMIN'
-});
+};
 
 export default Say;

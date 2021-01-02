@@ -18,13 +18,13 @@ Stop.execute = async (bot, msg, args) => {
     }
 }
 
-Stop.setHelp({
+Stop.help = {
     name: 'stop',
     args: '',
     aliases: [],
     description: 'stops played music',
     permission: 'DJ'
-});
+};
 
 const error = Stop.error = {
     music_play: "There must be a song in queue to stop it.",

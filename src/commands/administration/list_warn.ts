@@ -33,13 +33,13 @@ ListWarn.execute = async (bot, msg, args) => {
     }
 };
 
-ListWarn.setHelp({
+ListWarn.help = {
     name: 'list-warn',
     args: '<@user>',
     aliases: ['warnlist', 'listwarn', 'warns'],
     description: 'displays all <@user> warnings',
     permission: 'ADMIN'
-});
+};
 
 const error = ListWarn.error = {
     user_not_found: "User was not found on the server. Please, try again.",

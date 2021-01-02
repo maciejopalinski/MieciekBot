@@ -16,13 +16,13 @@ Skip.execute = async (bot, msg, args) => {
     }
 }
 
-Skip.setHelp({
+Skip.help = {
     name: 'skip',
     args: '',
     aliases: [],
     description: 'skips current track',
     permission: 'DJ'
-});
+};
 
 const error = Skip.error = {
     music_play: "There must be something in queue to skip it.",

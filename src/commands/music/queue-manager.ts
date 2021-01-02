@@ -99,13 +99,13 @@ QueueManager.execute = async (bot, msg, args) => {
     }
 }
 
-QueueManager.setHelp({
+QueueManager.help = {
     name: 'queue-manager',
     args: '[subcommand]',
     aliases: ['qman', 'qmanager', 'queueman'],
     description: 'manages saved queues, run with no args to show subcommands',
     permission: 'ADMIN'
-});
+};
 
 const error = QueueManager.error = {
     music_play: "Queue is empty.",

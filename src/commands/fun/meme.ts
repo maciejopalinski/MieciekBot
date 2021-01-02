@@ -26,12 +26,12 @@ Meme.execute = async (bot, msg, args) => {
     return msg.channel.send(meme_embed);
 }
 
-Meme.setHelp({
+Meme.help = {
     name: 'meme',
     args: '',
     aliases: ['funny', 'memee'],
     description: 'sends random meme from reddit',
     permission: 'USER'
-});
+};
 
 export default Meme;

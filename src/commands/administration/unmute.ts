@@ -43,13 +43,13 @@ Unmute.execute = async (bot, msg, args) => {
     user.roles.remove(mute_role);
 }
 
-Unmute.setHelp({
+Unmute.help = {
     name: 'unmute',
     args: '<@user>',
     aliases: [],
     description: 'unmutes <@user>',
     permission: 'ADMIN'
-});
+};
 
 const error = Unmute.error = {
     not_mutable: "I cannot unmute this user."

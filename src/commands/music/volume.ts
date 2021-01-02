@@ -25,13 +25,13 @@ Volume.execute = async (bot, msg, args) => {
     }
 }
 
-Volume.setHelp({
+Volume.help = {
     name: 'volume',
     args: '[0-200]',
     aliases: ['vol'],
     description: 'sets volume to given value (100 - normal).',
     permission: 'DJ'
-});
+};
 
 const error = Volume.error = {
     music_play: "There must be a song in queue.",

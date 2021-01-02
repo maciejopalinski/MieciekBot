@@ -63,13 +63,13 @@ Play.execute = async (bot, msg, args, load) => {
     }
 }
 
-Play.setHelp({
+Play.help = {
     name: 'play',
     args: '<url|search>',
     aliases: ['p'],
     description: 'plays music in voice channel',
     permission: 'DJ'
-});
+};
 
 const error = Play.error = {
     voice_channel: "You must be in a voice channel to play music.",

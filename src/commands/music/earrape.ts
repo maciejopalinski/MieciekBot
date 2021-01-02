@@ -25,13 +25,13 @@ Earrape.execute = async (bot, msg, args) => {
     }
 }
 
-Earrape.setHelp({
+Earrape.help = {
     name: 'earrape',
     args: '',
     aliases: ['music-hehe'],
     description: 'plays music 5x louder',
     permission: 'DJ'
-});
+};
 
 const error = Earrape.error = {
     music_play: "There must be a song in queue.",

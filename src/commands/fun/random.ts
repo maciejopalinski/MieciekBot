@@ -27,13 +27,13 @@ Random.execute = async (bot, msg, args) => {
     }
 }
 
-Random.setHelp({
+Random.help = {
     name: 'random',
     args: '<range>',
     aliases: ['roll', 'dice', 'roll-dice', 'roll_dice', 'rand', 'srand'],
     description: 'rolls dice with <range> sides',
     permission: 'USER'
-});
+};
 
 const error = Random.error = {
     cannot_roll: "Range must be in range *2 - 65535*. Please, pick different number and try again."

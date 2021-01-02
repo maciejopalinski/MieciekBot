@@ -25,12 +25,12 @@ Accept.execute = async (bot, msg, args) => {
     else msg.delete();
 }
 
-Accept.setHelp({
+Accept.help = {
     name: 'accept',
     args: '',
     aliases: [],
     description: 'adds the user role',
     permission: '@everyone'
-});
+};
 
 export default Accept;

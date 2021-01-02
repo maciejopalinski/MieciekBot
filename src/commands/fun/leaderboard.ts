@@ -29,12 +29,12 @@ Leaderboard.execute = async (bot, msg, args) => {
     msg.channel.send(rank_embed);
 }
 
-Leaderboard.setHelp({
+Leaderboard.help = {
     name: 'leaderboard',
     args: '',
     aliases: ['rank'],
     description: 'displays server activity leaderboard',
     permission: 'USER'
-});
+};
 
 export default Leaderboard;

@@ -21,13 +21,13 @@ Aliases.execute = async (bot, msg, args) => {
     msg.channel.send(aliases_embed);
 }
 
-Aliases.setHelp({
+Aliases.help = {
     name: 'aliases',
     args: '<command>',
     aliases: ['more', 'moar'],
     description: 'displays all aliases of <command>',
     permission: 'USER'
-});
+};
 
 const error = Aliases.error = {
     cmd_not_found: "Command was not found! Please, try again."

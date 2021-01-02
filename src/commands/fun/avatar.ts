@@ -11,12 +11,12 @@ Avatar.execute = async (bot, msg, args) => {
     msg.channel.send(avatar_embed);
 }
 
-Avatar.setHelp({
+Avatar.help = {
     name: 'avatar',
     args: '[@user]',
     aliases: ['userimg', 'userpic'],
     description: 'shows user avatar',
     permission: 'USER'
-});
+};
 
 export default Avatar;
