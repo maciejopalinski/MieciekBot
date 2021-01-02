@@ -13,6 +13,7 @@ interface PlayingState {
 
 export class ServerQueue {
 
+    guild: Discord.Guild;
     client: Client;
     text_channel: Channel;
     voice_channel: Discord.VoiceChannel;
@@ -31,6 +32,7 @@ export class ServerQueue {
         this.client = client;
         this.text_channel = text_channel;
         this.voice_channel = voice_channel;
+        this.guild = voice_channel.guild;
     }
 
     /**
