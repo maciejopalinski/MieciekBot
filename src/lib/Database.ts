@@ -7,18 +7,16 @@ import { ISavedQueue, IUser, IWarn } from '../models';
 
 export class DatabaseManager {
 
-    db_uri: string;
     exp_system = new ExperienceSystem();
 
     models = Models;
 
     constructor(db_uri: string) {
-        this.db_uri = db_uri;
-        this.connect();
+        this.connect(db_uri);
     }
 
-    private connect() {
-        mongoose.connect(this.db_uri, {
+    private connect(uri: string) {
+        mongoose.connect(uri, {
             useNewUrlParser: true,
             useUnifiedTopology: true,
             useFindAndModify: false,
