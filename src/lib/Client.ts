@@ -42,9 +42,11 @@ export class Client extends Discord.Client {
     async init() {
 
         console.info(`Initializing MieciekBot ${this.version}...\n`);
+
+        this.db_manager = new DatabaseManager(this.db_uri);
+
         this.event_loader.loadEvents();
         this.command_manager.loadCommands();
-        this.db_manager = new DatabaseManager(this.db_uri);
         
         await this.login(this.token);
         await this.guild.fetchAll();
