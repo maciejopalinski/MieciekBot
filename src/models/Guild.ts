@@ -22,11 +22,11 @@ export interface ServerAnnounceOptions {
 
 export interface IGuild extends mongoose.Document {
 	guildID: string;
-	prefix?: string;
-	delete_timeout?: number;
-	roles?: ServerPermissionRoles,
-	announce?: ServerAnnounceOptions,
-	spam_channels?: string[]
+	prefix: string;
+	delete_timeout: number;
+	roles: ServerPermissionRoles,
+	announce: ServerAnnounceOptions,
+	spam_channels: string[]
 }
 
 const GuildSchema = new mongoose.Schema({
