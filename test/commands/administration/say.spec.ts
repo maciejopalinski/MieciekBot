@@ -15,6 +15,7 @@ describe('Say Command', () => {
         const args = 'test test 123 test test';
         await Say.execute(client, message, args.split(' '));
 
+        expect(channel.send).toHaveBeenCalledTimes(1);
         expect(channel.send).toHaveBeenCalledWith(args);
     });
 

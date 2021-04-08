@@ -16,9 +16,7 @@ describe('Eval Command', () => {
         await Eval.execute(client, message, args.split(' '));
 
         expect(channel.send).toHaveBeenCalledTimes(1);
-        
-        let send_args = (channel.send as jest.Mock<any, any>).mock.calls[0];
-        expect(send_args[0]).toContain('ReferenceError: foo is not defined');
+        expect(channel.send).toHaveBeenCalledWith(expect.stringContaining('not defined'), expect.anything());
     });
 
     it('should return correct answer for math equation', async () => {
@@ -27,19 +25,14 @@ describe('Eval Command', () => {
         await Eval.execute(client, message, args.split(' '));
 
         expect(channel.send).toHaveBeenCalledTimes(1);
-
-        let send_args = (channel.send as jest.Mock<any, any>).mock.calls[0];
-        expect(send_args[0]).toContain(expected);
+        expect(channel.send).toHaveBeenCalledWith(expected, expect.anything());
     });
 
     it('should throw OutputLengthError', async () => {
-        const args = 'bot';
-        await Eval.execute(client, message, args.split(' '));
+        await Eval.execute(client, message, ['bot']);
         
         expect(channel.send).toHaveBeenCalledTimes(1);
-
-        let send_args = (channel.send as jest.Mock<any, any>).mock.calls[0];
-        expect(send_args[0]).toContain('Output is longer than 2000 characters');
+        expect(channel.send).toHaveBeenCalledWith(expect.stringContaining('longer than 2000 characters'), expect.anything());
     });
 
 });
