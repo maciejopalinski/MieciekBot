@@ -1,8 +1,9 @@
 import { Guild } from 'discord.js';
 import { Client, MessageEmbed } from '../lib';
+import * as Models from '../models';
 
 export const onGuildCreate = async (client: Client, guild: Guild) => {
-    await client.db_manager.models.Guild.create({ guildID: guild.id }).catch(err => console.error(err));
+    await Models.Guild.create({ guildID: guild.id }).catch(err => console.error(err));
         
     let owner = await client.users.fetch(guild.ownerID);
     if(!owner) return guild.leave();

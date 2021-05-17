@@ -6,8 +6,8 @@ Aliases.execute = async (bot, msg, args) => {
     
     const commandfile = bot.command_manager.getCommand(args[0]);
 
-    let { roles, prefix } = bot.guild.get(msg.guild.id);
-    let allowed = roles.user.allowed_nodes;
+    let { prefix } = bot.guild_manager.guilds.get(msg.guild.id);
+    let allowed = bot.guild_manager.guild_users.get(msg.guild.id).permission.get(msg.member.id).allowed_nodes;
 
     if(!commandfile || !allowed.includes(commandfile.help.permission) && commandfile.help.name != 'help')
     {

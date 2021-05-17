@@ -1,6 +1,7 @@
 import { MessageAttachment } from 'discord.js';
+import Canvas, { freetypeVersion } from 'canvas';
 import { Command } from '../../lib';
-import Canvas from 'canvas';
+import { User } from '../../models';
 
 Canvas.registerFont('src/assets/fonts/Bebas-Regular.ttf', {family: 'Bebas-Regular'});
 Canvas.registerFont('src/assets/fonts/AldotheApache.ttf', {family: 'AldoTheApache'});
@@ -17,7 +18,7 @@ XP.execute = async (bot, msg, args) => {
 
     let user = await bot.db_manager.getUser(msg.guild.id, member.id);
     if(!user) {
-        bot.db_manager.models.User.create({
+        User.create({
             guildID: msg.guild.id,
             userID: member.id
         });

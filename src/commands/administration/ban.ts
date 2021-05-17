@@ -19,7 +19,7 @@ Ban.execute = async (bot, msg, args) => {
         .setTitle(`You have been banned on ${msg.guild.name}!`)
         .addField('Banned by:', `<@${msg.author.id}>`)
         .addField('Reason:', reason);
-        
+
         let info_ban = new MessageEmbed(bot, msg.guild)
         .setTitle(`${user.user.username} has been banned!`)
         .addField('Banned by:', `<@${msg.author.id}>`)

@@ -3,23 +3,32 @@ import { MessageEmbed, Command } from '../../lib';
 const Help = new Command();
 
 Help.execute = async (bot, msg, args) => {
-    let { roles, prefix } = bot.guild.get(msg.guild.id);
+
+    let { prefix } = bot.guild_manager.guilds.get(msg.guild.id);
+    let allowed = bot.guild_manager.guild_users.get(msg.guild.id).permission.get(msg.member.id).allowed_nodes;
 
     let help = new MessageEmbed(bot, msg.guild);
-    let allowed = roles.user.allowed_nodes;
 
-    if(!args[0] || !bot.command_manager.categories.includes(args[0]))
+    if (!args[0]) args[0] = '';
+    let category = bot.command_manager.categories.find(c => {
+        let full_match = c.toLowerCase() == args[0].toLowerCase();
+        let partial_match = c.toLowerCase().match(args[0].toLowerCase());
+
+        return full_match || partial_match;
+    });
+
+    if(!args[0] || !category)
     {
         help
         .addField(`Usage: ${prefix}${Help.help.name} ${Help.help.args}`, '\u200b')
         .addField('Available categories:', bot.command_manager.categories.join(', '));
         return msg.channel.send(help);
     }
-    
-    help.setTitle(`HELP: ${args[0]}`);
 
-    let commands = bot.command_manager.commands.filter(v => v.category == args[0] && allowed.includes(v.help.permission));
-    commands.forEach(v => help.addField(`${prefix}${v.help.name} ${v.help.args}`, v.help.description));
+    help.setTitle(`HELP: ${category}`);
+
+    let commands = bot.command_manager.commands.filter(c => c.category == category && allowed.includes(c.help.permission));
+    commands.forEach(c => help.addField(`${prefix}${c.help.name} ${c.help.args}`, c.help.description));
 
     if(help.fields.length == 0) help.addField('There weren\'t any available commands for you.', '\u200b');
     msg.channel.send(help);

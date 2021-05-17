@@ -16,7 +16,6 @@ export interface ServerAnnounceToggles {
 
 export interface ServerAnnounceOptions {
     channel_id: string;
-    channel?: TextChannel | NewsChannel;
 	toggles: ServerAnnounceToggles;
 }
 

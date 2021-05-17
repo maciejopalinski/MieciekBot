@@ -6,37 +6,29 @@ export const onReady = async (client: Client) => {
     console.info(`Logged in as: ${client.user.tag}`);
     console.info(`Running...`);
 
+    let base_presence: PresenceData = {
+        status: 'online',
+        activity: { url: 'https://github.com/PoProstuMieciek/' }
+    };
+
     let status: PresenceData[] = [
         {
-            status: 'online',
-            activity: {
-                type: 'LISTENING',
-                name: 'Megadeth',
-                url: 'https://github.com/PoProstuMieciek/'
-            }
+            ...base_presence,
+            activity: { type: 'LISTENING', name: 'Dream Theater' }
         },
         {
-            status: 'online',
-            activity: {
-                type: 'LISTENING',
-                name: 'Slipknot',
-                url: 'https://github.com/PoProstuMieciek/'
-            }
+            ...base_presence,
+            activity: { type: 'LISTENING', name: 'Gojira' }
         },
         {
-            status: 'online',
+            ...base_presence,
+            activity: { type: 'PLAYING', name: 'Visual Studio Code' }
+        },
+        {
+            ...base_presence,
             activity: {
                 type: 'PLAYING',
-                name: 'Visual Studio Code',
-                url: 'https://github.com/PoProstuMieciek/'
-            }
-        },
-        {
-            status: 'online',
-            activity: {
-                type: 'PLAYING',
-                name: `on ${client.guilds.cache.size} ${client.guilds.cache.size > 1 ? 'servers' : 'server'}`,
-                url: 'https://github.com/PoProstuMieciek/'
+                name: `on ${client.guilds.cache.size} ${client.guilds.cache.size > 1 ? 'servers' : 'server'}`
             }
         }
     ];

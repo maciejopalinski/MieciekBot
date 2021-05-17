@@ -1,14 +1,13 @@
-import * as Discord from 'discord.js';
+import { Collection } from 'discord.js';
 import YTDL from 'ytdl-core';
-
 import { ServerQueue } from './';
 
 export class MusicManager {
 
-    queues: Discord.Collection<string, ServerQueue> = new Discord.Collection();
+    queues = new Collection<string, ServerQueue>();
     
-    search_cache: Map<string, string> = new Map();
-    vidinfo_cache: Map<string, YTDL.videoInfo> = new Map();
+    search_cache = new Map<string, string>();
+    vidinfo_cache = new Map<string, YTDL.videoInfo>();
 
     get(guild_id: string) {
         return this.queues.get(guild_id);
@@ -19,7 +18,7 @@ export class MusicManager {
     }
 
     set(server_queue: ServerQueue) {
-        return this.queues.set((<Discord.TextChannel> server_queue.text_channel).guild.id, server_queue);
+        return this.queues.set(server_queue.guild.id, server_queue);
     }
 
     /**

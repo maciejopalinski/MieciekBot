@@ -4,8 +4,8 @@ const Settings = new Command();
 
 Settings.execute = async (bot, msg, args) => {
 
-    let guild_config = bot.guild.get(msg.guild.id);
-    let { prefix, delete_timeout, roles, spam_channels, announce } = guild_config;
+    let { prefix, delete_timeout, roles, spam_channels, announce } = bot.guild_manager.guilds.get(msg.guild.id);
+    let permission_manager = bot.guild_manager.guild_permission_manager.get(msg.guild.id);
 
     if(!args[0])
     {
@@ -18,7 +18,7 @@ Settings.execute = async (bot, msg, args) => {
         .addField('delete_timeout', delete_timeout)
         .addField('spam_channels', spam_channels_info);
 
-        roles.manager.permission_nodes.forEach(node => {
+        permission_manager.nodes.forEach(node => {
             if(node instanceof RolePermissionNode && node.name != '@everyone') {
                 help.addField(`role:${node.name.toLowerCase()}`, `<@&${node.role_id}> (${node.role_id})`);
             }
@@ -62,7 +62,7 @@ Settings.execute = async (bot, msg, args) => {
                 return bot.sendAndDelete(msg.channel, error.not_found);
             }
             
-            roles.manager.permission_nodes.forEach(node => {
+            permission_manager.nodes.forEach(node => {
                 if(node instanceof RolePermissionNode && node.name != '@everyone' && key == `role:${node.name.toLowerCase()}`)
                 {
                     settings.roles[node.name.toLowerCase()] = new_role.id;
@@ -121,7 +121,9 @@ Settings.execute = async (bot, msg, args) => {
             if(settings.spam_channels.length >= 1) info = `[<#${settings.spam_channels.join('>, <#')}>]`;
         }
 
-        await bot.guild.fetchOne(await settings.save());
+        let saved = await settings.save();
+        // await bot.guild_manager.fetchOne(saved);
+        // not needed because of /src/events/Database.ts change stream
 
         if(info) msg.channel.send(`Successfully changed '${key}' value to ${info}.`);
         else

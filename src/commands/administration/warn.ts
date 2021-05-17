@@ -1,4 +1,5 @@
 import { MessageEmbed, Command } from '../../lib';
+import { Warn as DBWarn } from '../../models/';
 
 const Warn = new Command();
 
@@ -27,7 +28,7 @@ Warn.execute = async (bot, msg, args) => {
         let date = new Date();
         let date_string = `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
 
-        bot.db_manager.models.Warn.create({
+        DBWarn.create({
             guildID: msg.guild.id,
             userID: user.id,
             warnedBy: msg.author.id,

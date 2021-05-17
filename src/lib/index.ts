@@ -1,9 +1,8 @@
+export * from './Command/';
+export * from './Database/';
+export * from './Guild/';
+export * from './Music/';
+
 export * from './Client';
-export * from './Command';
-export * from './Database';
-export * from './Event';
-export * from './ExperienceSystem';
-export * from './GuildProperty';
+export * from './EventLoader';
 export * from './MessageEmbed';
-export * from './Music';
-export * from './Permissions';

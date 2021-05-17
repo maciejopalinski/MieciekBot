@@ -3,7 +3,7 @@ import { Command, MessageEmbed } from "../../lib";
 const QueueManager = new Command();
 
 QueueManager.execute = async (bot, msg, args) => {
-    let { prefix } = bot.guild.get(msg.guild.id);
+    let { prefix } = bot.guild_manager.guilds.get(msg.guild.id);
 
     let alias = msg.content.split(' ')[0].slice(prefix.length);
     let subcommand = args[0];

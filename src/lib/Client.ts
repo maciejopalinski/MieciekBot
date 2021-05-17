@@ -1,4 +1,4 @@
-import Discord from 'discord.js';
+import Discord, { NewsChannel, TextChannel } from 'discord.js';
 import project_info from '../../package.json';
 import { CommandManager, EventLoader, DatabaseManager, MusicManager, GuildManager } from './';
 
@@ -10,7 +10,7 @@ export class Client extends Discord.Client {
     version: string;
     debug = false;
 
-    guild: GuildManager;
+    guild_manager: GuildManager;
     music_manager: MusicManager;
 
     event_loader: EventLoader;
@@ -32,7 +32,7 @@ export class Client extends Discord.Client {
         this.event_loader = new EventLoader(this);
         this.command_manager = new CommandManager();
 
-        this.guild = new GuildManager(this);
+        this.guild_manager = new GuildManager(this);
         this.music_manager = new MusicManager();
     }
 
@@ -46,29 +46,30 @@ export class Client extends Discord.Client {
         this.command_manager.loadCommands();
         
         await this.login(this.token || process.env.BOT_TOKEN);
-        await this.guild.fetchAll();
+        await this.guild_manager.fetchAll();
     }
 
     async sendAndDelete(
         channel: Channel,
         msg: string,
-        timeout = this.guild.get((channel as Discord.TextChannel).guild.id).delete_timeout
+        timeout = this.guild_manager.guilds.get((<TextChannel> channel).guild.id).delete_timeout
     ) {
         await channel.send(msg).then(msg => msg.delete({ timeout }));
     }
 
     async deleteMsg(
         msg: Discord.Message,
-        timeout = this.guild.get(msg.guild.id).delete_timeout
+        timeout = this.guild_manager.guilds.get(msg.guild.id).delete_timeout
     ) {
         msg.delete({ timeout });
     }
 
-    announce(dscguild: Discord.Guild, channel: Channel, text: string) {
-        let guild = this.guild.get(dscguild.id);
+    announce(dscguild: Discord.Guild, text: string, channel?: Channel) {
+        let announce_channel = this.guild_manager.guild_announce_channel.get(dscguild.id);
 
-        if(guild.announce.channel) return guild.announce.channel.send(text);
+        if(announce_channel) return announce_channel.send(text);
         else if(channel) return channel.send(text);
+        return null;
     }
 
     generateBotInvite(permissions: number = 8) {

@@ -11,9 +11,9 @@ Unmute.execute = async (bot, msg, args) => {
         return bot.sendAndDelete(msg.channel, error.not_mutable);
     }
 
-    let { roles } = bot.guild.get(msg.guild.id);
-    let mute_node = <RolePermissionNode> roles.manager.getNode('MUTE');
-    let user_node = <RolePermissionNode> roles.manager.getNode('USER');
+    let manager = bot.guild_manager.guild_permission_manager.get(msg.guild.id);
+    let mute_node = <RolePermissionNode> manager.getNode('MUTE');
+    let user_node = <RolePermissionNode> manager.getNode('USER');
     let mute_role = msg.guild.roles.cache.find(r => r.id == mute_node.role_id);
     let user_role = msg.guild.roles.cache.find(r => r.id == user_node.role_id);
 

@@ -1,11 +1,17 @@
-import * as Discord from 'discord.js';
+import { Guild, TextChannel, NewsChannel, VoiceChannel, VoiceConnection } from 'discord.js';
 import YTDL from 'ytdl-core';
 
-import { ISavedQueue } from '../../models';
-import { QueueLoopModes, Song } from './';
-import { Client, Channel } from '../';
+import { Client, Channel, Song } from '../';
+import { SavedQueue } from '../../models/';
 
-interface PlayingState {
+export enum QueueLoopModes {
+    DISABLED = 'DISABLED',
+    LOOP_TRACK = 'TRACK',
+    LOOP_QUEUE = 'QUEUE',
+    SHUFFLE = 'SHUFFLE'
+};
+
+export interface PlayingState {
     loop_mode: QueueLoopModes;
     current: Song;
     state: boolean;
@@ -13,11 +19,11 @@ interface PlayingState {
 
 export class ServerQueue {
 
-    guild: Discord.Guild;
+    guild: Guild;
     client: Client;
-    text_channel: Channel;
-    voice_channel: Discord.VoiceChannel;
-    connection: Discord.VoiceConnection = null;
+    text_channel: TextChannel | NewsChannel;
+    voice_channel: VoiceChannel;
+    connection: VoiceConnection = null;
 
     songs: Song[] = [];
 
@@ -28,24 +34,23 @@ export class ServerQueue {
 
     volume = { current: 100, last: 100 };
 
-    constructor(client: Client, text_channel: Channel, voice_channel: Discord.VoiceChannel) {
+    constructor(client: Client, text_channel: TextChannel | NewsChannel, voice_channel: VoiceChannel) {
         this.client = client;
         this.text_channel = text_channel;
         this.voice_channel = voice_channel;
         this.guild = voice_channel.guild;
     }
 
-    /**
-     * @param {Song} song
-     * @param {boolean} [announce]
-     * @param {boolean} [bypass_limit]
-     */
     addSong(song: Song, announce: boolean = true, bypass_limit: boolean = false) {
 
-        if(!bypass_limit && this.songs.length >= 20) throw new Error('Cannot add new tracks to the music queue. Queue can be up to 20 tracks long.');
+        if(this.songs.length >= 20 && !bypass_limit) {
+            throw new Error('Cannot add new tracks to the music queue. Queue can be up to 20 tracks long.');
+        }
+
         this.songs.push(song);
+
         if(this.songs.length == 1 || !this.playing.current) this.playing.current = song;
-        
+
         if(announce) this.text_channel.send(`**${song.title}** has been added to the queue.`);
     }
 
@@ -112,7 +117,7 @@ export class ServerQueue {
 
         if(!song) {
             this.voice_channel.leave();
-            this.client.music_manager.delete((<Discord.TextChannel> this.text_channel).guild.id);
+            this.client.music_manager.delete(this.guild.id);
             return;
         }
 
@@ -144,7 +149,7 @@ export class ServerQueue {
     }
 
     async saveQueue(name) {
-        let new_queue = await this.client.db_manager.models.SavedQueue.create({
+        let new_queue = await SavedQueue.create({
             guildID: this.voice_channel.guild.id,
             name,
             urls: []

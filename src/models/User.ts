@@ -3,8 +3,8 @@ import mongoose from 'mongoose';
 export interface IUser extends mongoose.Document {
     guildID: string,
     userID: string,
-    level?: number,
-    xp?: number
+    level: number,
+    xp: number
 }
 
 const UserSchema = new mongoose.Schema({

@@ -1,38 +1,16 @@
-import { Message } from 'discord.js';
+import { GuildMember } from 'discord.js';
 import fs from 'fs';
-import { Client } from './';
-
-export interface CommandOptions {
-
-    name: string
-    args: string
-    description: string
-    aliases: string[]
-    permission: string
-}
-
-export class Command {
-
-    async execute(bot: Client, msg: Message, args: string[], optional?: any): Promise<void | Message> {}
-
-    help: CommandOptions;
-    args_array: string[] = [];
-    category: string = "";
-    path: string = "";
-
-    error = {};
-}
+import { Command } from './Command';
 
 export class CommandManager {
 
     categories: string[] = [];
-
     commands: Command[] = [];
 
     loadCommands() {
         console.info('Starting commands loading...');
 
-        let commands_dir = `${__dirname}/../commands`;
+        let commands_dir = `${__dirname}/../../commands`;
 
         let categories = fs.readdirSync(commands_dir);
         categories.forEach(category => {
@@ -81,24 +59,22 @@ export class CommandManager {
             }
         });
 
-        command.args_array = command.help.args.split(' ');
-        let v = this.commands.push(command);
-        
         if(!this.categories.includes(command.category)) this.categories.push(command.category);
-        
+
+        this.commands.push(command);
+
         console.info(`${command.path} loaded`);
-        return v;
     }
 
-    getCommand(query: string) : Command {
-        return this.getCommandByName(query) || this.getCommandByAlias(query) || null;
+    getCommand(query: string): Command | undefined {
+        return this.getCommandByName(query) || this.getCommandByAlias(query) || undefined;
     }
 
-    getCommandByName(name: string) : Command {
-        return this.commands.find(v => v.help.name == name) || null;
+    getCommandByName(name: string): Command | undefined {
+        return this.commands.find(v => v.help.name == name) || undefined;
     }
 
-    getCommandByAlias(alias: string) : Command {
-        return this.commands.find(v => v.help.aliases.includes(alias)) || null;
+    getCommandByAlias(alias: string): Command | undefined {
+        return this.commands.find(v => v.help.aliases.includes(alias)) || undefined;
     }
 }

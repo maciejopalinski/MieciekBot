@@ -17,13 +17,13 @@ ListWarn.execute = async (bot, msg, args) => {
             bot.deleteMsg(msg);
             return bot.sendAndDelete(msg.channel, error.unknown);
         }
-        
+
         warns.forEach(entry => {
             warns_embed.addField(`Reason: ${entry.reason}`, `Warned by: <@${entry.warnedBy}>\n${entry.timestamp}`);
         });
 
         if(warns.length < 1) warns_embed.addField('There are not any warnings for this user.', '\u200b');
-        
+
         msg.channel.send(warns_embed);
     }
     else

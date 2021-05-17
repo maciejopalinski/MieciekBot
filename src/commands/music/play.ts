@@ -1,8 +1,9 @@
-import { Command, ServerQueue, Song } from "../../lib";
+import { GuildMember, NewsChannel, TextChannel } from "discord.js";
+import { Client, Command, ServerQueue, Song } from "../../lib";
 
 const Play = new Command();
 
-Play.execute = async (bot, msg, args, load) => {
+Play.execute = async (bot, msg, args, ...[load]: boolean[]) => {
     
     if(!msg.member.voice.channel || !canModify(bot, msg.member))
     {
@@ -35,7 +36,7 @@ Play.execute = async (bot, msg, args, load) => {
         return;
     }
 
-    server_queue = new ServerQueue(bot, msg.channel, msg.member.voice.channel);
+    server_queue = new ServerQueue(bot, msg.channel as TextChannel | NewsChannel, msg.member.voice.channel);
 
     if(load) await server_queue.loadQueue(load);
     else server_queue.addSong(song, false);
@@ -76,13 +77,12 @@ const error = Play.error = {
     stopped: "Disconnected from voice channel. Music stopped."
 };
 
-/**
- * @param {Client} bot
- * @param {Discord.GuildMember} member
- */
-function canModify(bot, member) {
+function canModify(bot: Client, member: GuildMember) {
     const same_channel = (member.voice.channel == member.guild.me.voice.channel);
-    const is_admin = (bot.roles.user.priority >= bot.roles.manager.getNode('ADMIN').priority);
+
+    const user_node = bot.guild_manager.guild_permission_manager.get(member.guild.id).getMemberNode(member);
+    const admin_node = bot.guild_manager.guild_permission_manager.get(member.guild.id).getNode('ADMIN');
+    const is_admin = (user_node.priority >= admin_node.priority);
 
     if(!member.guild.me.voice.channel) return true;
     if(same_channel || is_admin) return true;

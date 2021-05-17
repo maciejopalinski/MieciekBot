@@ -1,13 +1,14 @@
 import { Message } from 'discord.js';
-import { Client } from '../lib';
 import EmojiRegex from 'emoji-regex';
+import { Client } from '../lib/';
+import { User } from '../models/';
 
 export const onMessage = async (client: Client, msg: Message) => {
     
     if (msg.author.bot) return;
     if (msg.channel.type === 'dm') return;
 
-    let guild = client.guild.get(msg.guild.id);
+    let guild = client.guild_manager.guilds.get(msg.guild.id);
     if (!guild) return msg.channel.send(`Oops! I did not properly configure your server... Please, invite me once again. ${client.generateBotInvite()}`).then(msg => msg.guild.leave());
 
     let prefix = guild.prefix;
@@ -19,13 +20,13 @@ export const onMessage = async (client: Client, msg: Message) => {
     let command = client.command_manager.getCommand(cmd.slice(guild.prefix.length));
     if (msg.content.startsWith(guild.prefix) && command)
     {
-        let node_manager = guild.roles.manager;
-        guild.roles.user = node_manager.getMemberNode(msg.member);
+        let node_manager = client.guild_manager.guild_permission_manager.get(msg.guild.id);
+        await client.guild_manager.guild_users.get(msg.guild.id).fetchDiscord(msg.member);
 
         if (node_manager.hasCommandPermission(command, msg.member))
         {
             let required_args = 0, optional_args = 0;
-            command.args_array.forEach(value => {
+            command.help.args.split(' ').forEach(value => {
                 if (value.startsWith('<')) required_args += 1;
                 if (value.startsWith('[')) optional_args += 1;
             });
@@ -55,8 +56,8 @@ export const onMessage = async (client: Client, msg: Message) => {
         let user = await client.db_manager.getUser(msg.guild.id, msg.member.id);
         if(!user)
         {
-            // if user does not exist in database, insert him
-            await client.db_manager.models.User.create({
+            // if user does not exist in database, create it
+            await User.create({
                 guildID: msg.guild.id,
                 userID: msg.member.id
             }).catch(err => console.error);
@@ -87,7 +88,7 @@ export const onMessage = async (client: Client, msg: Message) => {
             if(user.xp >= client.db_manager.exp_system.getExperience(user.level + 1))
             {
                 user.level += 1;
-                client.announce(msg.guild, msg.channel, `<@${msg.member.id}> advanced to level ${user.level}!`);
+                client.announce(msg.guild, `<@${msg.member.id}> advanced to level ${user.level}!`, msg.channel);
             }
             user.save();
         }
