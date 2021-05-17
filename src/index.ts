@@ -1,4 +1,8 @@
 import { Client } from './lib';
 
-export const client = new Client(process.env.BOT_TOKEN, process.env.DATABASE);
+export const client = new Client();
+
+client.token = process.env.BOT_TOKEN;
+client.db_uri = process.env.DATABASE;
+
 client.init();

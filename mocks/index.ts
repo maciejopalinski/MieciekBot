@@ -59,7 +59,7 @@ export default class MockDiscord {
     }
 
     private mockClient(): void {
-        this.client = new Client('mocked discord token', process.env.DATABASE, {});
+        this.client = new Client({});
     }
 
     private mockGuild(): void {

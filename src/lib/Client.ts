@@ -1,5 +1,5 @@
-import * as Discord from 'discord.js';
-import * as project_info from '../../package.json';
+import Discord from 'discord.js';
+import project_info from '../../package.json';
 import { CommandManager, EventLoader, DatabaseManager, MusicManager, GuildManager } from './';
 
 export type Channel = Discord.TextChannel | Discord.DMChannel | Discord.NewsChannel;
@@ -18,7 +18,7 @@ export class Client extends Discord.Client {
     db_manager: DatabaseManager;
     db_uri: string;
 
-    constructor(discord_token: string, database_uri: string, client_options?: Discord.ClientOptions) {
+    constructor(client_options?: Discord.ClientOptions) {
         super(client_options);
         
         require('./ConsoleLogger');
@@ -28,9 +28,6 @@ export class Client extends Discord.Client {
             this.version += '-dev';
             this.debug = true;
         }
-        
-        this.db_uri = database_uri;
-        this.token = discord_token;
 
         this.event_loader = new EventLoader(this);
         this.command_manager = new CommandManager();
@@ -43,12 +40,12 @@ export class Client extends Discord.Client {
 
         console.info(`Initializing MieciekBot ${this.version}...\n`);
 
-        this.db_manager = new DatabaseManager(this.db_uri);
+        this.db_manager = new DatabaseManager(this.db_uri || process.env.DATABASE);
 
         this.event_loader.loadEvents();
         this.command_manager.loadCommands();
         
-        await this.login(this.token);
+        await this.login(this.token || process.env.BOT_TOKEN);
         await this.guild.fetchAll();
     }
 
