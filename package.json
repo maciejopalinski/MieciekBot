@@ -5,7 +5,7 @@
     "scripts": {
         "build": "tsc",
         "build:watch": "tsc -w",
-        "start": "npm run build && node dist/src/index.js",
+        "start": "node dist/src/index.js",
         "start:dev:js": "node --require dotenv/config --inspect=9229 dist/src/index.js",
         "start:dev:ts": "node --require ts-node/register --require dotenv/config --inspect=9229 src/index.ts",
         "dev:js": "nodemon -e js --exec npm run start:dev:js",
