@@ -5,23 +5,26 @@
     "scripts": {
         "test": "jest",
         "build": "tsc",
+        "build:watch": "tsc -w",
         "start": "npm run build && node dist/src/index.js",
-        "start:dev": "node --require ts-node/register --require dotenv/config --inspect=9229 src/index.ts",
-        "dev": "nodemon -e ts --exec \"npm run start:dev\"",
+        "start:dev:js": "node --require dotenv/config --inspect=9229 dist/src/index.js",
+        "start:dev:ts": "node --require ts-node/register --require dotenv/config --inspect=9229 src/index.ts",
+        "dev:js": "nodemon -e js --exec \"npm run start:dev:js\"",
+        "dev:ts": "nodemon -e ts --exec \"npm run start:dev:ts\"",
         "clean": "rm -rf dist/"
     },
     "dependencies": {
         "@discordjs/opus": "^0.5.0",
         "axios": "^0.21.1",
-        "canvas": "^2.7.0",
+        "canvas": "^2.8.0",
         "discord.js": "^12.5.3",
         "emoji-regex": "^9.2.2",
-        "mongoose": "^5.12.8",
+        "mongoose": "^5.12.9",
         "octonode": "^0.10.2",
         "random-number-csprng": "^1.0.2",
         "random-puppy": "^1.1.0",
         "youtube-search": "^1.1.6",
-        "ytdl-core": "^4.7.0"
+        "ytdl-core": "^4.8.0"
     },
     "devDependencies": {
         "@types/jest": "^26.0.23",
