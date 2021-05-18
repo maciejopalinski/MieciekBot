@@ -1,5 +1,6 @@
-import { GuildMember, NewsChannel, TextChannel } from "discord.js";
-import { Client, Command, ServerQueue, Song } from "../../lib";
+import { GuildMember, NewsChannel, TextChannel } from 'discord.js';
+import { validateURL } from 'ytdl-core';
+import { Client, Command, ServerQueue, Song } from '../../lib';
 
 const Play = new Command();
 
@@ -14,12 +15,14 @@ Play.execute = async (bot, msg, args, ...[load]: boolean[]) => {
     let song: Song = null;
     if(!load)
     {
+        let query = args.join(' ');
         song = new Song(bot);
         try {
-            await song.fetchInfo(args.join(' '));
+            await song.fetchInfo(query);
 
-            // TODO: prevent this from saving link as key into cache
-            bot.music_manager.search_cache.set(args.join(' '), song.url);
+            if(!validateURL(query)) {
+                bot.music_manager.search_cache.set(query, song.url);
+            }
         } catch (error) {
             console.error(error);
             return msg.channel.send(error.message);
