@@ -3,6 +3,8 @@ import { Client } from "../lib";
 import { Guild, IGuild } from '../models';
 
 export const onGuildChange = (client: Client, doc: ChangeEventUpdate<IGuild>) => {
+    if (!['update', 'insert'].includes(doc.operationType)) return;
+
     client.guild_manager.fetchGuild(doc.fullDocument);
 }
 
