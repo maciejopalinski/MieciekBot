@@ -12,21 +12,21 @@ Mute.execute = async (bot, msg, args) => {
         return bot.sendAndDelete(msg.channel, error.not_mutable);
     }
 
-    let manager = bot.guild_manager.guild_permission_manager.get(msg.guild.id);
-    let mute_node = <RolePermissionNode> manager.getNode('MUTE');
-    let user_node = <RolePermissionNode> manager.getNode('USER');
-    let mute_role = msg.guild.roles.cache.find(r => r.id == mute_node.role_id);
-    let user_role = msg.guild.roles.cache.find(r => r.id == user_node.role_id);
+    let manager = bot.guild_manager.getPermissionManager(msg.guild.id);
+    let mute_role = manager.getNodeRole('MUTE');
+    let user_role = manager.getNodeRole('USER');
 
     if(!mute_role)
     {
+        let node = manager.getNode('MUTE') as RolePermissionNode;
         bot.deleteMsg(msg);
-        return bot.sendAndDelete(msg.channel, `Mute role (${mute_node.role_id}) was not found on the server. Please, edit your configuration.`);
+        return bot.sendAndDelete(msg.channel, `Mute role (${node.role_id}) was not found on the server. Please, edit your configuration.`);
     }
     if(!user_role)
     {
+        let node = manager.getNode('USER') as RolePermissionNode;
         bot.deleteMsg(msg);
-        return bot.sendAndDelete(msg.channel, `User role (${user_node.role_id}) was not found on the server. Please, edit your configuration.`);
+        return bot.sendAndDelete(msg.channel, `User role (${node.role_id}) was not found on the server. Please, edit your configuration.`);
     }
 
     let mute_embed = new MessageEmbed(bot, msg.guild)

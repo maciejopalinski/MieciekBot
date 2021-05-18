@@ -7,7 +7,7 @@ export class UserManager {
     client: Client;
     guild: Guild;
 
-    users = new Collection<string, IUser>();
+    user_xp = new Collection<string, IUser>();
     permission = new Collection<string, AnyPermissionNode>();
 
     constructor(client: Client, guild: Guild) {
@@ -15,19 +15,24 @@ export class UserManager {
         this.guild = guild;
     }
 
-    async fetchDiscord(user: GuildMember) {
-        const found = await User.findOne({ guildID: user.guild.id, userID: user.id });
-        this.fetchOne(found);
+    async fetchUser(member: GuildMember) {
+        if (this.getUserPermission(member.id)) return;
+
+        const GID = member.guild.id;
+        const UID = member.id;
+
+        const found = await User.findOne({ guildID: GID, userID: UID });
+        this.user_xp.set(UID, found);
+
+        let highest = this.client.guild_manager.getPermissionManager(GID).getMemberNode(member);
+        this.permission.set(UID, highest);
     }
 
-    async fetchOne(user: IUser) {
-        const ID = user.userID;
-        const USER = this.guild.members.cache.get(ID);
-        
-        this.users.set(ID, user);
+    getUserXP(uid: string) {
+        return this.user_xp.get(uid);
+    }
 
-        let manager = this.client.guild_manager.guild_permission_manager.get(user.guildID);
-        let node = manager.getMemberNode(USER);
-        this.permission.set(ID, node);
+    getUserPermission(uid: string) {
+        return this.permission.get(uid);
     }
 }

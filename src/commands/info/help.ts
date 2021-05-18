@@ -4,8 +4,8 @@ const Help = new Command();
 
 Help.execute = async (bot, msg, args) => {
 
-    let { prefix } = bot.guild_manager.guilds.get(msg.guild.id);
-    let allowed = bot.guild_manager.guild_users.get(msg.guild.id).permission.get(msg.member.id).allowed_nodes;
+    let { prefix } = bot.guild_manager.getGuildConfig(msg.guild.id);
+    let allowed = bot.guild_manager.getUserPermission(msg.guild.id, msg.member.id).allowed_nodes;
 
     let help = new MessageEmbed(bot, msg.guild);
 

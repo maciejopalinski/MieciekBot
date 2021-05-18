@@ -77,4 +77,15 @@ export class CommandManager {
     getCommandByAlias(alias: string): Command | undefined {
         return this.commands.find(v => v.help.aliases.includes(alias)) || undefined;
     }
+
+    calculateArgs(command: Command) {
+        let required = 0, optional = 0;
+
+        command.help.args.split(' ').forEach(arg => {
+            if (arg.startsWith('<')) required++;
+            if (arg.startsWith('[')) optional++;
+        });
+
+        return { required, optional };
+    }
 }

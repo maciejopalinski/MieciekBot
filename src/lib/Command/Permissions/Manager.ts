@@ -1,4 +1,4 @@
-import { Guild, GuildMember } from 'discord.js';
+import { Guild, GuildMember, Role } from 'discord.js';
 import { Command } from '../Command';
 import { AnyPermissionNode, PermissionNodeName, RolePermissionNode, UserPermissionNode } from './Nodes';
 
@@ -19,9 +19,19 @@ export class PermissionManager {
         return this.nodes.find(v => v.name.toLowerCase() == name.toLowerCase());
     }
 
+    getNodeRole(name: PermissionNodeName) {
+        let node = this.getNode(name);
+        if (node instanceof RolePermissionNode) {
+            return this.guild.roles.cache.get(node.role_id);
+        }
+        else return null;
+    }
+
     addNode(node: AnyPermissionNode) {
-        this.nodes.push(node);
-        this.nodes.sort((a, b) => a.priority - b.priority);
+        if (!this.nodes.some(v => v.name == node.name)) {
+            this.nodes.push(node);
+            this.nodes.sort((a, b) => a.priority - b.priority);
+        }
     }
 
     /**

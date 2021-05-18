@@ -4,8 +4,8 @@ const Settings = new Command();
 
 Settings.execute = async (bot, msg, args) => {
 
-    let { prefix, delete_timeout, roles, spam_channels, announce } = bot.guild_manager.guilds.get(msg.guild.id);
-    let permission_manager = bot.guild_manager.guild_permission_manager.get(msg.guild.id);
+    let { prefix, delete_timeout, roles, spam_channels, announce } = bot.guild_manager.getGuildConfig(msg.guild.id);
+    let permission_manager = bot.guild_manager.getPermissionManager(msg.guild.id);
 
     if(!args[0])
     {

@@ -1,4 +1,5 @@
-import { MessageEmbed, Command } from '../../lib';
+import { Message } from 'discord.js';
+import { Client, MessageEmbed, Command } from '../../lib';
 import axios, { AxiosRequestConfig } from 'axios';
 
 const Coronavirus = new Command();
@@ -38,14 +39,7 @@ Coronavirus.execute = async (bot, msg, args) => {
     }
 }
 
-/**
- * @param {Client} bot
- * @param {Discord.Message} msg
- * @param {object} body
- * @param {String} header
- * @returns {MessageEmbed}
- */
-function create_embed(bot, msg, body, header) {
+function create_embed(bot: Client, msg: Message, body: any, header: string) {
     let time = new Date(Date.parse(body.response[0].time));
 
     let cv_embed = new MessageEmbed(bot, msg.guild)
