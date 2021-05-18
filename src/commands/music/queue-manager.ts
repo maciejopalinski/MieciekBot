@@ -1,4 +1,5 @@
 import { Command, MessageEmbed } from "../../lib";
+import { SavedQueue } from "../../models";
 
 const QueueManager = new Command();
 
@@ -17,7 +18,9 @@ QueueManager.execute = async (bot, msg, args) => {
         .addField(`${prefix}${alias} view <name>`, 'views content of saved queue')
         .addField(`${prefix}${alias} save <name>`, 'saves current queue')
         .addField(`${prefix}${alias} load <name>`, 'loads saved queue')
-        .addField(`${prefix}${alias} delete <name>`, 'deletes saved queue');
+        .addField(`${prefix}${alias} delete <name>`, 'deletes saved queue')
+        .addField(`${prefix}${alias} share <name>`, 'creates unique id to share playlist across servers')
+        .addField(`${prefix}${alias} import <id>`, 'imports playlist to current server');
 
         return msg.channel.send(subcommands_embed);
     }
@@ -45,7 +48,9 @@ QueueManager.execute = async (bot, msg, args) => {
     {
         let found_embed = new MessageEmbed(bot, msg.guild);
         let found_queue = await bot.db_manager.getSavedQueue(msg.guild.id, queue_name);
-        if(!found_queue) found_embed.addField(`Queue with name *'${queue_name}'* was not found in the database.`, '\u200b');
+        if(!found_queue) {
+            found_embed.addField(`Queue with name *'${queue_name}'* was not found in the database.`, '\u200b');
+        }
         else {
             found_embed.setTitle(`Queue: '${queue_name}'`);
 
@@ -72,7 +77,8 @@ QueueManager.execute = async (bot, msg, args) => {
         else if(queue_name.length < 3 || queue_name.length > 96) {
             bot.deleteMsg(msg);
             return bot.sendAndDelete(msg.channel, 'Queue name must be 3-96 charaters long!');
-        } else {
+        }
+        else {
             await server_queue.saveQueue(queue_name);
         }
     }
@@ -85,7 +91,12 @@ QueueManager.execute = async (bot, msg, args) => {
         }
 
         let found_queue = await bot.db_manager.getSavedQueue(msg.guild.id, queue_name);
-        if(!found_queue) msg.channel.send(new MessageEmbed(bot, msg.guild).addField(`Queue with name *'${queue_name}'* was not found in the database.`, '\u200b'));
+        if(!found_queue) {
+            msg.channel.send(
+                new MessageEmbed(bot, msg.guild)
+                .addField(`Queue with name *'${queue_name}'* was not found in the database.`, '\u200b')
+            );
+        }
         else {
             bot.command_manager.getCommand('play').execute(bot, msg, undefined, found_queue);
         }
@@ -93,7 +104,65 @@ QueueManager.execute = async (bot, msg, args) => {
     else if(subcommand == 'delete')
     {
         await (await bot.db_manager.getSavedQueue(msg.guild.id, queue_name)).delete();
-        msg.channel.send(new MessageEmbed(bot, msg.guild).addField(`Queue with name *'${queue_name}'* was successfull deleted from the database.`, '\u200b'));
+
+        msg.channel.send(
+            new MessageEmbed(bot, msg.guild)
+            .addField(`Queue with name *'${queue_name}'* was successfull deleted from the database.`, '\u200b')
+        );
+    }
+    else if(subcommand == 'share')
+    {
+        let found_queue = await bot.db_manager.getSavedQueue(msg.guild.id, queue_name);
+        if(!found_queue) {
+            msg.channel.send(
+                new MessageEmbed(bot, msg.guild)
+                .addField(`Queue with name *'${queue_name}'* was not found in the database.`, '\u200b')
+            );
+        }
+        else {
+            msg.channel.send(
+                new MessageEmbed(bot, msg.guild)
+                .addField('To import queue in another server, run following command:', `\`${prefix}${alias} import ${found_queue.queueID}\``)
+            );
+        }
+    }
+    else if(subcommand == 'import')
+    {
+        let id = queue_name;
+
+        let found_queue = await SavedQueue.findOne({ queueID: id });
+        let same_name = await SavedQueue.findOne({ guildID: msg.guild.id, name: found_queue.name });
+        if(!found_queue) {
+            msg.channel.send(
+                new MessageEmbed(bot, msg.guild)
+                .addField(`Queue with ID *'${id}'* was not found in the database.`, '\u200b')
+            );
+        }
+        else if(found_queue.guildID == msg.guild.id) {
+            msg.channel.send(
+                new MessageEmbed(bot, msg.guild)
+                .addField(`You cannot import your own/existing queue.`, '\u200b')
+            );
+        }
+        else if(same_name) {
+            msg.channel.send(
+                new MessageEmbed(bot, msg.guild)
+                .addField(`Another queue with that name already exists!`, `Name: ${same_name.name}`)
+            );
+        }
+        else {
+            let imported = await SavedQueue.create({
+                guildID: msg.guild.id,
+                name: found_queue.name,
+                urls: found_queue.urls
+            });
+            
+            msg.channel.send(
+                new MessageEmbed(bot, msg.guild)
+                .addField(`Queue '${imported.name}' has been successfully imported.`, '\u200b')
+                .addField('You can load it by running following command:', `\`${prefix}${alias} load ${imported.name}\``)
+            );
+        }
     }
     else {
         bot.deleteMsg(msg);
