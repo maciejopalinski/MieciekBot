@@ -1,4 +1,4 @@
-import { Command, MessageEmbed } from "../../lib";
+import { Command, MessageEmbed } from '../../lib';
 
 const Info = new Command();
 

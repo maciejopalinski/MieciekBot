@@ -1,4 +1,4 @@
-import { Command } from "../../lib";
+import { Command } from '../../lib';
 
 const Pause = new Command();
 

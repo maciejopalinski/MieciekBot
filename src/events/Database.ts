@@ -1,5 +1,5 @@
 import { ChangeEventUpdate, ChangeEvent } from 'mongodb';
-import { Client } from "../lib";
+import { Client } from '../lib';
 import { Guild, IGuild } from '../models';
 
 export const onGuildChange = (client: Client, doc: ChangeEventUpdate<IGuild>) => {

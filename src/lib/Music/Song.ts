@@ -15,8 +15,12 @@ export class Song {
     }
 
     async fetchInfo(query: string) {
-        if(!YTDL.validateURL(query)) query = await this.searchYouTube(query);
-        this.details = (await this.client.music_manager.getBasicInfo(query)).videoDetails;
+        if(!YTDL.validateURL(query)) {
+            query = await this.searchYouTube(query);
+        }
+        
+        let info = await this.client.music_manager.getBasicInfo(query);
+        this.details = info.videoDetails;
     }
 
     async searchYouTube(video_name: string) {
@@ -24,14 +28,18 @@ export class Song {
         let search_options: Search.YouTubeSearchOptions = { maxResults: 3, key: process.env.GOOGLE_API_KEY };
         let search_results: any = this.client.music_manager.search_cache.get(video_name) || null;
 
-        if(search_results == null) search_results = await Search(video_name, search_options);
+        if(search_results == null) {
+            search_results = await Search(video_name, search_options);
+        }
         else return search_results;
 
         let link: string = undefined;
         if(search_results.results.length > 0)
         {
             link = search_results.results.find(v => v.kind == 'youtube#video').link;
-            if(!YTDL.validateURL(link)) throw new Error('Video with that name or URL was not found on YouTube.');
+            if(!YTDL.validateURL(link)) {
+                throw new Error('Video with that name or URL was not found on YouTube.');
+            }
             else return link;
         }
         else throw new Error('Video with that name or URL was not found on YouTube.');

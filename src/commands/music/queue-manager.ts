@@ -1,5 +1,5 @@
-import { Command, MessageEmbed } from "../../lib";
-import { SavedQueue } from "../../models";
+import { Command, MessageEmbed } from '../../lib';
+import { SavedQueue } from '../../models';
 
 const QueueManager = new Command();
 
