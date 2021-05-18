@@ -2,7 +2,20 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Launch MieciekBot via NPM",
+            "name": "MieciekBot: npm run dev:ts",
+            "type": "node",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "runtimeExecutable": "npm",
+            "runtimeArgs": [
+                "run",
+                "dev:ts"
+            ],
+            "port": 9229,
+            "stopOnEntry": true
+        },
+        {
+            "name": "MieciekBot: npm run dev:js",
             "type": "node",
             "request": "launch",
             "cwd": "${workspaceFolder}",
