@@ -46,26 +46,26 @@ export class Client extends Discord.Client {
         this.command_manager.loadCommands();
         
         await this.login(this.token || process.env.BOT_TOKEN);
-        await this.guild_manager.fetchAll();
+        await this.guild_manager.fetchAllGuilds();
     }
 
     async sendAndDelete(
         channel: Channel,
         msg: string,
-        timeout = this.guild_manager.guilds.get((<TextChannel> channel).guild.id).delete_timeout
+        timeout = this.guild_manager.getGuildConfig((<TextChannel> channel).guild.id).delete_timeout
     ) {
         await channel.send(msg).then(msg => msg.delete({ timeout }));
     }
 
     async deleteMsg(
         msg: Discord.Message,
-        timeout = this.guild_manager.guilds.get(msg.guild.id).delete_timeout
+        timeout = this.guild_manager.getGuildConfig(msg.guild.id).delete_timeout
     ) {
         msg.delete({ timeout });
     }
 
     announce(dscguild: Discord.Guild, text: string, channel?: Channel) {
-        let announce_channel = this.guild_manager.guild_announce_channel.get(dscguild.id);
+        let announce_channel = this.guild_manager.getAnnounceChannel(dscguild.id);
 
         if(announce_channel) return announce_channel.send(text);
         else if(channel) return channel.send(text);

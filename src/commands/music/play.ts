@@ -11,7 +11,7 @@ Play.execute = async (bot, msg, args, ...[load]: boolean[]) => {
         return bot.sendAndDelete(msg.channel, error.voice_channel);
     }
 
-    let song = null;
+    let song: Song = null;
     if(!load)
     {
         song = new Song(bot);
@@ -80,8 +80,8 @@ const error = Play.error = {
 function canModify(bot: Client, member: GuildMember) {
     const same_channel = (member.voice.channel == member.guild.me.voice.channel);
 
-    const user_node = bot.guild_manager.guild_permission_manager.get(member.guild.id).getMemberNode(member);
-    const admin_node = bot.guild_manager.guild_permission_manager.get(member.guild.id).getNode('ADMIN');
+    const user_node = bot.guild_manager.getUserPermission(member.guild.id, member.id);
+    const admin_node = bot.guild_manager.getPermissionManager(member.guild.id).getNode('ADMIN');
     const is_admin = (user_node.priority >= admin_node.priority);
 
     if(!member.guild.me.voice.channel) return true;

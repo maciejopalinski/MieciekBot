@@ -3,8 +3,8 @@ import Canvas, { freetypeVersion } from 'canvas';
 import { Command } from '../../lib';
 import { User } from '../../models';
 
-Canvas.registerFont('src/assets/fonts/Bebas-Regular.ttf', {family: 'Bebas-Regular'});
-Canvas.registerFont('src/assets/fonts/AldotheApache.ttf', {family: 'AldoTheApache'});
+Canvas.registerFont('src/assets/fonts/Bebas-Regular.ttf', { family: 'Bebas-Regular' });
+Canvas.registerFont('src/assets/fonts/AldotheApache.ttf', { family: 'AldoTheApache' });
 
 const XP = new Command();
 

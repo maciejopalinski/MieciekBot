@@ -3,7 +3,7 @@ import { Client } from "../lib";
 import { Guild, IGuild } from '../models';
 
 export const onGuildChange = (client: Client, doc: ChangeEventUpdate<IGuild>) => {
-    client.guild_manager.fetchOne(doc.fullDocument);
+    client.guild_manager.fetchGuild(doc.fullDocument);
 }
 
 export default (client: Client) => {

@@ -4,7 +4,7 @@ import * as Models from '../models';
 
 export const onGuildCreate = async (client: Client, guild: Guild) => {
     await Models.Guild.create({ guildID: guild.id }).catch(err => console.error(err));
-        
+
     let owner = await client.users.fetch(guild.ownerID);
     if(!owner) return guild.leave();
 
@@ -12,7 +12,7 @@ export const onGuildCreate = async (client: Client, guild: Guild) => {
     .setTitle(guild.name)
     .addField('Hi! I just configured your server.', 'Please, set up all required permissions, roles and other useful properties.')
     .addField('\u200b', 'Have a good time!');
-    
+
     owner.send(owner_embed).catch(err => {
         if(err) return console.error(err);
     });
@@ -22,7 +22,7 @@ export const onGuildCreate = async (client: Client, guild: Guild) => {
 
 export const onGuildDelete = async (client: Client, guild: Guild) => {
     await client.db_manager.deleteGuildData(guild.id);
-        
+
     console.info(`Deleting guild... (GID:${guild.id})`);
 }
 

@@ -3,11 +3,6 @@ import RandomNumber from 'random-number-csprng';
 
 const Random = new Command();
 
-/**
- * @param {Client} bot 
- * @param {Discord.Message} msg 
- * @param {Array<String>} args 
- */
 Random.execute = async (bot, msg, args) => {
     let range = parseInt(args[0]);
     if(range > 1 && range <= 65535)

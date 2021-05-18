@@ -42,8 +42,9 @@ export class MusicManager {
         let cache_entry = this.vidinfo_cache.get(url);
         if(cache_entry) return cache_entry;
         else {
-            this.vidinfo_cache.set(url, await YTDL.getBasicInfo(url));
-            return this.getBasicInfo(url);
+            let info = await YTDL.getBasicInfo(url);
+            this.vidinfo_cache.set(info.videoDetails.video_url, info);
+            return info;
         }
     }
 }

@@ -51,16 +51,17 @@ export class DatabaseManager {
     }
 
     async databaseCleanup(client: Client) {
-        
+
         // add new guilds
         client.guilds.cache.forEach(async guild => {
             let db_guild = await this.getGuild(guild.id);
-            
+
             if(!db_guild) client.emit('guildCreate', guild);
         });
-        
+
         // delete old guilds
-        let db_guilds = await Models.Guild.find({}).exec();
+        let db_guilds = await Models.Guild.find({});
+
         db_guilds.forEach(guild => {
             if(!client.guilds.cache.has(guild.guildID))
             {

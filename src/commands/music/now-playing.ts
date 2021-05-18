@@ -159,7 +159,7 @@ function roundRect(
     y: number,
     width: number,
     height: number,
-    radius: {tl:number, tr:number, br:number, bl:number} | number = {tl:5, tr:5, br:5, bl:5},
+    radius: { tl:number, tr:number, br:number, bl:number } | number = { tl:5, tr:5, br:5, bl:5 },
     fill = false, stroke = true
 ) {
     if(typeof radius == 'number') radius = { tl:radius, tr:radius, br:radius, bl:radius };

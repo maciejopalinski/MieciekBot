@@ -4,8 +4,8 @@ const Accept = new Command();
 
 Accept.execute = async (bot, msg, args) => {
 
-    let manager = bot.guild_manager.guild_permission_manager.get(msg.guild.id);
-    let allowed_nodes = bot.guild_manager.guild_users.get(msg.guild.id).permission.get(msg.member.id).allowed_nodes;
+    let manager = bot.guild_manager.getPermissionManager(msg.guild.id);
+    let allowed_nodes = bot.guild_manager.getUserPermission(msg.guild.id, msg.member.id).allowed_nodes;
 
     if(allowed_nodes.includes('@everyone'))
     {

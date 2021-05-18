@@ -23,12 +23,10 @@ export class Song {
 
         let search_options: Search.YouTubeSearchOptions = { maxResults: 3, key: process.env.GOOGLE_API_KEY };
         let search_results: any = this.client.music_manager.search_cache.get(video_name) || null;
-        
+
         if(search_results == null) search_results = await Search(video_name, search_options);
-        else {
-            return search_results;
-        }
-        
+        else return search_results;
+
         let link: string = undefined;
         if(search_results.results.length > 0)
         {

@@ -1,6 +1,6 @@
+import GitHub from 'octonode';
 import { MessageEmbed, Command } from '../../lib';
 
-import GitHub from 'octonode';
 const GitHubClient = GitHub.client(process.env.GITHUB_API_TOKEN);
 
 const Changelog = new Command();

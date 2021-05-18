@@ -13,11 +13,11 @@ Meme.execute = async (bot, msg, args) => {
         'blursedimages',
         'ihadastroke'
     ];
-    
+
     let random = subReddits[Math.floor(Math.random() * subReddits.length)];
 
     let img = await RandomPuppy(random);
-    
+
     let meme_embed = new MessageEmbed(bot, undefined, false)
     .setTitle(`MEME: r/${random}`)
     .setImage(img)

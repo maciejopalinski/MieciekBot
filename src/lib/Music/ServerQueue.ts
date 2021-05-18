@@ -142,7 +142,7 @@ export class ServerQueue {
         for (const url of saved_queue.urls) {
             let song = new Song(this.client);
             await song.fetchInfo(url);
-            this.addSong(song, false);
+            this.addSong(song, false, true);
         }
         
         await this.text_channel.send(`Queue has been successfully loaded. Total songs: **${this.songs.length}**`);
