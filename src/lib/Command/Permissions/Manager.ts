@@ -1,4 +1,4 @@
-import { Guild, GuildMember, Role } from 'discord.js';
+import { Guild, GuildMember } from 'discord.js';
 import { Command } from '../Command';
 import { AnyPermissionNode, PermissionNodeName, RolePermissionNode, UserPermissionNode } from './Nodes';
 
