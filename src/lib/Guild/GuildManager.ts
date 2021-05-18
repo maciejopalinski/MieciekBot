@@ -27,8 +27,6 @@ export class GuildManager {
         const ID = guild.guildID;
         const GUILD = this.client.guilds.cache.get(ID);
 
-        await this.client.guilds.fetch(ID);
-
         this.guild_config.set(ID, guild);
 
         // permission manager

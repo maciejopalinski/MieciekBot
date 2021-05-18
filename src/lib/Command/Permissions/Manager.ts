@@ -11,7 +11,7 @@ export class PermissionManager {
         this.guild = guild;
         this.nodes = nodes;
 
-        this.addNode(new RolePermissionNode('@everyone', this.guild.roles.everyone.id, 0));
+        this.addNode(new RolePermissionNode('@everyone', this.guild.id, 0));
         this.addNode(new UserPermissionNode('BOT_OWNER', '510925936393322497', 1000, ['USER', 'DJ', 'ADMIN', 'OWNER', 'BOT_OWNER']));
     }
 
