@@ -3,6 +3,7 @@
     "version": "4.0.0",
     "main": "src/index.ts",
     "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
         "build": "tsc",
         "build:watch": "tsc -w",
         "start": "node dist/src/index.js",
