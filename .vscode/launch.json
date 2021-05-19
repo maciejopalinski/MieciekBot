@@ -2,7 +2,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "MieciekBot: npm run dev:ts",
+            "name": "npm run dev:ts",
             "type": "node",
             "request": "launch",
             "cwd": "${workspaceFolder}",
@@ -15,7 +15,7 @@
             "stopOnEntry": true
         },
         {
-            "name": "MieciekBot: npm run dev:js",
+            "name": "npm run dev:js",
             "type": "node",
             "request": "launch",
             "cwd": "${workspaceFolder}",
