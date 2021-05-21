@@ -8,7 +8,6 @@ Meme.execute = async (bot, msg, args) => {
         'dankmemes',
         'memes',
         'me_irl',
-        'cursedimages',
         'blessedimages',
         'blursedimages',
         'ihadastroke'
