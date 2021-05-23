@@ -1,4 +1,5 @@
 import { Command } from '../../lib';
+import { onGuildCreate, onGuildDelete } from '../../events/Guild';
 
 const Reconfigure = new Command();
 
@@ -8,8 +9,9 @@ Reconfigure.execute = async (bot, msg, args) => {
     if(args[0] == `confirm${msg.guild.id}`)
     {
         await bot.sendAndDelete(msg.channel, 'Reseting...');
-        bot.emit('guildDelete', msg.guild);
-        bot.emit('guildCreate', msg.guild);
+
+        await onGuildDelete(bot, msg.guild);
+        await onGuildCreate(bot, msg.guild);
     }
     else msg.channel.send(
         `Are you sure you want to reset all bot properties in database?\n` +

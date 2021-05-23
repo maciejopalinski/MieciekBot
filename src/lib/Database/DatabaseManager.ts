@@ -2,6 +2,7 @@ import { Guild } from 'discord.js';
 import mongoose from 'mongoose';
 
 import { Client, ExperienceSystem } from '../';
+import { onGuildCreate, onGuildDelete } from '../../events/Guild';
 import * as Models from '../../models';
 
 export class DatabaseManager {
@@ -56,16 +57,16 @@ export class DatabaseManager {
         client.guilds.cache.forEach(async guild => {
             let db_guild = await this.getGuild(guild.id);
 
-            if(!db_guild) client.emit('guildCreate', guild);
+            if(!db_guild) await onGuildCreate(client, guild);
         });
 
         // delete old guilds
         let db_guilds = await Models.Guild.find({});
 
-        db_guilds.forEach(guild => {
+        db_guilds.forEach(async guild => {
             if(!client.guilds.cache.has(guild.guildID))
             {
-                client.emit('guildDelete', <Guild> { id: guild.guildID });
+                await onGuildDelete(client, <Guild> { id: guild.guildID });
                 console.debug(`Deleting old guild and its members from the database... (GID:${guild.guildID})`);
             }
         });
