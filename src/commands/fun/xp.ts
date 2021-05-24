@@ -18,7 +18,7 @@ XP.execute = async (bot, msg, args) => {
 
     let user = await bot.db_manager.getUser(msg.guild.id, member.id);
     if(!user) {
-        User.create({
+        user = await User.create({
             guildID: msg.guild.id,
             userID: member.id
         });
