@@ -1,4 +1,3 @@
-import { TextChannel, NewsChannel } from 'discord.js';
 import mongoose from 'mongoose';
 
 export interface ServerPermissionRoles {
