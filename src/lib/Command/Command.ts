@@ -16,8 +16,8 @@ export class Command {
     async execute(bot: Client, msg: Message, args: string[], ...rest: any[]): Promise<void | Message> {}
 
     help: CommandHelp;
-    category: string = "";
-    path: string = "";
+    category: string = '';
+    path: string = '';
 
     error = {};
 }
