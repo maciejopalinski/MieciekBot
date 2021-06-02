@@ -26,6 +26,16 @@
             ],
             "port": 9229,
             "stopOnEntry": true
+        },
+        {
+            "name": "Attach",
+            "type": "pwa-node",
+            "request": "attach",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "port": 9229,
+            "restart": { "delay": 0, "maxAttempts": 3 }
         }
     ]
 }
