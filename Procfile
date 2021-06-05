@@ -1,1 +1,1 @@
-discord-bot: npm start
+bot: npm start
