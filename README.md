@@ -2,7 +2,7 @@
 An open source Node.js Discord bot.
 
 ## Requirements
-- Node.js - https://nodejs.org/en/download/
+- Node.js (v16.6.0 or newer) - https://nodejs.org/en/download/
 - NPM - shipped by default with Node.js framework
 
 ## Installation
