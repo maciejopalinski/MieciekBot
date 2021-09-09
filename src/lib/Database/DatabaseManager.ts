@@ -14,12 +14,7 @@ export class DatabaseManager {
     }
 
     private connect(uri: string) {
-        mongoose.connect(uri, {
-            useNewUrlParser: true,
-            useUnifiedTopology: true,
-            useFindAndModify: false,
-            useCreateIndex: true
-        });
+        mongoose.connect(uri);
     }
 
     // GET
