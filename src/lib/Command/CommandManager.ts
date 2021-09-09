@@ -1,6 +1,10 @@
-import { GuildMember } from 'discord.js';
 import fs from 'fs';
+import { Client } from '../';
 import { Command } from './Command';
+import { REST } from '@discordjs/rest';
+import { GuildDefaultMessageNotifications, Routes } from 'discord-api-types/v9';
+import { GuildApplicationCommandPermissionData } from 'discord.js';
+import { RolePermissionNode, UserPermissionNode } from '.';
 
 export class CommandManager {
 
@@ -23,17 +27,25 @@ export class CommandManager {
             });
 
             jsfiles.forEach(command => {
-                
-                let path = `${commands_dir}/${category}/${command}`;
-                let props: Command = require(path).default;
 
-                props.category = category;
-                props.path = `commands/${category}/${command}`;
+                let path = `/${category}/${command}`;
+                let props = require(commands_dir + path).default;
 
-                try {
-                    this.registerCommand(props);
-                } catch(err) {
-                    console.error(err);
+                if (props instanceof Command)
+                {
+                    props.category = category;
+                    props.path = path;
+                    props.init();
+
+                    try {
+                        this.registerCommand(props);
+                    } catch(err) {
+                        console.error(err);
+                    }
+                }
+                else
+                {
+                    console.error(`${path} is not a valid command file`);
                 }
             });
         });
@@ -48,8 +60,8 @@ export class CommandManager {
     registerCommand(command: Command) {
 
         // check for name duplications
-        if(this.getCommandByName(command.help.name)) {
-            throw new Error(`Command with name '${command.help.name}' has been already registered!`);
+        if(this.getCommandByName(command.data.name)) {
+            throw new Error(`Command with name '${command.data.name}' has been already registered!`);
         }
 
         // check for alias duplications
@@ -66,24 +78,65 @@ export class CommandManager {
         console.info(`${command.path} loaded`);
     }
 
+    async deploySlashCommands(client: Client) {
+
+        const rest = new REST({ version: '9' }).setToken(client.token);
+
+        let slash_commands = this.commands.filter(c => c.hasInteractionHandler).map(c => c.data.toJSON());
+
+        try {
+            if (client.debug)
+            {
+                const guild = client.guilds.cache.get(client.debug_guild_id);
+                if (guild)
+                {
+                    console.info(`Deploying guild slash commands (GID: ${guild.id})...`);
+
+                    guild.commands.cache.map(c => c.toJSON());
+
+                    await rest.put(
+                        Routes.applicationGuildCommands(client.user.id, guild.id),
+                        { body: slash_commands }
+                    );
+
+                    console.info(`Deployed ${slash_commands.length} guild slash commands`);
+                }
+            }
+            else
+            {
+                console.info('Deploying global slash commands...');
+
+                await rest.put(
+                    Routes.applicationCommands(client.user.id),
+                    { body: slash_commands }
+                );
+
+                console.info(`Deployed ${slash_commands.length} application slash commands`);
+            }
+        }
+        catch (err) {
+            console.error(err);
+        }
+    }
+
     getCommand(query: string): Command | undefined {
         return this.getCommandByName(query) || this.getCommandByAlias(query) || undefined;
     }
 
     getCommandByName(name: string): Command | undefined {
-        return this.commands.find(v => v.help.name == name) || undefined;
+        return this.commands.find(c => c.data.name == name) || undefined;
     }
 
     getCommandByAlias(alias: string): Command | undefined {
-        return this.commands.find(v => v.help.aliases.includes(alias)) || undefined;
+        return this.commands.find(c => c.help.aliases.includes(alias)) || undefined;
     }
 
     calculateArgs(command: Command) {
         let required = 0, optional = 0;
 
-        command.help.args.split(' ').forEach(arg => {
-            if (arg.startsWith('<')) required++;
-            if (arg.startsWith('[')) optional++;
+        command.data.options.forEach(opt => {
+            if (opt.toJSON().required) required++;
+            else optional++;
         });
 
         return { required, optional };

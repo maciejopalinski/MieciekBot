@@ -1,23 +1,54 @@
-import { Message } from 'discord.js';
+import { SlashCommandBuilder } from '@discordjs/builders';
+import { CommandInteraction, Message, BitField } from 'discord.js';
+import { type } from 'os';
 import { Client } from '../';
 import { PermissionNodeName } from './Permissions/Nodes';
 
-export interface CommandHelp {
+export enum CommandType {
+    MESSAGE     = 1 << 0,
+    INTERACTION = 1 << 1,
+    BOTH        = MESSAGE | INTERACTION,
+}
 
-    name: string;
-    args: string;
-    description: string;
+export interface CommandHelp {
+    type: CommandType;
     aliases: string[];
     permission: PermissionNodeName;
 }
 
 export class Command {
 
-    async execute(bot: Client, msg: Message, args: string[], ...rest: any[]): Promise<void | Message> {}
+    constructor(help: CommandHelp) {
+        this.help = help;
 
-    help: CommandHelp;
+        // if (this.help.permission == '@everyone') this.data.setDefaultPermission(true);
+        // else this.data.setDefaultPermission(false);
+    }
+
+    init() {
+        this.data.options.forEach(opt => {
+            const option = opt.toJSON();
+
+            if (option.required) this.args += `<${option.name}> `;
+            else this.args += `[${option.name}] `;
+        });
+    }
+
+    async executeFromInteraction(bot: Client, interaction: CommandInteraction) {}
+    async executeFromMessage(bot: Client, msg: Message, args: string[]) {}
+
+    get hasInteractionHandler() {
+        return (this.help.type & CommandType.INTERACTION) != 0;
+    }
+
+    get hasMessageHandler() {
+        return (this.help.type & CommandType.MESSAGE) != 0;
+    }
+
     category: string = '';
     path: string = '';
+    args: string = '';
 
-    error = {};
+    help: CommandHelp;
+    data: SlashCommandBuilder = new SlashCommandBuilder();
 }
