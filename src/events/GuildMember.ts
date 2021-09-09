@@ -21,6 +21,6 @@ export const onGuildMemberAdd = async (client: Client, member: GuildMember) => {
 }
 
 export default (client: Client) => {
-    client.on('guildMemberRemove', async member => onGuildMemberRemove(client, member));
-    client.on('guildMemberAdd', async member => onGuildMemberAdd(client, member));
+    client.on('guildMemberRemove', member => onGuildMemberRemove(client, member));
+    client.on('guildMemberAdd', member => onGuildMemberAdd(client, member));
 }
