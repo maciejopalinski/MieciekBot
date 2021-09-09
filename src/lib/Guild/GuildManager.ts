@@ -1,6 +1,6 @@
 import { Collection, GuildMember, NewsChannel, TextChannel } from 'discord.js';
 import { Client, PermissionManager, UserManager, RolePermissionNode, UserPermissionNode } from '../';
-import { Guild, IGuild, User, IUser } from '../../models';
+import { Guild, IGuild } from '../../models';
 
 export class GuildManager {
 
@@ -16,7 +16,13 @@ export class GuildManager {
     }
 
     async fetchAllGuilds() {
-        const guilds = await Guild.find({ guildID: { $in: this.client.guilds.cache.keyArray() } });
+
+        const guilds = await Guild.find({
+            guildID: {
+                $in: [ ... this.client.guilds.cache.keys() ]
+            }
+        });
+
         for (const guild of guilds) {
             this.fetchGuild(guild);
         }
@@ -36,7 +42,7 @@ export class GuildManager {
         pmanager.addNode(new RolePermissionNode('DJ',    guild.roles.dj  ,  3, ['USER', 'DJ']));
         pmanager.addNode(new RolePermissionNode('ADMIN', guild.roles.admin, 4, ['USER', 'DJ', 'ADMIN']));
         pmanager.addNode(new RolePermissionNode('OWNER', guild.roles.owner, 5, ['USER', 'DJ', 'ADMIN', 'OWNER']));
-        pmanager.addNode(new UserPermissionNode('OWNER', GUILD.ownerID,     5, ['USER', 'DJ', 'ADMIN', 'OWNER']));
+        pmanager.addNode(new UserPermissionNode('OWNER', GUILD.ownerId,     5, ['USER', 'DJ', 'ADMIN', 'OWNER']));
         this.guild_permission.set(ID, pmanager);
 
         // announce channel
