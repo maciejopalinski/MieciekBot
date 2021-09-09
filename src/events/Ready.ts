@@ -8,28 +8,28 @@ export const onReady = async (client: Client) => {
 
     let base_presence: PresenceData = {
         status: 'online',
-        activity: { url: 'https://github.com/PoProstuMieciek/' }
+        activities: [{ url: 'https://github.com/PoProstuMieciek/' }]
     };
 
     let status: PresenceData[] = [
         {
             ...base_presence,
-            activity: { type: 'LISTENING', name: 'Dream Theater' }
+            activities: [{ type: 'LISTENING', name: 'Dream Theater' }]
         },
         {
             ...base_presence,
-            activity: { type: 'LISTENING', name: 'Gojira' }
+            activities: [{ type: 'LISTENING', name: 'Gojira' }]
         },
         {
             ...base_presence,
-            activity: { type: 'PLAYING', name: 'Visual Studio Code' }
+            activities: [{ type: 'PLAYING', name: 'Visual Studio Code' }]
         },
         {
             ...base_presence,
-            activity: {
+            activities: [{
                 type: 'PLAYING',
                 name: `on ${client.guilds.cache.size} ${client.guilds.cache.size > 1 ? 'servers' : 'server'}`
-            }
+            }]
         }
     ];
 
@@ -42,5 +42,5 @@ export const onReady = async (client: Client) => {
 }
 
 export default (client: Client) => {
-    client.on('ready', async () => onReady(client));
+    client.on('ready', () => onReady(client));
 }
