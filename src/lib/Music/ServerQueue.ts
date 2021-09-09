@@ -1,7 +1,8 @@
-import { Guild, TextChannel, NewsChannel, VoiceChannel, VoiceConnection } from 'discord.js';
+import { Guild, TextChannel, NewsChannel, VoiceChannel, StageChannel, TextBasedChannels } from 'discord.js';
+import { joinVoiceChannel, createAudioPlayer, createAudioResource, entersState, StreamType, AudioPlayerStatus, VoiceConnectionStatus, AudioPlayer } from '@discordjs/voice';
 import YTDL from 'ytdl-core';
 
-import { Client, Channel, Song } from '../';
+import { Client, Song } from '../';
 import { SavedQueue } from '../../models/';
 
 export enum QueueLoopModes {
@@ -21,9 +22,10 @@ export class ServerQueue {
 
     guild: Guild;
     client: Client;
-    text_channel: TextChannel | NewsChannel;
-    voice_channel: VoiceChannel;
-    connection: VoiceConnection = null;
+    text_channel: TextBasedChannels;
+    voice_channel: VoiceChannel | StageChannel;
+
+    player: AudioPlayer;
 
     songs: Song[] = [];
 
@@ -34,7 +36,7 @@ export class ServerQueue {
 
     volume = { current: 100, last: 100 };
 
-    constructor(client: Client, text_channel: TextChannel | NewsChannel, voice_channel: VoiceChannel) {
+    constructor(client: Client, text_channel: TextBasedChannels, voice_channel: VoiceChannel | StageChannel) {
         this.client = client;
         this.text_channel = text_channel;
         this.voice_channel = voice_channel;
@@ -57,7 +59,7 @@ export class ServerQueue {
     removeSong(index: number) {
         if(this.songs[index].uuid == this.playing.current.uuid) {
             this.songs.splice(index, 1);
-            this.connection.dispatcher.end();
+            this.player.stop();
         } else {
             this.songs.splice(index, 1);
         }
@@ -105,37 +107,46 @@ export class ServerQueue {
     }
 
     updateVolume() {
-        return this.connection.dispatcher.setVolumeLogarithmic(this.volume.current / 100);
+        // return this.player.setVolumeLogarithmic(this.volume.current / 100); // !!! TODO
     }
 
     restoreVolume() {
         this.setVolume(this.volume.last);
     }
 
+    connectToChannel(channel: VoiceChannel) {
+
+        const connection = joinVoiceChannel({
+            channelId: channel.id,
+            guildId: channel.guild.id,
+            adapterCreator: null
+        });
+    }
+
     play() {
         let song = this.playing.current;
 
         if(!song) {
-            this.voice_channel.leave();
+            // this.voice_channel.leave();
             this.client.music_manager.delete(this.guild.id);
             return;
         }
 
-        let dispatcher = this.connection
-        .play(YTDL(song.url, { quality: '140' }))
-        .on('finish', () => {
-            this.nextSong();
-            this.play();
-        })
-        .on('error', console.error);
+        // let dispatcher = this.connection
+        // .play(YTDL(song.url, { quality: '140' }))
+        // .on('finish', () => {
+        //     this.nextSong();
+        //     this.play();
+        // })
+        // .on('error', console.error);
 
-        dispatcher.setVolumeLogarithmic(this.volume.current / 100);
-        this.playing.state = true;
-        this.text_channel.send(`Now playing: **${this.playing.current.details.title}**`);
+        // dispatcher.setVolumeLogarithmic(this.volume.current / 100);
+        // this.playing.state = true;
+        // this.text_channel.send(`Now playing: **${this.playing.current.details.title}**`);
     }
 
     join() {
-        return this.voice_channel.join();
+        // return this.voice_channel.join(); // !!! TODO
     }
 
     async loadQueue(saved_queue) {
