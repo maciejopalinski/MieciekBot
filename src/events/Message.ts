@@ -3,15 +3,16 @@ import EmojiRegex from 'emoji-regex';
 import { Client } from '../lib/';
 import { User } from '../models/';
 
-export const onMessage = async (client: Client, msg: Message) => {
-    
+export const onMessageCreate = async (client: Client, msg: Message) => {
+
     if (msg.author.bot) return;
-    if (msg.channel.type === 'dm') return;
+    if (msg.channel.type === 'DM') return;
 
     let guild = client.guild_manager.getGuildConfig(msg.guild.id);
     if (!guild) {
-        return msg.channel.send(`Oops! I did not properly configure your server... Please, invite me once again. ${client.generateBotInvite()}`)
+        msg.channel.send(`Oops! I did not properly configure your server... Please, invite me once again. ${client.generateBotInvite()}`)
         .then(msg => msg.guild.leave());
+        return;
     }
 
     let prefix = guild.prefix;
@@ -32,7 +33,7 @@ export const onMessage = async (client: Client, msg: Message) => {
             // if all required arguments are present, run a command
             if (args.length >= required)
             {
-                command.execute(client, msg, args).catch(err => {
+                command.executeFromMessage(client, msg, args).catch(err => {
                     console.error(err);
 
                     if(client.debug) {
@@ -45,7 +46,7 @@ export const onMessage = async (client: Client, msg: Message) => {
             }
             else
             {
-                let err = `Usage: ${prefix}${command.help.name} ${command.help.args}`;
+                let err = `Usage: ${prefix}${command.data.name} ${command.args}`;
                 client.deleteMsg(msg);
                 client.sendAndDelete(msg.channel, err)
             }
@@ -89,5 +90,5 @@ export const onMessage = async (client: Client, msg: Message) => {
 }
 
 export default (client: Client) => {
-    client.on('message', async msg => onMessage(client, msg));
+    client.on('messageCreate', msg => onMessageCreate(client, msg));
 }
