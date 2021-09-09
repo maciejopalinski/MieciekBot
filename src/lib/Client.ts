@@ -1,14 +1,14 @@
-import Discord, { NewsChannel, TextChannel } from 'discord.js';
+import Discord from 'discord.js';
 import project_info from '../../package.json';
 import { CommandManager, EventLoader, DatabaseManager, MusicManager, GuildManager } from './';
 
-export type Channel = Discord.TextChannel | Discord.DMChannel | Discord.NewsChannel;
-
 export class Client extends Discord.Client {
-    
+
     project_info = project_info;
     version: string;
+
     debug = false;
+    debug_guild_id: string;
 
     guild_manager: GuildManager;
     music_manager: MusicManager;
@@ -20,13 +20,14 @@ export class Client extends Discord.Client {
 
     constructor(client_options?: Discord.ClientOptions) {
         super(client_options);
-        
+
         require('./ConsoleLogger');
 
         this.version = this.project_info.version;
         if (process.env.DEBUG == 'true') {
             this.version += '-dev';
             this.debug = true;
+            this.debug_guild_id = process.env.DEBUG_GUILD_ID;
         }
 
         this.event_loader = new EventLoader(this);
@@ -44,27 +45,33 @@ export class Client extends Discord.Client {
 
         this.event_loader.loadEvents();
         this.command_manager.loadCommands();
-        
-        await this.login(this.token || process.env.BOT_TOKEN);
+
+        await this.login(this.token || process.env.DISCORD_TOKEN);
+
         await this.guild_manager.fetchAllGuilds();
+        await this.command_manager.deploySlashCommands(this);
     }
 
     async sendAndDelete(
-        channel: Channel,
+        channel: Discord.TextBasedChannels,
         msg: string,
-        timeout = this.guild_manager.getGuildConfig((<TextChannel> channel).guild.id).delete_timeout
+        timeout = 0
     ) {
-        await channel.send(msg).then(msg => msg.delete({ timeout }));
+        if (!timeout && channel instanceof Discord.GuildChannel)
+        {
+            timeout = this.guild_manager.getGuildConfig(channel.guild.id).delete_timeout
+        }
+        await channel.send(msg).then(msg => this.deleteMsg(msg, timeout));
     }
 
     async deleteMsg(
         msg: Discord.Message,
         timeout = this.guild_manager.getGuildConfig(msg.guild.id).delete_timeout
     ) {
-        msg.delete({ timeout });
+        setTimeout(() => msg.delete(), timeout);
     }
 
-    announce(dscguild: Discord.Guild, text: string, channel?: Channel) {
+    announce(dscguild: Discord.Guild, text: string, channel?: Discord.TextBasedChannels) {
         let announce_channel = this.guild_manager.getAnnounceChannel(dscguild.id);
 
         if(announce_channel) return announce_channel.send(text);
@@ -73,7 +80,7 @@ export class Client extends Discord.Client {
     }
 
     generateBotInvite(permissions: number = 8) {
-        return `https://discordapp.com/oauth2/authorize?client_id=${this.user.id}&scope=bot&permissions=${permissions}`;
+        return `https://discord.com/api/oauth2/authorize?client_id=${this.user.id}&permissions=${permissions}&response_type=code&scope=bot%20applications.commands%20identify%20guilds`;
     }
 
     generateUUID(length: number, characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789') {
